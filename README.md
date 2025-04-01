@@ -9,13 +9,6 @@ There are currently two types of graphs available:
 *  **Box plot** - the traditional benchmarking graph. This plot shows environmental impacts based on categorical variables (e.g. building use, number of stories or location). All environmental impacts are inclusiveof life cycle stages A-C.
 *  **Scatter plot** - good for analyzing relationships.This plot shows environmental impacts compared to continuousvariables (e.g. floor area, window-to-wall ratio or column spacing). All environmental impacts are inclusiveof life cycle stages A-C.
 
-## Data Structure
-**Please refer to the data descriptor article for full details, descriptions, and usage notes regarding the dataset and its structure.**
-
-The **buildings_metadata.xlsx** file is structured so that each row of data reflects a single project. It contains 72 features organized by feature types including site context, building design, structural design, LCA methods, and calculated summaries. 
-
-The **full_lca_results.xlsx** file is structured in a novel way that enables high-resolution data filtering and comparison-making. It is similar to the non-aggregated LCA tool output formats of Tally and One Click LCA where each row of data reflects a single material and life cycle stage from an individual project and contains the materials associated classifications, inventory data, and impacts. It contains 21 features organized by feature types for LCA classifications, LCI results, LCIA results, and calculated summaries. The two dataset files can be merged or joined using unique primary keys (project_index) that are assigned to each project to facilitate a wide range of uses and types of analysis. 
-
 ## Versioning
 Versions on this repository are tracked using Releases on GitHub. 
 
