@@ -100,12 +100,14 @@ layout = html.Div(
                             (https://doi.org/10.6084/m9.figshare.28462145.v1)**
                             - **[Data Descriptor Paper (preprint)]
                             (https://doi.org/10.21203/rs.3.rs-6108016/v1)**
+                            - **[Material Use Intensity Paper (preprint)]
+                            (https://doi.org/10.21203/rs.3.rs-6315460/v1)**
                             - **[Data Collection User Guide]
                             (https://hdl.handle.net/1773/51285)**
                             - **[Data Entry Template]
                             (https://hdl.handle.net/1773/51286)**
                             - **[Github Repository for Dashboard]
-                            ()**
+                            (https://github.com/Life-Cycle-Lab/wblca-benchmark-v2-data)**
                             ''',
                             className='fw-light'
                         ),
@@ -184,7 +186,7 @@ layout = html.Div(
                             '''
                             Chafart, M., Benke, B., Simonen, K. (2025). WBLCA Benchmark Study v2 Dashboard
                             (Version 1.0) \[Computer Software]. Life Cycle Lab,
-                            https://benchmark-v2.lifecyclelab.org/
+                            https://wblca-benchmark-v2.lifecyclelab.org/
                             ''',
                             className='fw-light'
                         ),
