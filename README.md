@@ -10,7 +10,7 @@ There are currently two types of graphs available:
 *  **Scatter plot** - good for analyzing relationships.This plot shows environmental impacts compared to continuousvariables (e.g. floor area, window-to-wall ratio or column spacing). All environmental impacts are inclusiveof life cycle stages A-C.
 
 ## Versioning
-Versions on this repository are tracked using Releases on GitHub. 
+Versions on this repository are tracked using Releases on GitHub. Deployments of this app to Heroku and hosted on the Life Cycle Lab domain will also be tracked through GitHub.
 
 ## How to cite
 For any dashboard related citations, please use: 
