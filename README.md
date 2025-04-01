@@ -10,22 +10,27 @@ There are currently two types of graphs available:
 *  **Scatter plot** - good for analyzing relationships.This plot shows environmental impacts compared to continuousvariables (e.g. floor area, window-to-wall ratio or column spacing). All environmental impacts are inclusiveof life cycle stages A-C.
 
 ## Versioning
-Versions on this repository are tracked using Releases on GitHub. Deployments of this app to Heroku and hosted on the Life Cycle Lab domain will also be tracked through GitHub.
+Versions of this repository are tracked using Releases on GitHub.
 
 ## How to cite
 For any dashboard related citations, please use: 
-- Chafart, M., Benke, B., Simonen, K. (2025). WBLCA Benchmark Study v2 Dashboard (Version 1.0) \[Computer Software]. Life Cycle Lab, https://wblca-benchmark-v2.lifecyclelab.org/
+```
+Chafart, M., Benke, B., Simonen, K. (2025). WBLCA Benchmark Study v2 Dashboard (Version 1.0) [Computer Software]. Life Cycle Lab, https://wblca-benchmark-v2.lifecyclelab.org/
+```
 
 For citations relating to the dataset, please cite both the Data Descriptor and the specific data version used:
-- **Data Descriptor:** Benke, B., Chafart, M., Shen, Y., Ashtiani, M., Carlisle, S., and Simonen, K.  *A Harmonized Dataset of High-Resolution Whole Building Life Cycle Assessment Results in North America.* In Review. Preprint available at https://doi.org/10.21203/rs.3.rs-6108016/v1
+- **Data Descriptor:**
+```
+Benke, B., Chafart, M., Shen, Y., Ashtiani, M., Carlisle, S., and Simonen, K.  A Harmonized Dataset of High-Resolution Whole Building Life Cycle Assessment Results in North America. In Review. Preprint available at https://doi.org/10.21203/rs.3.rs-6108016/v1
+```
 - **Dataset:** Refer to the latest version on Figshare https://doi.org/10.6084/m9.figshare.28462145.v1
 
 ## Additional Project Resources
 - [WBLCA Benchmark Study V2 Project Page - Carbon Leadership Forum](https://carbonleadershipforum.org/clf-wblca-v2/)
 - [WBLCA Benchmark Study V2 Project Page - Life Cycle Lab at University of Washington](https://www.lifecyclelab.org/projects/)
 - [Data Descriptor - A Harmonized Dataset of High-Resolution Whole Building Life Cycle Assessment Results in North America](https://doi.org/10.21203/rs.3.rs-6108016/v1)
-- [California Carbon Report](https://carbonleadershipforum.org/california-carbon/)
 - [Material Use Intensity Paper - Material Use and Embodied Carbon Intensity of New Construction Buildings in North America](https://doi.org/10.21203/rs.3.rs-6315460/v1)
+- [California Carbon Report](https://carbonleadershipforum.org/california-carbon/)
 - [Data Entry Template](https://hdl.handle.net/1773/51286)
 - [Data Collection User Guide](https://hdl.handle.net/1773/51285)
 
