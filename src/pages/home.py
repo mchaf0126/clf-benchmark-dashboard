@@ -107,7 +107,7 @@ layout = html.Div(
                             - **[Data Entry Template]
                             (https://hdl.handle.net/1773/51286)**
                             - **[Github Repository for Dashboard]
-                            (https://github.com/Life-Cycle-Lab/wblca-benchmark-v2-data)**
+                            (https://github.com/Life-Cycle-Lab/wblca-benchmark-v2-dashboard)**
                             ''',
                             className='fw-light'
                         ),
