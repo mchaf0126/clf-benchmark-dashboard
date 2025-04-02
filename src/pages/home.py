@@ -144,8 +144,8 @@ layout = html.Div(
                             '''
                             The individuals from the Carbon Leadership Forum who worked on this
                             dashboard are:
-                            - Brad Benke, Reseacher (now at Carbon Leadership Forum)
-                            - Manuel Chafart, Researcher (now at Carbon Leadership Forum)
+                            - Manuel Chafart, Reseacher (now at Carbon Leadership Forum)
+                            - Brad Benke, Researcher (now at Carbon Leadership Forum)
                             - Kathrina Simonen, Professor
 
                             **[CRediT]
