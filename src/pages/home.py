@@ -35,11 +35,11 @@ layout = html.Div(
                         dcc.Markdown(
                             '''
                             In 2017, the Carbon Leadership Forum (CLF) at the 
-                            University of Washington published the [Embodied 
+                            University of Washington published the **[Embodied 
                             Carbon Benchmark Study V1]
-                            (https://carbonleadershipforum.org/lca-benchmark-database/)
-                            and [Visualization Tool]
-                            (https://carbonleadershipforum.org/embodied-carbon-benchmark-study-data-visualization/). 
+                            (https://carbonleadershipforum.org/lca-benchmark-database/)**
+                            and **[Visualization Tool]
+                            (https://carbonleadershipforum.org/embodied-carbon-benchmark-study-data-visualization/)**. 
                             Since then, the practice of whole-building life 
                             cycle assessment (WBLCA) has grown rapidly, and 
                             it became clear that more robust and reliable 
@@ -50,8 +50,8 @@ layout = html.Div(
                             realistic and measurable embodied carbon reductions
                             at the building scale.
                             
-                            The [WBLCA Benchmark Study V2]
-                            (https://carbonleadershipforum.org/clf-wblca-v2/)
+                            The **[WBLCA Benchmark Study V2]
+                            (https://carbonleadershipforum.org/clf-wblca-v2/)**
                             began while the Carbon Leadership Forum (CLF) 
                             was hosted at the University 
                             of Washington (UW). After the CLF became an 
@@ -71,16 +71,20 @@ layout = html.Div(
                             '''
                             There are
                             currently two types of graphs available:
-                            *  **Box plot** - the traditional benchmarking graph. 
+                            *  **[Box plot](/box_plot)** - the traditional benchmarking graph. 
                             This plot shows environmental impacts based on categorical 
                             variables (e.g. building use, number of stories or 
                             location). All environmental impacts are inclusive
                             of life cycle stages A-C.
-                            *  **Scatter plot** - good for analyzing relationships.
+                            *  **[Scatter plot](/scatter_plot)** - good for analyzing relationships.
                             This plot shows environmental impacts compared to continuous
                             variables (e.g. floor area, window-to-wall ratio or 
                             column spacing). All environmental impacts are inclusive
                             of life cycle stages A-C.
+                            
+                            Please refer to the Data Glossary in the **[WBLCA Benchmark v2 Data 
+                            Github Repository](https://github.com/Life-Cycle-Lab/wblca-benchmark-v2-data)**
+                            for any questions related to categorical or continuous variable definitions.
                             ''',
                             className='fw-light'
                         ),
@@ -107,7 +111,7 @@ layout = html.Div(
                             - **[Data Entry Template]
                             (https://hdl.handle.net/1773/51286)**
                             - **[Github Repository for Dashboard]
-                            (https://github.com/Life-Cycle-Lab/wblca-benchmark-v2-dashboard)**
+                            (https://github.com/Life-Cycle-Lab/wblca-benchmark-v2-data)**
                             ''',
                             className='fw-light'
                         ),
@@ -119,7 +123,7 @@ layout = html.Div(
                         ),
                         dcc.Markdown(
                             '''
-                            The [Life Cycle Lab](https://www.lifecyclelab.org/) 
+                            The **[Life Cycle Lab](https://www.lifecyclelab.org/)**
                             at UW’s College of Built Environments leads
                             research to advance life cycle assessment (LCA) data, methods,
                             and approaches to enable the optimization of materials, buildings,
@@ -144,8 +148,8 @@ layout = html.Div(
                             - Manuel Chafart, Researcher (now at Carbon Leadership Forum)
                             - Kathrina Simonen, Professor
 
-                            [CRediT]
-                            (https://www.elsevier.com/researcher/author/policies-and-guidelines/credit-author-statement)
+                            **[CRediT]
+                            (https://www.elsevier.com/researcher/author/policies-and-guidelines/credit-author-statement)**
                             authorship contribution: Conceptualization - B.B., M.C.,
                             Formal analysis: M.C; Methodology - B.B., M.C.;  Visualization: M.C;
                             Supervision and Funding Acquisition: K.S.
