@@ -256,7 +256,7 @@ outlier_toggle_cont:
   first_item: []
   toggle_id: outlier_toggle_cont
   tooltip: This toggle will remove outliers from the scatter plot.
-    A project is considered an outlier if the selected impact
+    A project is considered an outlier if the selected impact or continuous variable
     of the project is 3 times the interquartile range of 
     all project impacts in the dataset.
   tooltip_id: outlier_toggle_tooltip_cont
