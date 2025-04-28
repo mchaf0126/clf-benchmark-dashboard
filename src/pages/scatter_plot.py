@@ -264,7 +264,7 @@ def update_chart(cont_x,
     xshift = create_graph_xshift(max_value=max_of_cont_x)
     yshift = create_graph_xshift(max_value=max_of_df)
     log_flag = False
-    if log_linear == 'Logarithmic':
+    if log_linear == 'logarithmic':
         log_flag = True
         range_x_for_graph = [min_of_cont_x, max_of_cont_x + xshift]
         range_y_for_graph = [min_of_df, max_of_df + yshift]

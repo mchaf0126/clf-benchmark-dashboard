@@ -315,7 +315,7 @@ log_linear_cont:
       value: linear
     - 
       label: Logarithmic
-      label: logarithmic
+      value: logarithmic
   first_item: linear
   radio_id: log_linear_radio
   tooltip: This selection dictates the type of x and y-axis
