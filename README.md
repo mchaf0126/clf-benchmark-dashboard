@@ -2,12 +2,10 @@
 This is a public repository containing the code required to run the CLF Dashboard as part of the CLF WBLCA Benchmark Study V2. This is a fork of the LCL dashboard found [here](https://wblca-benchmark-v2.lifecyclelab.org).
 
 ## About this study
-In 2017, the Carbon Leadership Forum (CLF) at the University of Washington published the [Embodied Carbon Benchmark Study V1](https://carbonleadershipforum.org/lca-benchmark-database/) and [Visualization Tool](https://carbonleadershipforum.org/embodied-carbon-benchmark-study-data-visualization/). Since then, the practice of whole-building life cycle assessment (WBLCA) has grown rapidly, and it became clear that more robust and reliable benchmarks are critical for advancing work in thisfield. This project fills a critical gap and helps enable architects, engineers, policy makers, and the entire design community to work towards realistic and measurable embodied carbon reductionsat the building scale. The [WBLCA Benchmark Study V2](https://carbonleadershipforum.org/clf-wblca-v2/) began while the Carbon Leadership Forum (CLF) was hosted at the University of Washington (UW). After the CLF became an independent nonprofit in the spring of 2024, the study continued as a collaboration between the UW’s newly named Life Cycle Lab and CLF.
+In 2017, the Carbon Leadership Forum (CLF) at the University of Washington published the [Embodied Carbon Benchmark Study V1](https://carbonleadershipforum.org/lca-benchmark-database/) and [Visualization Tool](https://carbonleadershipforum.org/embodied-carbon-benchmark-study-data-visualization/). Since then, the practice of whole-building life cycle assessment (WBLCA) has grown rapidly, and it became clear that more robust and reliable benchmarks are critical for advancing work in thisfield. This project fills a critical gap and helps enable architects, engineers, policy makers, and the entire design community to work towards realistic and measurable embodied carbon reductionsat the building scale. TBD!
 
 ## About the dashboard
-There are currently two types of graphs available:
-*  **Box plot** - the traditional benchmarking graph. This plot shows environmental impacts based on categorical variables (e.g. building use, number of stories or location). All environmental impacts are inclusiveof life cycle stages A-C.
-*  **Scatter plot** - good for analyzing relationships.This plot shows environmental impacts compared to continuousvariables (e.g. floor area, window-to-wall ratio or column spacing). All environmental impacts are inclusiveof life cycle stages A-C.
+TBD!
 
 ## Versioning
 Versions of this repository are tracked using Releases on GitHub.
@@ -15,7 +13,7 @@ Versions of this repository are tracked using Releases on GitHub.
 ## How to cite
 For any dashboard related citations, please use: 
 ```
-Chafart, M., Benke, B., Simonen, K. (2025). WBLCA Benchmark Study v2 Dashboard (Version 1.0) [Computer Software]. Life Cycle Lab, https://wblca-benchmark-v2.lifecyclelab.org/
+Chafart, M., Benke, B., Jensen, A. (2025). WBLCA Benchmark Study v2 Dashboard (Version 1.0) [Computer Software]. Carbon Leadership Forum, TBD!
 ```
 
 For citations relating to the dataset, please cite both the Data Descriptor and the specific data version used:
@@ -39,8 +37,8 @@ Benke, B., Chafart, M., Shen, Y., Ashtiani, M., Carlisle, S., and Simonen, K.  A
 ### 1. Clone the repository
 
 ```bash
-git clone https://github.com/Life-Cycle-Lab/wblca-benchmark-v2-dashboard.git
-cd wblca-benchmark-v2-dashboard
+TBD!
+TBD!
 ```
 
 ### 2. Install dependencies
