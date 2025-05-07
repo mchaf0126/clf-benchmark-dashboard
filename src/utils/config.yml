@@ -84,6 +84,92 @@ categorical_dropdown:
     become the categories plotted on the y-axis of the box plot.
   tooltip_id: categorical_dropdown_tooltip
 
+
+categorical_dropdown_byob:
+  label: Categorical Variable  
+  dropdown_list:
+    - 
+      label: Country
+      value: site_country
+    - 
+      label: Region
+      value: site_region
+    - 
+      label: State or Province
+      value: site_state_province
+    - 
+      label: Climate Zone
+      value: site_clim_zone
+    - 
+      label: Project Type
+      value: bldg_proj_type
+    - 
+      label: IBC Construction Type
+      value: bldg_ibc_type
+    - 
+      label: Attached Parking Type
+      value: bldg_park_type
+    - 
+      label: Primary Building Use Type
+      value: bldg_prim_use
+    - 
+      label: Secondary Building Use Type
+      value: bldg_sec_use
+    - 
+      label: Stories Above Grade
+      value: bldg_stories_above
+    - 
+      label: Stories Below Grade
+      value: bldg_stories_below
+    - 
+      label: Building Height
+      value: bldg_height
+    - 
+      label: Seismic Site Class
+      value: str_seis_site_cls
+    - 
+      label: Seismic Design Category
+      value: str_sdc
+    - 
+      label: Primary Horizontal Gravity System
+      value: str_prim_horiz_sys
+    - 
+      label: Primary Vertical Gravity System
+      value: str_prim_vert_sys
+    - 
+      label: Primary Lateral Force Resisting System
+      value: str_lat_sys
+    - 
+      label: Podium
+      value: str_podium
+    - 
+      label: Foundation Type
+      value: str_fdn_type
+    - 
+      label: Structural System Summary
+      value: str_sys_summary
+    - 
+      label: Design Phase
+      value: lca_design_phase
+    - 
+      label: Software
+      value: lca_software
+    - 
+      label: Purpose of Assessment
+      value: lca_purp_of_assessment
+    - 
+      label: Physical Scope Summary
+      value: lca_phys_scope
+    - 
+      label: Embodied Carbon Reductions
+      value: lca_ec_reductions
+  first_item: site_state_province
+  dropdown_id: categorical_dropdown_byob
+  tooltip: Categorical values are those that can take on 
+    one of a limited number of possible values. These values will 
+    become the categories plotted on the y-axis of the box plot.
+  tooltip_id: categorical_dropdown_byob_tooltip
+
 continuous_dropdown:
   label: Continuous Variable  
   dropdown_list:
@@ -211,6 +297,42 @@ total_impact_dropdown_cont:
     These values will be plotted on the y-axis of the graph.
   tooltip_id: total_impact_dropdown_tooltip_cont
 
+total_impact_dropdown_byob: 
+  label: Impacts  
+  dropdown_list: 
+    - 
+      label: Embodied Carbon Intensity
+      value: gwp
+    -  
+      label: Eutrophication Potential Intensity
+      value: ep
+    -  
+      label: Acidification Potential Intensity
+      value: ap
+    -  
+      label: Smog Formation Potential Intensity
+      value: sfp
+    -  
+      label: Ozone Depletion Potential Intensity
+      value: odp
+    -  
+      label: Natural Resource Depletion Intensity
+      value: nred
+    -  
+      label: Embodied Carbon per Occupant
+      value: gwp_occupant
+    -  
+      label: Embodied Carbon per Residential Unit
+      value: gwp_res_unit
+  first_item: gwp
+  dropdown_id: total_impact_dropdown_byob
+  tooltip: Each environmental metric contained in the dataset
+    is represented in this dropdown. They are either divided by
+    floor area to create "intensity" metrics, or are divided by
+    other numeric values such as occupants or residential units. 
+    These values will be plotted on the y-axis of the graph.
+  tooltip_id: total_impact_dropdown_tooltip_byob
+
 new_constr_toggle_cat:
   label: ""
   toggle_list:
@@ -290,6 +412,21 @@ floor_area_normalization_cont:
     building and the gross floor area of any 
     attached/integrated parking components."
   tooltip_id: floor_area_normalization_tooltip_cont
+
+floor_area_normalization_byob:
+  label: "Normalize intensity by:  "
+  radio_list:
+    - label: Constructed Floor Area
+      value: bldg_cfa
+    - label: Gross Internal Floor Area
+      value: bldg_gfa
+  first_item: bldg_gfa
+  radio_id: floor_area_normal_byob
+  tooltip: "Total constructed floor area (CFA) 
+    includes the gross internal floor area (GFA) of the 
+    building and the gross floor area of any 
+    attached/integrated parking components."
+  tooltip_id: floor_area_normalization_tooltip_byob
 
 sort_box_plot_cat:
   label: "Sort box plots by:  "
@@ -698,3 +835,52 @@ category_order_map:
   lca_ec_reductions:
     - Yes
     - No
+  
+lcs_checklist: 
+  label: Impacts  
+  checklist: 
+    - 
+      label: A1-A3
+      value: A1-A3
+    -  
+      label: A4
+      value: A4
+    -  
+      label: B4-B5
+      value: B4-B5
+    -  
+      label: C2-C4
+      value: C2-C4
+    -  
+      label: D
+      value: D
+  first_item: [A1-A3]
+  checklist_id: lcs_checklist
+  tooltip: TBD
+  tooltip_id: TBD
+
+scope_checklist: 
+  label: Impacts  
+  checklist: 
+    - 
+      label: Substructure
+      value: Substructure
+    -  
+      label: "Shell - Superstructure"
+      value: "Shell - Superstructure"
+    -  
+      label: "Shell - Enclosure"
+      value: "Shell - Enclosure"
+    -  
+      label: "Interiors - Finishes"
+      value: "Interiors - Finishes"
+    -  
+      label: "Interiors - Construction"
+      value: "Interiors - Construction"
+    -  
+      label: "Unknown"
+      value: "Unknown"
+  first_item: ["Substructure", "Shell - Superstructure"]
+  checklist_id: scope_checklist
+  tooltip: TBD
+  tooltip_id: TBD
