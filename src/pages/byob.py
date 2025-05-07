@@ -222,6 +222,7 @@ def update_data_for_byob(category_x: str,
                          scope: list,
                          buildings_metadata: dict,
                          impacts_by_lcs_scope: dict):
+
     metadata_df = pd.DataFrame.from_dict(buildings_metadata.get('buildings_metadata'))
     impacts_by_lcs_scope_df = pd.DataFrame.from_dict(impacts_by_lcs_scope.get('impacts_by_lcs_scope'))
 
