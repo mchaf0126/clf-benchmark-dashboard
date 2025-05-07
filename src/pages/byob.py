@@ -1,12 +1,13 @@
 import textwrap
 import plotly.express as px
 import pandas as pd
-from dash import html, dcc, callback, Input, Output, State, register_page
+from dash import html, dcc, callback, Input, Output, State, register_page, ALL
 import dash_bootstrap_components as dbc
 from src.components.dropdowns import create_dropdown
 from src.components.toggle import create_toggle
 from src.components.radio_items import create_radio_items
 from src.components.tooltip import create_tooltip
+from src.components.checklists import create_checklist
 from src.components.datatable import create_datatable, \
     create_float_table_entry, create_string_table_entry, create_int_table_entry
 from src.utils.load_config import app_config
@@ -16,11 +17,17 @@ config = app_config
 
 register_page(__name__, path='/byob')
 
-# categorical_dropdown_yaml = config.get('categorical_dropdown')
-# assert categorical_dropdown_yaml is not None, 'The config for cat. dropdowns could not be set'
+categorical_dropdown_yaml = config.get('categorical_dropdown_byob')
+assert categorical_dropdown_yaml is not None, 'The config for cat. dropdowns could not be set'
 
-# total_impact_dropdown_yaml = config.get('total_impact_dropdown_cat')
-# assert total_impact_dropdown_yaml is not None, 'The config for total impacts could not be set'
+total_impact_dropdown_yaml = config.get('total_impact_dropdown_byob')
+assert total_impact_dropdown_yaml is not None, 'The config for total impacts could not be set'
+
+lcs_checklist_yaml = config.get('lcs_checklist')
+assert lcs_checklist_yaml is not None, 'The config for lcs checklist could not be set'
+
+scope_checklist_yaml = config.get('scope_checklist')
+assert scope_checklist_yaml is not None, 'The config for scope checklist could not be set'
 
 # new_constr_toggle_yaml = config.get('new_constr_toggle_cat')
 # assert new_constr_toggle_yaml is not None, 'The config for new construction could not be set'
@@ -28,8 +35,8 @@ register_page(__name__, path='/byob')
 # outlier_toggle_yaml = config.get('outlier_toggle_cat')
 # assert outlier_toggle_yaml is not None, 'The config for outlier toggle could not be set'
 
-# floor_area_radio_yaml = config.get('floor_area_normalization_cat')
-# assert floor_area_radio_yaml is not None, 'The config for floor area norm. could not be set'
+floor_area_radio_yaml = config.get('floor_area_normalization_byob')
+assert floor_area_radio_yaml is not None, 'The config for floor area norm. could not be set'
 
 # sort_box_radio_yaml = config.get('sort_box_plot_cat')
 # assert sort_box_radio_yaml is not None, 'The config for box plot sorting could not be set'
@@ -43,31 +50,45 @@ register_page(__name__, path='/byob')
 # cfa_gfa_map = config.get('cfa_gfa_map')
 # assert cfa_gfa_map is not None, 'The config for cfa/gfa map could not be set'
 
-# categorical_dropdown = create_dropdown(
-#     label=categorical_dropdown_yaml['label'],
-#     tooltip_id=categorical_dropdown_yaml['tooltip_id'],
-#     dropdown_list=categorical_dropdown_yaml['dropdown_list'],
-#     first_item=categorical_dropdown_yaml['first_item'],
-#     dropdown_id=categorical_dropdown_yaml['dropdown_id']
-# )
+categorical_dropdown = create_dropdown(
+    label=categorical_dropdown_yaml['label'],
+    tooltip_id=categorical_dropdown_yaml['tooltip_id'],
+    dropdown_list=categorical_dropdown_yaml['dropdown_list'],
+    first_item=categorical_dropdown_yaml['first_item'],
+    dropdown_id=categorical_dropdown_yaml['dropdown_id']
+)
 
-# categorical_tooltip = create_tooltip(
-#     tooltip_text=categorical_dropdown_yaml['tooltip'],
-#     target_id=categorical_dropdown_yaml['tooltip_id']
-# )
+categorical_tooltip = create_tooltip(
+    tooltip_text=categorical_dropdown_yaml['tooltip'],
+    target_id=categorical_dropdown_yaml['tooltip_id']
+)
 
-# total_impact_dropdown = create_dropdown(
-#     label=total_impact_dropdown_yaml['label'],
-#     tooltip_id=total_impact_dropdown_yaml['tooltip_id'],
-#     dropdown_list=total_impact_dropdown_yaml['dropdown_list'],
-#     first_item=total_impact_dropdown_yaml['first_item'],
-#     dropdown_id=total_impact_dropdown_yaml['dropdown_id']
-# )
+lcs_checklist = create_checklist(
+    label=lcs_checklist_yaml['label'],
+    checklist=lcs_checklist_yaml['checklist'],
+    first_item=lcs_checklist_yaml['first_item'],
+    checklist_id={"type": "lcs", "id": 'lcs_checklist'}
+)
 
-# total_impact_tooltip = create_tooltip(
-#     tooltip_text=total_impact_dropdown_yaml['tooltip'],
-#     target_id=total_impact_dropdown_yaml['tooltip_id']
-# )
+scope_checklist = create_checklist(
+    label=scope_checklist_yaml['label'],
+    checklist=scope_checklist_yaml['checklist'],
+    first_item=scope_checklist_yaml['first_item'],
+    checklist_id={"type": "scope", "id": 'scope_checklist'}
+)
+
+total_impact_dropdown = create_dropdown(
+    label=total_impact_dropdown_yaml['label'],
+    tooltip_id=total_impact_dropdown_yaml['tooltip_id'],
+    dropdown_list=total_impact_dropdown_yaml['dropdown_list'],
+    first_item=total_impact_dropdown_yaml['first_item'],
+    dropdown_id=total_impact_dropdown_yaml['dropdown_id']
+)
+
+total_impact_tooltip = create_tooltip(
+    tooltip_text=total_impact_dropdown_yaml['tooltip'],
+    target_id=total_impact_dropdown_yaml['tooltip_id']
+)
 
 # new_constr_toggle = create_toggle(
 #     toggle_list=new_constr_toggle_yaml['toggle_list'],
@@ -93,18 +114,18 @@ register_page(__name__, path='/byob')
 #     target_id=outlier_toggle_yaml['tooltip_id']
 # )
 
-# floor_area_radio = create_radio_items(
-#     label=floor_area_radio_yaml['label'],
-#     tooltip_id=floor_area_radio_yaml['tooltip_id'],
-#     radio_list=floor_area_radio_yaml['radio_list'],
-#     first_item=floor_area_radio_yaml['first_item'],
-#     radio_id=floor_area_radio_yaml['radio_id']
-# )
+floor_area_radio = create_radio_items(
+    label=floor_area_radio_yaml['label'],
+    tooltip_id=floor_area_radio_yaml['tooltip_id'],
+    radio_list=floor_area_radio_yaml['radio_list'],
+    first_item=floor_area_radio_yaml['first_item'],
+    radio_id=floor_area_radio_yaml['radio_id']
+)
 
-# floor_area_tooltip = create_tooltip(
-#     tooltip_text=floor_area_radio_yaml['tooltip'],
-#     target_id=floor_area_radio_yaml['tooltip_id']
-# )
+floor_area_tooltip = create_tooltip(
+    tooltip_text=floor_area_radio_yaml['tooltip'],
+    target_id=floor_area_radio_yaml['tooltip_id']
+)
 
 # sort_box_radio = create_radio_items(
 #     label=sort_box_radio_yaml['label'],
@@ -119,45 +140,46 @@ register_page(__name__, path='/byob')
 #     target_id=sort_box_radio_yaml['tooltip_id']
 # )
 
-# controls_cat = dbc.Card(
-#     [
-#         categorical_dropdown,
-#         categorical_tooltip,
-#         total_impact_dropdown,
-#         total_impact_tooltip,
-#         floor_area_radio,
-#         floor_area_tooltip,
-#         sort_box_radio,
-#         sort_box_tooltip,
-#         new_constr_toggle,
-#         new_constr_tooltip,
-#         outlier_toggle,
-#         outlier_tooltip
-#     ],
-#     body=True,
-# )
+controls_byob = dbc.Card(
+    [
+        categorical_dropdown,
+        categorical_tooltip,
+        total_impact_dropdown,
+        total_impact_tooltip,
+        floor_area_radio,
+        floor_area_tooltip,
+        lcs_checklist,
+        scope_checklist,
+        # sort_box_radio,
+        # sort_box_tooltip,
+        # new_constr_toggle,
+        # new_constr_tooltip,
+        # outlier_toggle,
+        # outlier_tooltip
+    ],
+    body=True,
+)
 
 # table = create_datatable(table_id='results_table_cat')
 
-layout = html.Div()
-# layout = html.Div(
-#     children=[
-#         dbc.Row(
-#             [
-#                 dbc.Col(
-#                     [
-#                         controls_cat
-#                     ], xs=4, sm=4, md=4, lg=4, xl=3, xxl=3,
-#                 ),
-#                 dbc.Col(
-#                     [
-#                         dcc.Graph(id="categorical_graph")
-#                     ], xs=8, sm=8, md=8, lg=8, xl=7, xxl=7,
-#                 ),
-#             ],
-#             justify='center',
-#             className='mb-4'
-#         ),
+layout = html.Div(
+    children=[
+        dbc.Row(
+            [
+                dbc.Col(
+                    [
+                        controls_byob
+                    ], xs=4, sm=4, md=4, lg=4, xl=3, xxl=3,
+                ),
+                dbc.Col(
+                    [
+                        dcc.Graph(id="byob_graph")
+                    ], xs=8, sm=8, md=8, lg=8, xl=7, xxl=7,
+                ),
+            ],
+            justify='center',
+            className='mb-4'
+        ),
 #         html.Hr(),
 #         dbc.Row(
 #             dbc.Col(
@@ -177,42 +199,73 @@ layout = html.Div()
 #             justify='center',
 #             className='mb-4'
 #         )
-#     ],
-# )
+    ],
+)
 
 
-# @callback(
-#     Output('categorical_graph', 'figure'),
-#     [
-#         Input('categorical_dropdown', 'value'),
-#         Input('total_impact_dropdown_cat', 'value'),
-#         Input('sort_box_plot_cat', 'value'),
-#         Input('floor_area_normal_cat', 'value'),
-#         Input('new_constr_toggle_cat', 'value'),
-#         Input('outlier_toggle_cat', 'value'),
-#         State('buildings_metadata', 'data')
-#     ]
-# )
-# def update_chart(category_x,
-#                  objective,
-#                  sort_type,
-#                  cfa_gfa_type,
-#                  new_constr_toggle_cat,
-#                  outlier_toggle_cat,
-#                  buildings_metadata):
-#     df = pd.DataFrame.from_dict(buildings_metadata.get('buildings_metadata'))
-#     if new_constr_toggle_cat == [1]:
-#         df = df[df['bldg_proj_type'] == 'New Construction']
-#     units_map = {
-#         'eci': '(kgCO<sub>2</sub>e/m<sup>2</sup>)',
-#         'epi': '(kgNe/m<sup>2</sup>)',
-#         'api': '(kgSO<sub>2</sub>e/m<sup>2</sup>)',
-#         'sfpi': '(kgO<sub>3</sub>e/m<sup>2</sup>)',
-#         'odpi': '(CFC-11e/m<sup>2</sup>)',
-#         'nredi': '(MJ/m<sup>2</sup>)',
-#         'ec_per_occupant': '(kgCO<sub>2</sub>e/occupant)',
-#         'ec_per_res_unit': '(kgCO<sub>2</sub>e/residential unit)',
-#     }
+@callback(
+    Output('byob_data', 'data'),
+    [
+        Input('categorical_dropdown_byob', 'value'),
+        Input('total_impact_dropdown_byob', 'value'),
+        Input('floor_area_normal_byob', 'value'),
+        Input({'type': 'lcs', 'id': ALL}, 'value'),
+        Input({'type': 'scope', 'id': ALL}, 'value'),
+        State('buildings_metadata', 'data'),
+        State('impacts_by_lcs_scope', 'data')
+    ]
+)
+def update_data_for_byob(category_x: str,
+                         objective: str,
+                         cfa_gfa_type: str,
+                         lcs: list,
+                         scope: list,
+                         buildings_metadata: dict,
+                         impacts_by_lcs_scope: dict):
+    metadata_df = pd.DataFrame.from_dict(buildings_metadata.get('buildings_metadata'))
+    impacts_by_lcs_scope_df = pd.DataFrame.from_dict(impacts_by_lcs_scope.get('impacts_by_lcs_scope'))
+
+    lcs = sum(lcs, [])
+    scope = sum(scope, [])
+
+    new_impacts = impacts_by_lcs_scope_df.loc[
+        ((impacts_by_lcs_scope_df['life_cycle_stage'].isin(lcs))
+        & (impacts_by_lcs_scope_df)['omniclass_element'].isin(scope)), :
+    ]
+    new_impacts_gb = new_impacts.groupby('project_index')[objective].sum()
+    final_impacts = metadata_df[['project_index', category_x, cfa_gfa_type]].merge(
+        new_impacts_gb,
+        how='left',
+        left_on='project_index',
+        right_on='project_index'
+    )
+    final_impacts['intensity'] = final_impacts[objective] / final_impacts[cfa_gfa_type]
+
+    return {'byob_data': final_impacts.to_dict()}
+    
+@callback(
+    Output('byob_graph', 'figure'),
+    [
+        Input('byob_data', 'data'),
+        State('categorical_dropdown_byob', 'value'),
+    ]
+    
+)
+def update_chart(byob_data: dict,
+                 category_x: str):
+    df = pd.DataFrame.from_dict(byob_data.get('byob_data'))
+    # if new_constr_toggle_cat == [1]:
+    #     df = df[df['bldg_proj_type'] == 'New Construction']
+    # units_map = {
+    #     'eci': '(kgCO<sub>2</sub>e/m<sup>2</sup>)',
+    #     'epi': '(kgNe/m<sup>2</sup>)',
+    #     'api': '(kgSO<sub>2</sub>e/m<sup>2</sup>)',
+    #     'sfpi': '(kgO<sub>3</sub>e/m<sup>2</sup>)',
+    #     'odpi': '(CFC-11e/m<sup>2</sup>)',
+    #     'nredi': '(MJ/m<sup>2</sup>)',
+    #     'ec_per_occupant': '(kgCO<sub>2</sub>e/occupant)',
+    #     'ec_per_res_unit': '(kgCO<sub>2</sub>e/residential unit)',
+    # }
 #     cfa_gfa_mapping = cfa_gfa_map.get(cfa_gfa_type)
 #     # cfa_gfa_name_for_annotation = cfa_gfa_mapping.get('name')
 #     objective_for_graph = cfa_gfa_mapping.get(objective)
@@ -240,8 +293,8 @@ layout = html.Div()
 #     else:
 #         category_order = category_order_map.get(category_x)
 
-#     max_of_df = df[objective_for_graph].max()
-#     xshift = create_graph_xshift(max_value=max_of_df)
+    max_of_df = df['intensity'].max()
+    xshift = create_graph_xshift(max_value=max_of_df)
 
 #     def customwrap(s, width=25):
 #         if s is not None:
@@ -250,48 +303,40 @@ layout = html.Div()
 #     df[category_x] = df[category_x].map(customwrap)
 #     wrapped_category_order = [customwrap(s) for s in category_order]
 
-#     fig = px.box(
-#         data_frame=df,
-#         y=category_x,
-#         x=objective_for_graph,
-#         category_orders={
-#             category_x: wrapped_category_order
-#         },
-#         color_discrete_sequence=["#ffc700"],
-#         height=500
-#     )
-#     for s in df[category_x].unique():
-#         if len(df[df[category_x] == s]) > 0:
-#             fig.add_annotation(
-#                 y=str(s),
-#                 x=max_of_df+xshift,
-#                 text=f'n={str(len(df[df[category_x]==s][category_x]))}',
-#                 showarrow=False
-#             )
+    fig = px.box(
+        data_frame=df,
+        y=category_x,
+        x="intensity",
+        color_discrete_sequence=["#ffc700"],
+        height=500
+    )
+    for s in df[category_x].unique():
+        if len(df[df[category_x] == s]) > 0:
+            fig.add_annotation(
+                y=str(s),
+                x=max_of_df+xshift,
+                text=f'n={str(len(df[df[category_x]==s][category_x]))}',
+                showarrow=False
+            )
 
-#     if objective in ['epi', 'api', 'sfpi']:
-#         tickformat_decimal =',.2f'
-#     elif objective == 'odpi':
-#         tickformat_decimal =',.6f'
-#     else:
-#         tickformat_decimal =',.0f'     
+    tickformat_decimal =',.0f'     
 
 #     fig.update_xaxes(
 #         title=field_name_map.get(objective_for_graph) + f' {units_map.get(objective)}',
 #         range=[0, max_of_df+xshift],
 #         tickformat=tickformat_decimal,
 #         )
-#     fig.update_yaxes(
-#         title=field_name_map.get(category_x),
-#         tickformat=tickformat_decimal,
-#     )
-#     fig.update_traces(
-#         quartilemethod='inclusive',
-#     )
-#     fig.update_layout(
-#         margin={'pad': 10},
-#     )
-#     return fig
+    fig.update_yaxes(
+        title=(category_x),
+        tickformat=tickformat_decimal,
+    )
+    fig.update_traces(
+        quartilemethod='inclusive',
+    )
+    fig.update_layout(
+        margin={'pad': 10},
+    )
+    return fig
 
 
 # @callback(

@@ -5,7 +5,7 @@ import dash_bootstrap_components as dbc
 def create_checklist(label: str,
                      checklist: list,
                      first_item: str,
-                     dropdown_id: str) -> html.Div:
+                     checklist_id: str) -> html.Div:
     """_summary_
 
     Args:
@@ -24,7 +24,7 @@ def create_checklist(label: str,
             dbc.Checklist(
                 options=checklist,
                 value=first_item,
-                id=dropdown_id,
+                id=checklist_id,
                 persistence=True,
                 inputCheckedClassName="border border-primary bg-primary"
             ),

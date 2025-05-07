@@ -13,10 +13,11 @@ app = Dash(
 server = app.server
 current_file_path = Path(__file__)
 main_directory = current_file_path.parents[1]
-data_directory = main_directory.joinpath('data/buildings_metadata.xlsx')
+metadata_directory = main_directory.joinpath('data/buildings_metadata.xlsx')
+impacts_directory = main_directory.joinpath('data/impacts_grouped_by_lcs_and_scope.csv')
 
-buildings_metadata_df = pd.read_excel(data_directory, index_col=False)
-impacts_by_lcs_scope_df = pd.read_pickle("impacts_grouped_by_lcs_and_scope.pkl")
+buildings_metadata_df = pd.read_excel(metadata_directory, index_col=False)
+impacts_by_lcs_scope_df = pd.read_csv(impacts_directory, index_col=False)
 
 load_figure_template('pulse')
 
@@ -36,6 +37,10 @@ app.layout = dbc.Container(
                 'impacts_by_lcs_scope': impacts_by_lcs_scope_df.to_dict()
             },
             id='impacts_by_lcs_scope',
+            storage_type='memory',
+        ),
+        dcc.Store(
+            id='byob_data',
             storage_type='memory',
         ),
         dbc.Row(
