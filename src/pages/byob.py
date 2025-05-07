@@ -41,8 +41,8 @@ assert floor_area_radio_yaml is not None, 'The config for floor area norm. could
 # sort_box_radio_yaml = config.get('sort_box_plot_cat')
 # assert sort_box_radio_yaml is not None, 'The config for box plot sorting could not be set'
 
-# field_name_map = config.get('field_name_map')
-# assert field_name_map is not None, 'The config for field names could not be set'
+field_name_map = config.get('field_name_map')
+assert field_name_map is not None, 'The config for field names could not be set'
 
 # category_order_map = config.get('category_order_map')
 # assert category_order_map is not None, 'The config for category orders could not be set'
@@ -308,7 +308,7 @@ def update_chart(byob_data: dict,
         y=category_x,
         x="intensity",
         color_discrete_sequence=["#ffc700"],
-        height=500
+        height=600
     )
     for s in df[category_x].unique():
         if len(df[df[category_x] == s]) > 0:
@@ -321,13 +321,13 @@ def update_chart(byob_data: dict,
 
     tickformat_decimal =',.0f'     
 
-#     fig.update_xaxes(
-#         title=field_name_map.get(objective_for_graph) + f' {units_map.get(objective)}',
-#         range=[0, max_of_df+xshift],
-#         tickformat=tickformat_decimal,
-#         )
+    fig.update_xaxes(
+        # title=field_name_map.get(objective_for_graph) + f' {units_map.get(objective)}',
+        # range=[0, max_of_df+xshift],
+        tickformat=tickformat_decimal,
+        )
     fig.update_yaxes(
-        title=(category_x),
+        title=field_name_map.get(category_x),
         tickformat=tickformat_decimal,
     )
     fig.update_traces(

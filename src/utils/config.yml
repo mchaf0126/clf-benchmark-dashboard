@@ -837,7 +837,7 @@ category_order_map:
     - No
   
 lcs_checklist: 
-  label: Impacts  
+  label: Life Cycle Stage 
   checklist: 
     - 
       label: A1-A3
@@ -860,7 +860,7 @@ lcs_checklist:
   tooltip_id: TBD
 
 scope_checklist: 
-  label: Impacts  
+  label: Scope  
   checklist: 
     - 
       label: Substructure
