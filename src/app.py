@@ -13,11 +13,11 @@ app = Dash(
 server = app.server
 current_file_path = Path(__file__)
 main_directory = current_file_path.parents[1]
-metadata_directory = main_directory.joinpath('data/buildings_metadata.xlsx')
-impacts_directory = main_directory.joinpath('data/impacts_grouped_by_lcs_and_scope.pkl')
+metadata_directory = main_directory.joinpath('data/buildings_metadata.pkl')
+impacts_directory = main_directory.joinpath('data/impacts_grouped_by_lcs_and_scope.parquet')
 
-buildings_metadata_df = pd.read_excel(metadata_directory, index_col=False)
-impacts_by_lcs_scope_df = pd.read_pickle(impacts_directory)
+buildings_metadata_df = pd.read_pickle(metadata_directory)
+impacts_by_lcs_scope_df = pd.read_parquet(impacts_directory)
 
 load_figure_template('pulse')
 

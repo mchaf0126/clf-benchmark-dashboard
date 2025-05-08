@@ -1,7 +1,8 @@
 import textwrap
+from pathlib import Path
 import plotly.express as px
 import pandas as pd
-from dash import html, dcc, callback, Input, Output, State, register_page, ALL
+from dash import html, dcc, callback, Input, Output, State, register_page, ALL, callback_context
 import dash_bootstrap_components as dbc
 from src.components.dropdowns import create_dropdown
 from src.components.toggle import create_toggle
@@ -12,6 +13,7 @@ from src.components.datatable import create_datatable, \
     create_float_table_entry, create_string_table_entry, create_int_table_entry
 from src.utils.load_config import app_config
 from src.utils.general import create_graph_xshift
+from timeit import default_timer as timer
 
 config = app_config
 
@@ -211,20 +213,20 @@ layout = html.Div(
         Input('floor_area_normal_byob', 'value'),
         Input({'type': 'lcs', 'id': ALL}, 'value'),
         Input({'type': 'scope', 'id': ALL}, 'value'),
-        State('buildings_metadata', 'data'),
-        State('impacts_by_lcs_scope', 'data')
     ]
 )
 def update_data_for_byob(category_x: str,
                          objective: str,
                          cfa_gfa_type: str,
                          lcs: list,
-                         scope: list,
-                         buildings_metadata: dict,
-                         impacts_by_lcs_scope: dict):
+                         scope: list):
+    current_file_path = Path(__file__)
+    main_directory = current_file_path.parents[2]
+    metadata_directory = main_directory.joinpath('data/buildings_metadata.pkl')
+    impacts_directory = main_directory.joinpath('data/impacts_grouped_by_lcs_and_scope.parquet')
 
-    metadata_df = pd.DataFrame.from_dict(buildings_metadata.get('buildings_metadata'))
-    impacts_by_lcs_scope_df = pd.DataFrame.from_dict(impacts_by_lcs_scope.get('impacts_by_lcs_scope'))
+    metadata_df = pd.read_pickle(metadata_directory)
+    impacts_by_lcs_scope_df = pd.read_parquet(impacts_directory)
 
     lcs = sum(lcs, [])
     scope = sum(scope, [])
@@ -234,13 +236,14 @@ def update_data_for_byob(category_x: str,
         & (impacts_by_lcs_scope_df)['omniclass_element'].isin(scope)), :
     ]
     new_impacts_gb = new_impacts.groupby('project_index')[objective].sum()
-    final_impacts = metadata_df[['project_index', category_x, cfa_gfa_type]].merge(
+    final_impacts = metadata_df[['project_index', category_x, cfa_gfa_type]].set_index('project_index').merge(
         new_impacts_gb,
         how='left',
-        left_on='project_index',
-        right_on='project_index'
+        left_index=True,
+        right_index=True
     )
     final_impacts['intensity'] = final_impacts[objective] / final_impacts[cfa_gfa_type]
+    final_impacts = final_impacts.drop(columns=[objective, cfa_gfa_type])
 
     return {'byob_data': final_impacts.to_dict()}
     
