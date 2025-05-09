@@ -2,7 +2,7 @@ import textwrap
 from pathlib import Path
 import plotly.express as px
 import pandas as pd
-from dash import html, dcc, callback, Input, Output, State, register_page, ALL, callback_context
+from dash import html, dcc, callback, Input, Output, State, register_page, ALL, callback_context, Patch
 import dash_bootstrap_components as dbc
 from src.components.dropdowns import create_dropdown
 from src.components.toggle import create_toggle
@@ -14,10 +14,12 @@ from src.components.datatable import create_datatable, \
 from src.utils.load_config import app_config
 from src.utils.general import create_graph_xshift
 from timeit import default_timer as timer
+from dash_bootstrap_templates import load_figure_template
 
 config = app_config
 
 register_page(__name__, path='/byob')
+load_figure_template('pulse')
 
 categorical_dropdown_yaml = config.get('categorical_dropdown_byob')
 assert categorical_dropdown_yaml is not None, 'The config for cat. dropdowns could not be set'
@@ -162,6 +164,18 @@ controls_byob = dbc.Card(
     body=True,
 )
 
+byob_figure = px.box(
+    color_discrete_sequence=["#ffc700"],
+    height=800,
+).update_xaxes(
+    tickformat=',.0f',
+    title='',
+).update_traces(
+    quartilemethod='inclusive',
+).update_layout(
+    margin={'pad': 10},
+)
+print(byob_figure)
 # table = create_datatable(table_id='results_table_cat')
 
 layout = html.Div(
@@ -175,7 +189,7 @@ layout = html.Div(
                 ),
                 dbc.Col(
                     [
-                        dcc.Graph(id="byob_graph")
+                        dcc.Graph(figure=byob_figure, id="byob_graph")
                     ], xs=8, sm=8, md=8, lg=8, xl=7, xxl=7,
                 ),
             ],
@@ -243,21 +257,19 @@ def update_data_for_byob(category_x: str,
         right_index=True
     )
     final_impacts['intensity'] = final_impacts[objective] / final_impacts[cfa_gfa_type]
+    def customwrap(s, width=25):
+        if s is not None:
+            return "<br>".join(textwrap.wrap(s, width=width))
+    final_impacts[category_x] = final_impacts[category_x].map(customwrap)
     final_impacts = final_impacts.drop(columns=[objective, cfa_gfa_type])
 
     return {'byob_data': final_impacts.to_dict()}
     
 @callback(
     Output('byob_graph', 'figure'),
-    [
-        Input('byob_data', 'data'),
-        State('categorical_dropdown_byob', 'value'),
-    ]
-    
+    Input('byob_data', 'data'),
 )
-def update_chart(byob_data: dict,
-                 category_x: str):
-    df = pd.DataFrame.from_dict(byob_data.get('byob_data'))
+def update_chart(byob_data: dict):
     # if new_constr_toggle_cat == [1]:
     #     df = df[df['bldg_proj_type'] == 'New Construction']
     # units_map = {
@@ -297,50 +309,35 @@ def update_chart(byob_data: dict,
 #     else:
 #         category_order = category_order_map.get(category_x)
 
-    max_of_df = df['intensity'].max()
-    xshift = create_graph_xshift(max_value=max_of_df)
-
-#     def customwrap(s, width=25):
-#         if s is not None:
-#             return "<br>".join(textwrap.wrap(s, width=width))
+    df = pd.DataFrame.from_dict(byob_data.get('byob_data'))    
+    column_list = list(df.columns)
+    categories = column_list[0]
+    values = column_list[1]
     
-#     df[category_x] = df[category_x].map(customwrap)
-#     wrapped_category_order = [customwrap(s) for s in category_order]
+    annotations = []
+    max_of_df = df[values].max()
+    xshift = create_graph_xshift(max_value=max_of_df)
+    for s in df[categories].unique():
+        if len(df[df[categories] == s]) > 0:
+            annotation = {
+                'showarrow': False,
+                'y': str(s),
+                'x': max_of_df+xshift,
+                'text': f'n={str(len(df[df[categories]==s][categories]))}'
+            }
+            annotations.append(annotation)
+    # wrapped_category_order = [customwrap(s) for s in category_order]
 
-    fig = px.box(
-        data_frame=df,
-        y=category_x,
-        x="intensity",
-        color_discrete_sequence=["#ffc700"],
-        height=600
-    )
-    for s in df[category_x].unique():
-        if len(df[df[category_x] == s]) > 0:
-            fig.add_annotation(
-                y=str(s),
-                x=max_of_df+xshift,
-                text=f'n={str(len(df[df[category_x]==s][category_x]))}',
-                showarrow=False
-            )
+    patched_figure = Patch()
+    patched_figure["data"][0]["x"] = df[values].values
+    patched_figure["data"][0]["y"] = df[categories].values
+    patched_figure["data"][0]["orientation"] = 'h'
 
-    tickformat_decimal =',.0f'     
-
-    fig.update_xaxes(
-        # title=field_name_map.get(objective_for_graph) + f' {units_map.get(objective)}',
-        # range=[0, max_of_df+xshift],
-        tickformat=tickformat_decimal,
-        )
-    fig.update_yaxes(
-        title=field_name_map.get(category_x),
-        tickformat=tickformat_decimal,
-    )
-    fig.update_traces(
-        quartilemethod='inclusive',
-    )
-    fig.update_layout(
-        margin={'pad': 10},
-    )
-    return fig
+    patched_figure["layout"]["annotations"] = annotations
+    patched_figure["layout"]["xaxis"]["title"]["text"] = values
+    patched_figure["layout"]["yaxis"]["title"]["text"] = field_name_map.get(categories)
+   
+    return patched_figure
 
 
 # @callback(
