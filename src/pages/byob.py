@@ -241,6 +241,7 @@ def update_data_for_byob(category_x: str,
 
     metadata_df = pd.read_pickle(metadata_directory)
     impacts_by_lcs_scope_df = pd.read_parquet(impacts_directory)
+    print(category_x)
 
     lcs = sum(lcs, [])
     scope = sum(scope, [])
@@ -258,7 +259,7 @@ def update_data_for_byob(category_x: str,
     )
     final_impacts['intensity'] = final_impacts[objective] / final_impacts[cfa_gfa_type]
     def customwrap(s, width=25):
-        if s is not None:
+        if type(s) is not float:
             return "<br>".join(textwrap.wrap(s, width=width))
     final_impacts[category_x] = final_impacts[category_x].map(customwrap)
     final_impacts = final_impacts.drop(columns=[objective, cfa_gfa_type])
