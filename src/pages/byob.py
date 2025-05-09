@@ -166,16 +166,16 @@ controls_byob = dbc.Card(
 
 byob_figure = px.box(
     color_discrete_sequence=["#ffc700"],
-    height=800,
+    height=600,
 ).update_xaxes(
     tickformat=',.0f',
     title='',
+    type='linear'
 ).update_traces(
     quartilemethod='inclusive',
 ).update_layout(
     margin={'pad': 10},
 )
-print(byob_figure)
 # table = create_datatable(table_id='results_table_cat')
 
 layout = html.Div(
@@ -189,7 +189,7 @@ layout = html.Div(
                 ),
                 dbc.Col(
                     [
-                        dcc.Graph(figure=byob_figure, id="byob_graph")
+                        dcc.Graph(figure=byob_figure, id="byob_graph"),
                     ], xs=8, sm=8, md=8, lg=8, xl=7, xxl=7,
                 ),
             ],
@@ -241,7 +241,6 @@ def update_data_for_byob(category_x: str,
 
     metadata_df = pd.read_pickle(metadata_directory)
     impacts_by_lcs_scope_df = pd.read_parquet(impacts_directory)
-    print(category_x)
 
     lcs = sum(lcs, [])
     scope = sum(scope, [])
@@ -337,9 +336,9 @@ def update_chart(byob_data: dict):
     patched_figure["layout"]["annotations"] = annotations
     patched_figure["layout"]["xaxis"]["title"]["text"] = values
     patched_figure["layout"]["yaxis"]["title"]["text"] = field_name_map.get(categories)
+    patched_figure["layout"]["xaxis"]["range"] = [0, max_of_df+xshift]
    
     return patched_figure
-
 
 # @callback(
 #     [
