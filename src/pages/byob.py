@@ -2,7 +2,7 @@ import textwrap
 from pathlib import Path
 import plotly.express as px
 import pandas as pd
-from dash import html, dcc, callback, Input, Output, State, register_page, ALL, callback_context
+from dash import html, dcc, callback, Input, Output, State, register_page, ALL, callback_context, Patch
 import dash_bootstrap_components as dbc
 from src.components.dropdowns import create_dropdown
 from src.components.toggle import create_toggle
@@ -14,10 +14,12 @@ from src.components.datatable import create_datatable, \
 from src.utils.load_config import app_config
 from src.utils.general import create_graph_xshift
 from timeit import default_timer as timer
+from dash_bootstrap_templates import load_figure_template
 
 config = app_config
 
 register_page(__name__, path='/byob')
+load_figure_template('pulse')
 
 categorical_dropdown_yaml = config.get('categorical_dropdown_byob')
 assert categorical_dropdown_yaml is not None, 'The config for cat. dropdowns could not be set'
@@ -162,6 +164,17 @@ controls_byob = dbc.Card(
     body=True,
 )
 
+byob_figure = px.box(
+    color_discrete_sequence=["#ffc700"],
+    height=800,
+).update_xaxes(
+    tickformat=',.0f',
+).update_traces(
+    quartilemethod='inclusive',
+).update_layout(
+    margin={'pad': 10},
+)
+print(byob_figure)
 # table = create_datatable(table_id='results_table_cat')
 
 layout = html.Div(
@@ -175,7 +188,7 @@ layout = html.Div(
                 ),
                 dbc.Col(
                     [
-                        dcc.Graph(id="byob_graph")
+                        dcc.Graph(figure=byob_figure, id="byob_graph")
                     ], xs=8, sm=8, md=8, lg=8, xl=7, xxl=7,
                 ),
             ],
@@ -251,12 +264,10 @@ def update_data_for_byob(category_x: str,
     Output('byob_graph', 'figure'),
     [
         Input('byob_data', 'data'),
-        State('categorical_dropdown_byob', 'value'),
     ]
     
 )
-def update_chart(byob_data: dict,
-                 category_x: str):
+def update_chart(byob_data: dict):
     df = pd.DataFrame.from_dict(byob_data.get('byob_data'))
     # if new_constr_toggle_cat == [1]:
     #     df = df[df['bldg_proj_type'] == 'New Construction']
@@ -297,8 +308,8 @@ def update_chart(byob_data: dict,
 #     else:
 #         category_order = category_order_map.get(category_x)
 
-    max_of_df = df['intensity'].max()
-    xshift = create_graph_xshift(max_value=max_of_df)
+    # max_of_df = df['intensity'].max()
+    # xshift = create_graph_xshift(max_value=max_of_df)
 
 #     def customwrap(s, width=25):
 #         if s is not None:
@@ -306,41 +317,31 @@ def update_chart(byob_data: dict,
     
 #     df[category_x] = df[category_x].map(customwrap)
 #     wrapped_category_order = [customwrap(s) for s in category_order]
+    patched_figure = Patch()
+    patched_figure["data"][0]["x"] = df.iloc[:,1].values
+    patched_figure["data"][0]["y"] = df.iloc[:,0].values
+    patched_figure["data"][0]["orientation"] = 'h'
+    # for s in df[category_x].unique():
+    #     if len(df[df[category_x] == s]) > 0:
+    #         fig.add_annotation(
+    #             y=str(s),
+    #             x=max_of_df+xshift,
+    #             text=f'n={str(len(df[df[category_x]==s][category_x]))}',
+    #             showarrow=False
+    #         )
 
-    fig = px.box(
-        data_frame=df,
-        y=category_x,
-        x="intensity",
-        color_discrete_sequence=["#ffc700"],
-        height=600
-    )
-    for s in df[category_x].unique():
-        if len(df[df[category_x] == s]) > 0:
-            fig.add_annotation(
-                y=str(s),
-                x=max_of_df+xshift,
-                text=f'n={str(len(df[df[category_x]==s][category_x]))}',
-                showarrow=False
-            )
+    # tickformat_decimal =',.0f'     
 
-    tickformat_decimal =',.0f'     
-
-    fig.update_xaxes(
-        # title=field_name_map.get(objective_for_graph) + f' {units_map.get(objective)}',
-        # range=[0, max_of_df+xshift],
-        tickformat=tickformat_decimal,
-        )
-    fig.update_yaxes(
-        title=field_name_map.get(category_x),
-        tickformat=tickformat_decimal,
-    )
-    fig.update_traces(
-        quartilemethod='inclusive',
-    )
-    fig.update_layout(
-        margin={'pad': 10},
-    )
-    return fig
+    # fig.update_xaxes(
+    #     # title=field_name_map.get(objective_for_graph) + f' {units_map.get(objective)}',
+    #     # range=[0, max_of_df+xshift],
+    #     tickformat=tickformat_decimal,
+    #     )
+    # fig.update_yaxes(
+    #     title=field_name_map.get(category_x),
+    #     # tickformat=tickformat_decimal,
+    # )
+    return patched_figure
 
 
 # @callback(
