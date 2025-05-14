@@ -2,7 +2,7 @@ import textwrap
 from pathlib import Path
 import plotly.express as px
 import pandas as pd
-from dash import html, dcc, callback, Input, Output, State, register_page, ALL, callback_context, Patch
+from dash import html, dcc, callback, Input, Output, register_page, ALL, Patch
 import dash_bootstrap_components as dbc
 from src.components.dropdowns import create_dropdown
 from src.components.toggle import create_toggle
@@ -13,7 +13,6 @@ from src.components.datatable import create_datatable, \
     create_float_table_entry, create_string_table_entry, create_int_table_entry
 from src.utils.load_config import app_config
 from src.utils.general import create_graph_xshift
-from timeit import default_timer as timer
 from dash_bootstrap_templates import load_figure_template
 
 config = app_config
@@ -33,11 +32,11 @@ assert lcs_checklist_yaml is not None, 'The config for lcs checklist could not b
 scope_checklist_yaml = config.get('scope_checklist')
 assert scope_checklist_yaml is not None, 'The config for scope checklist could not be set'
 
-# new_constr_toggle_yaml = config.get('new_constr_toggle_cat')
-# assert new_constr_toggle_yaml is not None, 'The config for new construction could not be set'
+new_constr_toggle_yaml = config.get('new_constr_toggle_byob')
+assert new_constr_toggle_yaml is not None, 'The config for new construction could not be set'
 
-# outlier_toggle_yaml = config.get('outlier_toggle_cat')
-# assert outlier_toggle_yaml is not None, 'The config for outlier toggle could not be set'
+outlier_toggle_yaml = config.get('outlier_toggle_byob')
+assert outlier_toggle_yaml is not None, 'The config for outlier toggle could not be set'
 
 floor_area_radio_yaml = config.get('floor_area_normalization_byob')
 assert floor_area_radio_yaml is not None, 'The config for floor area norm. could not be set'
@@ -94,29 +93,29 @@ total_impact_tooltip = create_tooltip(
     target_id=total_impact_dropdown_yaml['tooltip_id']
 )
 
-# new_constr_toggle = create_toggle(
-#     toggle_list=new_constr_toggle_yaml['toggle_list'],
-#     first_item=new_constr_toggle_yaml['first_item'],
-#     toggle_id=new_constr_toggle_yaml['toggle_id'],
-#     tooltip_id=new_constr_toggle_yaml['tooltip_id'],
-# )
+new_constr_toggle = create_toggle(
+    toggle_list=new_constr_toggle_yaml['toggle_list'],
+    first_item=new_constr_toggle_yaml['first_item'],
+    toggle_id=new_constr_toggle_yaml['toggle_id'],
+    tooltip_id=new_constr_toggle_yaml['tooltip_id'],
+)
 
-# new_constr_tooltip = create_tooltip(
-#     tooltip_text=new_constr_toggle_yaml['tooltip'],
-#     target_id=new_constr_toggle_yaml['tooltip_id']
-# )
+new_constr_tooltip = create_tooltip(
+    tooltip_text=new_constr_toggle_yaml['tooltip'],
+    target_id=new_constr_toggle_yaml['tooltip_id']
+)
 
-# outlier_toggle = create_toggle(
-#     toggle_list=outlier_toggle_yaml['toggle_list'],
-#     first_item=outlier_toggle_yaml['first_item'],
-#     toggle_id=outlier_toggle_yaml['toggle_id'],
-#     tooltip_id=outlier_toggle_yaml['tooltip_id'],
-# )
+outlier_toggle = create_toggle(
+    toggle_list=outlier_toggle_yaml['toggle_list'],
+    first_item=outlier_toggle_yaml['first_item'],
+    toggle_id=outlier_toggle_yaml['toggle_id'],
+    tooltip_id=outlier_toggle_yaml['tooltip_id'],
+)
 
-# outlier_tooltip = create_tooltip(
-#     tooltip_text=outlier_toggle_yaml['tooltip'],
-#     target_id=outlier_toggle_yaml['tooltip_id']
-# )
+outlier_tooltip = create_tooltip(
+    tooltip_text=outlier_toggle_yaml['tooltip'],
+    target_id=outlier_toggle_yaml['tooltip_id']
+)
 
 floor_area_radio = create_radio_items(
     label=floor_area_radio_yaml['label'],
@@ -156,10 +155,10 @@ controls_byob = dbc.Card(
         scope_checklist,
         # sort_box_radio,
         # sort_box_tooltip,
-        # new_constr_toggle,
-        # new_constr_tooltip,
-        # outlier_toggle,
-        # outlier_tooltip
+        new_constr_toggle,
+        new_constr_tooltip,
+        outlier_toggle,
+        outlier_tooltip
     ],
     body=True,
 )
@@ -227,28 +226,42 @@ layout = html.Div(
         Input('floor_area_normal_byob', 'value'),
         Input({'type': 'lcs', 'id': ALL}, 'value'),
         Input({'type': 'scope', 'id': ALL}, 'value'),
+        Input('new_constr_toggle_byob', 'value'),
+        Input('outlier_toggle_byob', 'value')
     ]
 )
 def update_data_for_byob(category_x: str,
                          objective: str,
                          cfa_gfa_type: str,
                          lcs: list,
-                         scope: list):
+                         scope: list,
+                         new_constr_toggle_byob: list,
+                         outlier_toggle_byob: list):
+    # path to directories of files
     current_file_path = Path(__file__)
     main_directory = current_file_path.parents[2]
     metadata_directory = main_directory.joinpath('data/buildings_metadata.pkl')
     impacts_directory = main_directory.joinpath('data/impacts_grouped_by_lcs_and_scope.parquet')
 
+    # read files
     metadata_df = pd.read_pickle(metadata_directory)
     impacts_by_lcs_scope_df = pd.read_parquet(impacts_directory)
 
+    # turn checklists into workable lists
     lcs = sum(lcs, [])
     scope = sum(scope, [])
 
+    # new construction filter
+    if new_constr_toggle_byob == [1]:
+        metadata_df = metadata_df[metadata_df['bldg_proj_type'] == 'New Construction']
+
+    # filter based on LCS and omniclass element
     new_impacts = impacts_by_lcs_scope_df.loc[
         ((impacts_by_lcs_scope_df['life_cycle_stage'].isin(lcs))
         & (impacts_by_lcs_scope_df)['omniclass_element'].isin(scope)), :
     ]
+
+    # create impacts and intensity metric
     new_impacts_gb = new_impacts.groupby('project_index')[objective].sum()
     final_impacts = metadata_df[['project_index', category_x, cfa_gfa_type]].set_index('project_index').merge(
         new_impacts_gb,
@@ -257,6 +270,18 @@ def update_data_for_byob(category_x: str,
         right_index=True
     )
     final_impacts['intensity'] = final_impacts[objective] / final_impacts[cfa_gfa_type]
+
+    # remove outliers
+    if outlier_toggle_byob == [1]:
+        Q1 = final_impacts['intensity'].quantile(0.25)
+        Q3 = final_impacts['intensity'].quantile(0.75)
+        IQR = Q3 - Q1
+        final_impacts = final_impacts[
+            (final_impacts['intensity'] < Q3 + 3 * IQR)
+            & (final_impacts['intensity'] > Q1 - 3 * IQR)
+        ]
+
+    # wrap text for formatting
     def customwrap(s, width=25):
         if type(s) is not float:
             return "<br>".join(textwrap.wrap(s, width=width))
@@ -285,15 +310,6 @@ def update_chart(byob_data: dict):
 #     cfa_gfa_mapping = cfa_gfa_map.get(cfa_gfa_type)
 #     # cfa_gfa_name_for_annotation = cfa_gfa_mapping.get('name')
 #     objective_for_graph = cfa_gfa_mapping.get(objective)
-    
-#     if outlier_toggle_cat == [1]:
-#         Q1 = df[objective_for_graph].quantile(0.25)
-#         Q3 = df[objective_for_graph].quantile(0.75)
-#         IQR = Q3 - Q1
-#         df = df[
-#             (df[objective_for_graph] < Q3 + 3 * IQR)
-#             & (df[objective_for_graph] > Q1 - 3 * IQR)
-#         ]
 
 #     if sort_type == 'median':
 #         grouped_medians = (
@@ -321,9 +337,9 @@ def update_chart(byob_data: dict):
         if len(df[df[categories] == s]) > 0:
             annotation = {
                 'showarrow': False,
-                'y': str(s),
+                'text': f'n={str(len(df[df[categories]==s][categories]))}',
                 'x': max_of_df+xshift,
-                'text': f'n={str(len(df[df[categories]==s][categories]))}'
+                'y': str(s),
             }
             annotations.append(annotation)
     # wrapped_category_order = [customwrap(s) for s in category_order]
@@ -337,7 +353,7 @@ def update_chart(byob_data: dict):
     patched_figure["layout"]["xaxis"]["title"]["text"] = values
     patched_figure["layout"]["yaxis"]["title"]["text"] = field_name_map.get(categories)
     patched_figure["layout"]["xaxis"]["range"] = [0, max_of_df+xshift]
-   
+
     return patched_figure
 
 # @callback(
