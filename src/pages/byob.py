@@ -2,7 +2,7 @@ import textwrap
 from pathlib import Path
 import plotly.express as px
 import pandas as pd
-from dash import html, dcc, callback, Input, Output, State, register_page, ALL, callback_context, Patch
+from dash import html, dcc, callback, Input, Output, register_page, ALL, Patch
 import dash_bootstrap_components as dbc
 from src.components.dropdowns import create_dropdown
 from src.components.toggle import create_toggle
@@ -237,24 +237,31 @@ def update_data_for_byob(category_x: str,
                          scope: list,
                          new_constr_toggle_byob: list,
                          outlier_toggle_byob: list):
+    # path to directories of files
     current_file_path = Path(__file__)
     main_directory = current_file_path.parents[2]
     metadata_directory = main_directory.joinpath('data/buildings_metadata.pkl')
     impacts_directory = main_directory.joinpath('data/impacts_grouped_by_lcs_and_scope.parquet')
 
+    # read files
     metadata_df = pd.read_pickle(metadata_directory)
     impacts_by_lcs_scope_df = pd.read_parquet(impacts_directory)
 
+    # turn checklists into workable lists
     lcs = sum(lcs, [])
     scope = sum(scope, [])
 
+    # new construction filter
     if new_constr_toggle_byob == [1]:
         metadata_df = metadata_df[metadata_df['bldg_proj_type'] == 'New Construction']
 
+    # filter based on LCS and omniclass element
     new_impacts = impacts_by_lcs_scope_df.loc[
         ((impacts_by_lcs_scope_df['life_cycle_stage'].isin(lcs))
         & (impacts_by_lcs_scope_df)['omniclass_element'].isin(scope)), :
     ]
+
+    # create impacts and intensity metric
     new_impacts_gb = new_impacts.groupby('project_index')[objective].sum()
     final_impacts = metadata_df[['project_index', category_x, cfa_gfa_type]].set_index('project_index').merge(
         new_impacts_gb,
@@ -264,6 +271,7 @@ def update_data_for_byob(category_x: str,
     )
     final_impacts['intensity'] = final_impacts[objective] / final_impacts[cfa_gfa_type]
 
+    # remove outliers
     if outlier_toggle_byob == [1]:
         Q1 = final_impacts['intensity'].quantile(0.25)
         Q3 = final_impacts['intensity'].quantile(0.75)
@@ -273,6 +281,7 @@ def update_data_for_byob(category_x: str,
             & (final_impacts['intensity'] > Q1 - 3 * IQR)
         ]
 
+    # wrap text for formatting
     def customwrap(s, width=25):
         if type(s) is not float:
             return "<br>".join(textwrap.wrap(s, width=width))
