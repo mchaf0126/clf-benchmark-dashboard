@@ -187,12 +187,13 @@ controls_byob = dbc.Accordion(
 byob_figure = px.box(
     color_discrete_sequence=["#ffc700"],
     height=600,
+    points='all'
 ).update_xaxes(
     tickformat=',.0f',
     title='',
     type='linear'
 ).update_traces(
-    quartilemethod='inclusive',
+    quartilemethod='linear',
 ).update_layout(
     margin={'pad': 10},
 )
@@ -211,30 +212,39 @@ layout = html.Div(
                 dbc.Col(
                     [
                         dcc.Graph(figure=byob_figure, id="byob_graph"),
+                        html.Div([
+                            dbc.Button(
+                                "Download Table Contents",
+                                color='primary',
+                                id="btn-download-tbl-byob",
+                                active=True,
+                                className='my-2 fw-bold'
+                            ),
+                            dcc.Download(id="download-tbl-byob"),
+                        ]),
                     ], xs=8, sm=8, md=8, lg=8, xl=7, xxl=7,
                 ),
             ],
             justify='center',
             className='mb-4'
         ),
-#         dbc.Row(
-#             dbc.Col(
-#                 html.Div([
-#                     dbc.Button(
-#                         "Download Table Contents",
-#                         color='primary',
-#                         id="btn-download-tbl-box",
-#                         active=True,
-#                         className='my-2 fw-bold'
-#                     ),
-#                     dcc.Download(id="download-tbl-box"),
-#                     table,
-#                 ]),
-#                 xs=12, sm=12, md=12, lg=12, xl=8, xxl=8,
-#             ),
-#             justify='center',
-#             className='mb-4'
-#         )
+        dbc.Row(
+            dbc.Col(
+                html.Div([
+                    dbc.Button(
+                        "Download Table Contents",
+                        color='primary',
+                        id="btn-download-tbl-byob",
+                        active=True,
+                        className='my-2 fw-bold'
+                    ),
+                    dcc.Download(id="download-tbl-byob"),
+                ]),
+                xs=12, sm=12, md=12, lg=12, xl=8, xxl=8,
+            ),
+            justify='center',
+            className='mb-4'
+        )
     ],
 )
 
@@ -377,75 +387,91 @@ def update_chart(byob_data: dict):
 
 
 @callback(
-    Output("download-tbl-box", "data"),
+    Output("download-tbl-byob", "data"),
     [
-        Input("btn-download-tbl-box", "n_clicks"),
+        Input("btn-download-tbl-byob", "n_clicks"),
         State('byob_data', 'data'),
     ],
     prevent_initial_call=True,
 )
 def func(n_clicks,
          byob_data):
-    if n_clicks > 0:
-        df = pd.DataFrame.from_dict(byob_data.get('byob_data'))    
-        column_list = list(df.columns)
-        categories = column_list[0]
-        values = column_list[1]
+    df = pd.DataFrame.from_dict(byob_data.get('byob_data'))    
+    column_list = list(df.columns)
+    categories = column_list[0]
+    values = column_list[1]
 
-        tbl_df = (
-            df.groupby(
-                categories, as_index=False
-            )[values]
-            .describe()
-            .rename(
-                columns={
-                    '25%': 'Q1',
-                    '50%': 'median',
-                    '75%': 'Q3'
-                }
-            ).drop(
-                columns='count'
-            )
-        )
-        tbl_df = pd.merge(
-            left=tbl_df,
-            right=df[categories].value_counts(),
-            how='left',
-            left_on=categories,
-            right_on=categories
-        )
-        tbl_df = pd.merge(
-            left=tbl_df,
-            right=df.groupby(categories)[values].quantile(0.2).rename('20%'),
-            how='left',
-            left_on=categories,
-            right_on=categories
-        )
-        tbl_df = pd.merge(
-            left=tbl_df,
-            right=df.groupby(categories)[values].quantile(0.8).rename('80%'),
-            how='left',
-            left_on=categories,
-            right_on=categories
-        )
-        tbl_df = tbl_df[
-            [
-                categories,
+    tbl_df = (
+        df.groupby(
+            categories, as_index=False
+        )[values]
+        .describe()
+        .rename(
+            columns={
+                '50%': 'median',
+            }
+        ).drop(
+            columns=[
                 'count',
-                'std',
-                'min',
-                '20%',
-                'Q1',
-                'median',
-                'mean',
-                'Q3',
-                '80%',
-                'max'
+                '25%',
+                '75%'
             ]
-        ]
-
-        return dcc.send_data_frame(
-            tbl_df.to_csv,
-            f"{categories} values by {values}.csv",
-            index=False
         )
+    )
+
+    tbl_df = pd.merge(
+        left=tbl_df,
+        right=df[categories].value_counts(),
+        how='left',
+        left_on=categories,
+        right_on=categories
+    )
+    tbl_df = pd.merge(
+        left=tbl_df,
+        right=df.groupby(categories)[values].quantile(0.2).rename('20%'),
+        how='left',
+        left_on=categories,
+        right_on=categories
+    )
+    tbl_df = pd.merge(
+        left=tbl_df,
+        right=df.groupby(categories)[values].quantile(0.25).rename('Q1'),
+        how='left',
+        left_on=categories,
+        right_on=categories
+    )
+    tbl_df = pd.merge(
+        left=tbl_df,
+        right=df.groupby(categories)[values].quantile(0.75).rename('Q3'),
+        how='left',
+        left_on=categories,
+        right_on=categories
+    )
+    tbl_df = pd.merge(
+        left=tbl_df,
+        right=df.groupby(categories)[values].quantile(0.8).rename('80%'),
+        how='left',
+        left_on=categories,
+        right_on=categories
+    )
+    tbl_df = tbl_df[
+        [
+            categories,
+            'count',
+            'std',
+            'min',
+            '20%',
+            'Q1',
+            'median',
+            'mean',
+            'Q3',
+            '80%',
+            'max'
+        ]
+    ]
+
+    return dcc.send_data_frame(
+        tbl_df.to_csv,
+        f"{categories} values by {values}.csv",
+        index=False
+    )
