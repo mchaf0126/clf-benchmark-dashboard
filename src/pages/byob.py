@@ -143,24 +143,45 @@ floor_area_tooltip = create_tooltip(
 #     target_id=sort_box_radio_yaml['tooltip_id']
 # )
 
-controls_byob = dbc.Card(
+controls_byob = dbc.Accordion(
     [
-        categorical_dropdown,
-        categorical_tooltip,
-        total_impact_dropdown,
-        total_impact_tooltip,
-        floor_area_radio,
-        floor_area_tooltip,
-        lcs_checklist,
-        scope_checklist,
-        # sort_box_radio,
-        # sort_box_tooltip,
-        new_constr_toggle,
-        new_constr_tooltip,
-        outlier_toggle,
-        outlier_tooltip
+        dbc.AccordionItem(
+            [
+                categorical_dropdown,
+                categorical_tooltip,
+                total_impact_dropdown,
+                total_impact_tooltip,
+            ],
+            title="Axis Controls",
+            item_id='axis_controls'
+        ),
+        dbc.AccordionItem(
+            [
+                lcs_checklist,
+                scope_checklist,
+            ],            
+            title="Project Filters",
+            item_id='proj_filters'
+        ),
+        dbc.AccordionItem(
+            [
+                floor_area_radio,
+                floor_area_tooltip,
+                # sort_box_radio,
+                # sort_box_tooltip,
+                # new_constr_toggle,
+                # new_constr_tooltip,
+                outlier_toggle,
+                outlier_tooltip
+            ],            
+            title="Additional Filters",
+            item_id='addl_filters'
+        ),
     ],
-    body=True,
+    start_collapsed=True,
+    always_open=True,
+    active_item=['axis_controls', 'proj_filters', 'addl_filters'],
+    class_name='overflow-scroll h-100',
 )
 
 byob_figure = px.box(
@@ -185,6 +206,7 @@ layout = html.Div(
                     [
                         controls_byob
                     ], xs=4, sm=4, md=4, lg=4, xl=3, xxl=3,
+                    style={'max-height': '800px'}
                 ),
                 dbc.Col(
                     [
@@ -226,7 +248,6 @@ layout = html.Div(
         Input('floor_area_normal_byob', 'value'),
         Input({'type': 'lcs', 'id': ALL}, 'value'),
         Input({'type': 'scope', 'id': ALL}, 'value'),
-        Input('new_constr_toggle_byob', 'value'),
         Input('outlier_toggle_byob', 'value')
     ]
 )
@@ -235,7 +256,6 @@ def update_data_for_byob(category_x: str,
                          cfa_gfa_type: str,
                          lcs: list,
                          scope: list,
-                         new_constr_toggle_byob: list,
                          outlier_toggle_byob: list):
     # path to directories of files
     current_file_path = Path(__file__)
@@ -252,8 +272,8 @@ def update_data_for_byob(category_x: str,
     scope = sum(scope, [])
 
     # new construction filter
-    if new_constr_toggle_byob == [1]:
-        metadata_df = metadata_df[metadata_df['bldg_proj_type'] == 'New Construction']
+    # if new_constr_toggle_byob == [1]:
+    metadata_df = metadata_df[metadata_df['bldg_proj_type'] == 'New Construction']
 
     # filter based on LCS and omniclass element
     new_impacts = impacts_by_lcs_scope_df.loc[
