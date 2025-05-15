@@ -308,7 +308,6 @@ def update_data_for_byob(category_x: str,
     final_impacts[category_x] = final_impacts[category_x].map(customwrap)
     final_impacts = final_impacts.drop(columns=[objective, cfa_gfa_type])
 
-    print(final_impacts)
     return {'byob_data': final_impacts.to_dict()}
     
 @callback(
