@@ -2,7 +2,7 @@ import textwrap
 from pathlib import Path
 import plotly.express as px
 import pandas as pd
-from dash import html, dcc, callback, Input, Output, register_page, ALL, Patch
+from dash import html, dcc, callback, Input, Output, State, register_page, ALL, Patch
 import dash_bootstrap_components as dbc
 from src.components.dropdowns import create_dropdown
 from src.components.toggle import create_toggle
@@ -217,7 +217,6 @@ layout = html.Div(
             justify='center',
             className='mb-4'
         ),
-#         html.Hr(),
 #         dbc.Row(
 #             dbc.Col(
 #                 html.Div([
@@ -376,204 +375,77 @@ def update_chart(byob_data: dict):
 
     return patched_figure
 
-# @callback(
-#     [
-#         Output('results_table_cat', 'columnDefs'),
-#         Output('results_table_cat', 'rowData'),
-#     ],
-#     [
-#         Input('categorical_dropdown', 'value'),
-#         Input('total_impact_dropdown_cat', 'value'),
-#         Input('floor_area_normal_cat', 'value'),
-#         Input('new_constr_toggle_cat', 'value'),
-#         Input('outlier_toggle_cat', 'value'),
-#         State('buildings_metadata', 'data')
-#     ]
-# )
-# def update_table(cat_value,
-#                  impact_value,
-#                  cfa_gfa_type,
-#                  new_constr_toggle_cat,
-#                  outlier_toggle_cat,
-#                  buildings_metadata):
-#     df = pd.DataFrame.from_dict(buildings_metadata.get('buildings_metadata'))
-#     df[cat_value] = df[cat_value].fillna('NULL')
-#     if new_constr_toggle_cat == [1]:
-#         df = df[df['bldg_proj_type'] == 'New Construction']
 
-#     cfa_gfa_mapping = cfa_gfa_map.get(cfa_gfa_type)
-#     impact_value_for_graph = cfa_gfa_mapping.get(impact_value)
-    
-#     if outlier_toggle_cat == [1]:
-#         Q1 = df[impact_value_for_graph].quantile(0.25)
-#         Q3 = df[impact_value_for_graph].quantile(0.75)
-#         IQR = Q3 - Q1
-#         df = df[
-#             (df[impact_value_for_graph] < Q3 + 3 * IQR)
-#             & (df[impact_value_for_graph] > Q1 - 3 * IQR)
-#         ]
+@callback(
+    Output("download-tbl-box", "data"),
+    [
+        Input("btn-download-tbl-box", "n_clicks"),
+        State('byob_data', 'data'),
+    ],
+    prevent_initial_call=True,
+)
+def func(n_clicks,
+         byob_data):
+    if n_clicks > 0:
+        df = pd.DataFrame.from_dict(byob_data.get('byob_data'))    
+        column_list = list(df.columns)
+        categories = column_list[0]
+        values = column_list[1]
 
-#     tbl_df = (
-#         df.groupby(
-#             cat_value, as_index=False
-#         )[impact_value_for_graph]
-#         .describe()
-#         .rename(
-#             columns={
-#                 '25%': 'Q1',
-#                 '50%': 'median',
-#                 '75%': 'Q3'
-#             }
-#         ).drop(
-#             columns='count'
-#         )
-#     )
-#     tbl_df = pd.merge(
-#         left=tbl_df,
-#         right=df[cat_value].value_counts(),
-#         how='left',
-#         left_on=cat_value,
-#         right_on=cat_value
-#     )
-#     tbl_df = pd.merge(
-#         left=tbl_df,
-#         right=df.groupby(cat_value)[impact_value_for_graph].quantile(0.2).rename('20%'),
-#         how='left',
-#         left_on=cat_value,
-#         right_on=cat_value
-#     )
-#     tbl_df = pd.merge(
-#         left=tbl_df,
-#         right=df.groupby(cat_value)[impact_value_for_graph].quantile(0.8).rename('80%'),
-#         how='left',
-#         left_on=cat_value,
-#         right_on=cat_value
-#     )
+        tbl_df = (
+            df.groupby(
+                categories, as_index=False
+            )[values]
+            .describe()
+            .rename(
+                columns={
+                    '25%': 'Q1',
+                    '50%': 'median',
+                    '75%': 'Q3'
+                }
+            ).drop(
+                columns='count'
+            )
+        )
+        tbl_df = pd.merge(
+            left=tbl_df,
+            right=df[categories].value_counts(),
+            how='left',
+            left_on=categories,
+            right_on=categories
+        )
+        tbl_df = pd.merge(
+            left=tbl_df,
+            right=df.groupby(categories)[values].quantile(0.2).rename('20%'),
+            how='left',
+            left_on=categories,
+            right_on=categories
+        )
+        tbl_df = pd.merge(
+            left=tbl_df,
+            right=df.groupby(categories)[values].quantile(0.8).rename('80%'),
+            how='left',
+            left_on=categories,
+            right_on=categories
+        )
+        tbl_df = tbl_df[
+            [
+                categories,
+                'count',
+                'std',
+                'min',
+                '20%',
+                'Q1',
+                'median',
+                'mean',
+                'Q3',
+                '80%',
+                'max'
+            ]
+        ]
 
-#     float_columns = [
-#         'std',
-#         'min',
-#         '20%',
-#         'Q1',
-#         'median',
-#         'mean',
-#         'Q3',
-#         '80%',
-#         'max',
-#     ]
-
-#     if impact_value in ['epi', 'api', 'sfpi']:
-#         valueformatter = {"function": "d3.format(',.2f')(params.value)"}
-#     elif impact_value == 'odpi':
-#         valueformatter = {"function": "d3.format(',.5f')(params.value)"}
-#     else:
-#         valueformatter = {"function": "d3.format(',.0f')(params.value)"}
-
-#     cols = (
-#         [create_string_table_entry(cat_value, field_name_map.get(cat_value))]
-#         + [create_int_table_entry('count')]
-#         + [
-#             create_float_table_entry(
-#                 float_col, field_name_map.get(float_col), valueformatter
-#             ) for float_col in float_columns
-#           ]
-#     )
-#     data = tbl_df.to_dict('records')
-#     return cols, data
-
-
-# @callback(
-#     Output("download-tbl-box", "data"),
-#     [
-#         Input("btn-download-tbl-box", "n_clicks"),
-#         State('floor_area_normal_cat', 'value'),
-#         State('categorical_dropdown', 'value'),
-#         State('total_impact_dropdown_cat', 'value'),
-#         State('new_constr_toggle_cat', 'value'),
-#         State('outlier_toggle_cat', 'value'),
-#         State('buildings_metadata', 'data')
-#     ],
-#     prevent_initial_call=True,
-# )
-# def func(n_clicks,
-#          cfa_gfa_type,
-#          cat_value,
-#          impact_value,
-#          new_constr_toggle_cat,
-#          outlier_toggle_cat,
-#          buildings_metadata):
-#     if n_clicks > 0:
-#         df = pd.DataFrame.from_dict(buildings_metadata.get('buildings_metadata'))
-#         df[cat_value] = df[cat_value].fillna('NULL')
-#         if new_constr_toggle_cat == [1]:
-#             df = df[df['bldg_proj_type'] == 'New Construction']
-
-#         cfa_gfa_mapping = cfa_gfa_map.get(cfa_gfa_type)
-#         impact_value_for_graph = cfa_gfa_mapping.get(impact_value)
-        
-#         if outlier_toggle_cat == [1]:
-#             Q1 = df[impact_value_for_graph].quantile(0.25)
-#             Q3 = df[impact_value_for_graph].quantile(0.75)
-#             IQR = Q3 - Q1
-#             df = df[
-#                 (df[impact_value_for_graph] < Q3 + 3 * IQR)
-#                 & (df[impact_value_for_graph] > Q1 - 3 * IQR)
-#             ]
-
-#         tbl_df = (
-#             df.groupby(
-#                 cat_value, as_index=False
-#             )[impact_value_for_graph]
-#             .describe()
-#             .rename(
-#                 columns={
-#                     '25%': 'Q1',
-#                     '50%': 'median',
-#                     '75%': 'Q3'
-#                 }
-#             ).drop(
-#                 columns='count'
-#             )
-#         )
-#         tbl_df = pd.merge(
-#             left=tbl_df,
-#             right=df[cat_value].value_counts(),
-#             how='left',
-#             left_on=cat_value,
-#             right_on=cat_value
-#         )
-#         tbl_df = pd.merge(
-#             left=tbl_df,
-#             right=df.groupby(cat_value)[impact_value_for_graph].quantile(0.2).rename('20%'),
-#             how='left',
-#             left_on=cat_value,
-#             right_on=cat_value
-#         )
-#         tbl_df = pd.merge(
-#             left=tbl_df,
-#             right=df.groupby(cat_value)[impact_value_for_graph].quantile(0.8).rename('80%'),
-#             how='left',
-#             left_on=cat_value,
-#             right_on=cat_value
-#         )
-#         tbl_df = tbl_df[
-#             [
-#                 cat_value,
-#                 'count',
-#                 'std',
-#                 'min',
-#                 '20%',
-#                 'Q1',
-#                 'median',
-#                 'mean',
-#                 'Q3',
-#                 '80%',
-#                 'max'
-#             ]
-#         ]
-
-#         return dcc.send_data_frame(
-#             tbl_df.to_csv,
-#             f"{cat_value} values by {impact_value_for_graph}.csv",
-#             index=False
-#         )
+        return dcc.send_data_frame(
+            tbl_df.to_csv,
+            f"{categories} values by {values}.csv",
+            index=False
+        )
