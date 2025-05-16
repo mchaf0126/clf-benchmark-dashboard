@@ -19,7 +19,7 @@ impacts_directory = main_directory.joinpath('data/impacts_grouped_by_lcs_and_sco
 buildings_metadata_df = pd.read_pickle(metadata_directory)
 impacts_by_lcs_scope_df = pd.read_parquet(impacts_directory)
 
-load_figure_template('pulse')
+load_figure_template('bootstrap')
 
 header = create_header()
 

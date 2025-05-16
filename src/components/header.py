@@ -15,8 +15,8 @@ def create_header() -> html.Div:
                     dbc.Col(
                         html.A(
                             html.Img(
-                                src='assets/LCL-banner.png',
-                                height="40px",
+                                src='assets/CLF WBLCA Benchmark Project Logo_blue (1).png',
+                                height="100px",
                             ),
                             href='https://lifecyclelab.org'
                         ),
@@ -25,7 +25,7 @@ def create_header() -> html.Div:
                     ),
                     dbc.Col(
                         dbc.NavbarBrand(
-                            'WBLCA Benchmark Study v2 Dashboard',
+                            'Interactive Dashboard',
                             className='fs-3 text-white fw-bolder text-wrap'
                         ),
                         width=6,
