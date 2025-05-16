@@ -330,13 +330,11 @@ def update_data_for_byob(category_x: str,
     else:
         category_order = category_order_map.get(category_x)
         category_order = list(reversed(category_order))
-
-    wrapped_category_order = [customwrap(s) for s in category_order]
-    print(wrapped_category_order)
+        category_order = [customwrap(s) for s in category_order]
 
     return {
         'byob_data': final_impacts.to_dict(),
-        'sort': wrapped_category_order
+        'sort': category_order
     }
     
 @callback(
