@@ -186,7 +186,7 @@ controls_byob = dbc.Accordion(
 )
 
 byob_figure = px.box(
-    color_discrete_sequence=["#ffc700"],
+    color_discrete_sequence=["#FFB71B"],
     height=600,
     orientation='h',
     points='all',
