@@ -14,6 +14,7 @@ from src.components.datatable import create_datatable, \
 from src.utils.load_config import app_config
 from src.utils.general import create_graph_xshift
 from dash_bootstrap_templates import load_figure_template
+import json
 
 config = app_config
 
@@ -41,14 +42,14 @@ assert outlier_toggle_yaml is not None, 'The config for outlier toggle could not
 floor_area_radio_yaml = config.get('floor_area_normalization_byob')
 assert floor_area_radio_yaml is not None, 'The config for floor area norm. could not be set'
 
-# sort_box_radio_yaml = config.get('sort_box_plot_cat')
-# assert sort_box_radio_yaml is not None, 'The config for box plot sorting could not be set'
+sort_box_radio_yaml = config.get('sort_box_plot_byob')
+assert sort_box_radio_yaml is not None, 'The config for box plot sorting could not be set'
 
 field_name_map = config.get('field_name_map')
 assert field_name_map is not None, 'The config for field names could not be set'
 
-# category_order_map = config.get('category_order_map')
-# assert category_order_map is not None, 'The config for category orders could not be set'
+category_order_map = config.get('category_order_map')
+assert category_order_map is not None, 'The config for category orders could not be set'
 
 # cfa_gfa_map = config.get('cfa_gfa_map')
 # assert cfa_gfa_map is not None, 'The config for cfa/gfa map could not be set'
@@ -130,18 +131,18 @@ floor_area_tooltip = create_tooltip(
     target_id=floor_area_radio_yaml['tooltip_id']
 )
 
-# sort_box_radio = create_radio_items(
-#     label=sort_box_radio_yaml['label'],
-#     tooltip_id=sort_box_radio_yaml['tooltip_id'],
-#     radio_list=sort_box_radio_yaml['radio_list'],
-#     first_item=sort_box_radio_yaml['first_item'],
-#     radio_id=sort_box_radio_yaml['radio_id']
-# )
+sort_box_radio = create_radio_items(
+    label=sort_box_radio_yaml['label'],
+    tooltip_id=sort_box_radio_yaml['tooltip_id'],
+    radio_list=sort_box_radio_yaml['radio_list'],
+    first_item=sort_box_radio_yaml['first_item'],
+    radio_id=sort_box_radio_yaml['radio_id']
+)
 
-# sort_box_tooltip = create_tooltip(
-#     tooltip_text=sort_box_radio_yaml['tooltip'],
-#     target_id=sort_box_radio_yaml['tooltip_id']
-# )
+sort_box_tooltip = create_tooltip(
+    tooltip_text=sort_box_radio_yaml['tooltip'],
+    target_id=sort_box_radio_yaml['tooltip_id']
+)
 
 controls_byob = dbc.Accordion(
     [
@@ -167,8 +168,8 @@ controls_byob = dbc.Accordion(
             [
                 floor_area_radio,
                 floor_area_tooltip,
-                # sort_box_radio,
-                # sort_box_tooltip,
+                sort_box_radio,
+                sort_box_tooltip,
                 # new_constr_toggle,
                 # new_constr_tooltip,
                 outlier_toggle,
@@ -187,13 +188,16 @@ controls_byob = dbc.Accordion(
 byob_figure = px.box(
     color_discrete_sequence=["#ffc700"],
     height=600,
-    points='all'
+    orientation='h',
+    points='all',
 ).update_xaxes(
     tickformat=',.0f',
     title='',
     type='linear'
 ).update_traces(
-    quartilemethod='linear',
+    quartilemethod='inclusive',
+    hovertemplate='Impact = %{x}<extra></extra>',
+    jitter=0.5
 ).update_layout(
     margin={'pad': 10},
 )
@@ -222,29 +226,13 @@ layout = html.Div(
                             ),
                             dcc.Download(id="download-tbl-byob"),
                         ]),
+                        html.Div(id='help_div')
                     ], xs=8, sm=8, md=8, lg=8, xl=7, xxl=7,
                 ),
             ],
             justify='center',
             className='mb-4'
         ),
-        dbc.Row(
-            dbc.Col(
-                html.Div([
-                    dbc.Button(
-                        "Download Table Contents",
-                        color='primary',
-                        id="btn-download-tbl-byob",
-                        active=True,
-                        className='my-2 fw-bold'
-                    ),
-                    dcc.Download(id="download-tbl-byob"),
-                ]),
-                xs=12, sm=12, md=12, lg=12, xl=8, xxl=8,
-            ),
-            justify='center',
-            className='mb-4'
-        )
     ],
 )
 
@@ -257,7 +245,8 @@ layout = html.Div(
         Input('floor_area_normal_byob', 'value'),
         Input({'type': 'lcs', 'id': ALL}, 'value'),
         Input({'type': 'scope', 'id': ALL}, 'value'),
-        Input('outlier_toggle_byob', 'value')
+        Input('outlier_toggle_byob', 'value'),
+        Input('sort_box_plot_byob', 'value')
     ]
 )
 def update_data_for_byob(category_x: str,
@@ -265,12 +254,23 @@ def update_data_for_byob(category_x: str,
                          cfa_gfa_type: str,
                          lcs: list,
                          scope: list,
-                         outlier_toggle_byob: list):
+                         outlier_toggle_byob: list,
+                         sort_box_byob: str):
     # path to directories of files
     current_file_path = Path(__file__)
     main_directory = current_file_path.parents[2]
     metadata_directory = main_directory.joinpath('data/buildings_metadata.pkl')
     impacts_directory = main_directory.joinpath('data/impacts_grouped_by_lcs_and_scope.parquet')
+
+    # intensity metric map
+    intensity_metric_map = {
+        "Embodied Carbon Intensity": "gwp",
+        "Eutrophication Potential Intensity": "ep",
+        "Acidification Potential Intensity": "ap",
+        "Smog Formation Potential Intensity": "sfp",
+        "Ozone Depletion Potential Intensity": "odp",
+        "Natural Resource Depletion Intensity": "nred",
+    }
 
     # read files
     metadata_df = pd.read_pickle(metadata_directory)
@@ -291,23 +291,23 @@ def update_data_for_byob(category_x: str,
     ]
 
     # create impacts and intensity metric
-    new_impacts_gb = new_impacts.groupby('project_index')[objective].sum()
+    new_impacts_gb = new_impacts.groupby('project_index')[intensity_metric_map.get(objective)].sum()
     final_impacts = metadata_df[['project_index', category_x, cfa_gfa_type]].set_index('project_index').merge(
         new_impacts_gb,
         how='left',
         left_index=True,
         right_index=True
     )
-    final_impacts['intensity'] = final_impacts[objective] / final_impacts[cfa_gfa_type]
+    final_impacts[objective] = final_impacts[intensity_metric_map.get(objective)] / final_impacts[cfa_gfa_type]
 
     # remove outliers
     if outlier_toggle_byob == [1]:
-        Q1 = final_impacts['intensity'].quantile(0.25)
-        Q3 = final_impacts['intensity'].quantile(0.75)
+        Q1 = final_impacts[objective].quantile(0.25)
+        Q3 = final_impacts[objective].quantile(0.75)
         IQR = Q3 - Q1
         final_impacts = final_impacts[
-            (final_impacts['intensity'] < Q3 + 3 * IQR)
-            & (final_impacts['intensity'] > Q1 - 3 * IQR)
+            (final_impacts[objective] < Q3 + 3 * IQR)
+            & (final_impacts[objective] > Q1 - 3 * IQR)
         ]
 
     # wrap text for formatting
@@ -315,46 +315,49 @@ def update_data_for_byob(category_x: str,
         if type(s) is not float:
             return "<br>".join(textwrap.wrap(s, width=width))
     final_impacts[category_x] = final_impacts[category_x].map(customwrap)
-    final_impacts = final_impacts.drop(columns=[objective, cfa_gfa_type])
+    final_impacts = final_impacts.drop(columns=[intensity_metric_map.get(objective), cfa_gfa_type])
 
-    return {'byob_data': final_impacts.to_dict()}
+    # category orders
+    if sort_box_byob == 'median':
+        grouped_medians = (
+            final_impacts.groupby(by=category_x)
+            .median()
+            .sort_values(
+                by=objective,
+                ascending=True
+            )
+        )
+        category_order = grouped_medians.index.to_list()
+    else:
+        category_order = category_order_map.get(category_x)
+        category_order = list(reversed(category_order))
+
+    wrapped_category_order = [customwrap(s) for s in category_order]
+    print(wrapped_category_order)
+
+    return {
+        'byob_data': final_impacts.to_dict(),
+        'sort': wrapped_category_order
+    }
     
 @callback(
     Output('byob_graph', 'figure'),
     Input('byob_data', 'data'),
 )
 def update_chart(byob_data: dict):
-    # if new_constr_toggle_cat == [1]:
-    #     df = df[df['bldg_proj_type'] == 'New Construction']
-    # units_map = {
-    #     'eci': '(kgCO<sub>2</sub>e/m<sup>2</sup>)',
-    #     'epi': '(kgNe/m<sup>2</sup>)',
-    #     'api': '(kgSO<sub>2</sub>e/m<sup>2</sup>)',
-    #     'sfpi': '(kgO<sub>3</sub>e/m<sup>2</sup>)',
-    #     'odpi': '(CFC-11e/m<sup>2</sup>)',
-    #     'nredi': '(MJ/m<sup>2</sup>)',
-    #     'ec_per_occupant': '(kgCO<sub>2</sub>e/occupant)',
-    #     'ec_per_res_unit': '(kgCO<sub>2</sub>e/residential unit)',
-    # }
-#     cfa_gfa_mapping = cfa_gfa_map.get(cfa_gfa_type)
-#     # cfa_gfa_name_for_annotation = cfa_gfa_mapping.get('name')
-#     objective_for_graph = cfa_gfa_mapping.get(objective)
+    units_map = {
+        "Embodied Carbon Intensity": '(kgCO<sub>2</sub>e/m<sup>2</sup>)',
+        "Eutrophication Potential Intensity": '(kgNe/m<sup>2</sup>)',
+        "Acidification Potential Intensity": '(kgSO<sub>2</sub>e/m<sup>2</sup>)',
+        "Smog Formation Potential Intensity": '(kgO<sub>3</sub>e/m<sup>2</sup>)',
+        "Ozone Depletion Potential Intensity": '(CFC-11e/m<sup>2</sup>)',
+        "Natural Resource Depletion Intensity": '(MJ/m<sup>2</sup>)',
+        # 'ec_per_occupant': '(kgCO<sub>2</sub>e/occupant)',
+        # 'ec_per_res_unit': '(kgCO<sub>2</sub>e/residential unit)',
+    }
 
-#     if sort_type == 'median':
-#         grouped_medians = (
-#             df[[category_x, objective_for_graph]]
-#             .groupby(by=category_x)
-#             .median()
-#             .sort_values(
-#                 by=objective_for_graph,
-#                 ascending=False
-#             )
-#         )
-#         category_order = grouped_medians.index.to_list()
-#     else:
-#         category_order = category_order_map.get(category_x)
-
-    df = pd.DataFrame.from_dict(byob_data.get('byob_data'))    
+    df = pd.DataFrame.from_dict(byob_data.get('byob_data'))
+    category_order = byob_data.get('sort')    
     column_list = list(df.columns)
     categories = column_list[0]
     values = column_list[1]
@@ -371,19 +374,27 @@ def update_chart(byob_data: dict):
                 'y': str(s),
             }
             annotations.append(annotation)
-    # wrapped_category_order = [customwrap(s) for s in category_order]
 
     patched_figure = Patch()
     patched_figure["data"][0]["x"] = df[values].values
     patched_figure["data"][0]["y"] = df[categories].values
-    patched_figure["data"][0]["orientation"] = 'h'
 
     patched_figure["layout"]["annotations"] = annotations
-    patched_figure["layout"]["xaxis"]["title"]["text"] = values
-    patched_figure["layout"]["yaxis"]["title"]["text"] = field_name_map.get(categories)
+    patched_figure["layout"]["xaxis"]["title"]["text"] = f"{values} {units_map.get(values)}"
     patched_figure["layout"]["xaxis"]["range"] = [0, max_of_df+xshift]
+    patched_figure["layout"]["yaxis"]["title"]["text"] = field_name_map.get(categories)
+    patched_figure["layout"]["yaxis"]["categoryarray"] = category_order
+    patched_figure["layout"]["yaxis"]["categoryorder"] = "array"
 
     return patched_figure
+
+
+@callback(
+    Output('help_div', 'children'),
+    Input('byob_figure', 'figure')
+)
+def test_one(figure_data):
+    return json.dumps(figure_data, indent=2)
 
 
 @callback(

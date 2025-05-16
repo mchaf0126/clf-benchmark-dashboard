@@ -302,29 +302,23 @@ total_impact_dropdown_byob:
   dropdown_list: 
     - 
       label: Embodied Carbon Intensity
-      value: gwp
+      value: Embodied Carbon Intensity
     -  
       label: Eutrophication Potential Intensity
-      value: ep
+      value: Eutrophication Potential Intensity
     -  
       label: Acidification Potential Intensity
-      value: ap
+      value: Acidification Potential Intensity
     -  
       label: Smog Formation Potential Intensity
-      value: sfp
+      value: Smog Formation Potential Intensity
     -  
       label: Ozone Depletion Potential Intensity
-      value: odp
+      value: Ozone Depletion Potential Intensity
     -  
       label: Natural Resource Depletion Intensity
-      value: nred
-    -  
-      label: Embodied Carbon per Occupant
-      value: gwp_occupant
-    -  
-      label: Embodied Carbon per Residential Unit
-      value: gwp_res_unit
-  first_item: gwp
+      value: Natural Resource Depletion Intensity
+  first_item: Embodied Carbon Intensity
   dropdown_id: total_impact_dropdown_byob
   tooltip: Each environmental metric contained in the dataset
     is represented in this dropdown. They are either divided by
@@ -462,6 +456,22 @@ sort_box_plot_cat:
       value: cat_value
   first_item: median
   radio_id: sort_box_plot_cat
+  tooltip: Selecting "Median" sorts box plots from 
+    highest to lowest median values. Selecting "Categorical 
+    value" will sort the box plots in a rational
+     way based on the category (e.g. Seismic Design Category 
+     will be sorted alphabetically)
+  tooltip_id: sort_box_plot_tooltip_cat
+
+sort_box_plot_byob:
+  label: "Sort box plots by:  "
+  radio_list:
+    - label: Median
+      value: median
+    - label: Categorical value
+      value: cat_value
+  first_item: median
+  radio_id: sort_box_plot_byob
   tooltip: Selecting "Median" sorts box plots from 
     highest to lowest median values. Selecting "Categorical 
     value" will sort the box plots in a rational
