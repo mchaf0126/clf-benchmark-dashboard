@@ -191,7 +191,6 @@ byob_figure = px.box(
     orientation='h',
     points='all',
 ).update_xaxes(
-    tickformat=',.0f',
     title='',
     type='linear'
 ).update_traces(
@@ -374,6 +373,17 @@ def update_chart(byob_data: dict):
                 'y': str(s),
             }
             annotations.append(annotation)
+    
+    if values in [
+        'Eutrophication Potential Intensity',
+        'Acidification Potential Intensity',
+        'Smog Formation Potential Intensity'
+    ]:
+        tickformat_decimal =',.2f'
+    elif values == 'Ozone Depletion Potential Intensity':
+        tickformat_decimal =',.8f'
+    else:
+        tickformat_decimal =',.0f'    
 
     patched_figure = Patch()
     patched_figure["data"][0]["x"] = df[values].values
@@ -382,6 +392,7 @@ def update_chart(byob_data: dict):
     patched_figure["layout"]["annotations"] = annotations
     patched_figure["layout"]["xaxis"]["title"]["text"] = f"{values} {units_map.get(values)}"
     patched_figure["layout"]["xaxis"]["range"] = [0, max_of_df+xshift]
+    patched_figure["layout"]["xaxis"]["tickformat"] = tickformat_decimal
     patched_figure["layout"]["yaxis"]["title"]["text"] = field_name_map.get(categories)
     patched_figure["layout"]["yaxis"]["categoryarray"] = category_order
     patched_figure["layout"]["yaxis"]["categoryorder"] = "array"
