@@ -209,16 +209,6 @@ def layout(state: str = None):
         [
             dbc.AccordionItem(
                 [
-                    categorical_dropdown,
-                    categorical_tooltip,
-                    enable_filters_toggle,
-                    categorical_filter
-                ],
-                title="Categorical Controls",
-                item_id='axis_controls'
-            ),
-            dbc.AccordionItem(
-                [
                     total_impact_dropdown,
                     total_impact_tooltip,
                     lcs_checklist,
@@ -226,6 +216,16 @@ def layout(state: str = None):
                 ],            
                 title="Impact Controls",
                 item_id='proj_filters'
+            ),
+            dbc.AccordionItem(
+                [
+                    categorical_dropdown,
+                    categorical_tooltip,
+                    enable_filters_toggle,
+                    categorical_filter
+                ],
+                title="Categorical Controls",
+                item_id='axis_controls'
             ),
             dbc.AccordionItem(
                 [
