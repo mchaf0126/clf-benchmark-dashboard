@@ -31,7 +31,7 @@ def create_dropdown(label: str, tooltip_id: str, dropdown_list: list, first_item
                 value=first_item,
                 id=dropdown_id,
                 clearable=False,
-                persistence=True,
+                persistence=False,
                 optionHeight=60
             ),
         ],

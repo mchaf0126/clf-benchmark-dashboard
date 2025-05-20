@@ -30,7 +30,7 @@ def create_radio_items(label: str, tooltip_id: str, radio_list: list, first_item
                 options=radio_list,
                 value=first_item,
                 id=radio_id,
-                persistence=True,
+                persistence=False,
                 inputCheckedClassName="border border-primary bg-primary"
             ),
         ],
