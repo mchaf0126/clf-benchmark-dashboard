@@ -282,6 +282,7 @@ def update_data_for_byob(category_x: str,
     # new construction filter
     # if new_constr_toggle_byob == [1]:
     metadata_df = metadata_df[metadata_df['bldg_proj_type'] == 'New Construction']
+    metadata_df = metadata_df[metadata_df['bldg_prim_use'] != "Parking"]
 
     # filter based on LCS and omniclass element
     new_impacts = impacts_by_lcs_scope_df.loc[
