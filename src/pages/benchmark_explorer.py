@@ -327,7 +327,7 @@ def add_filter_dropdown(cat_filters_toggle: list,
         Input({"type": "control", "id": "lcs_checklist"}, 'value'),
         Input({"type": "control", "id": 'outlier_toggle_byob'}, 'value'),
         Input('sort_box_plot_byob', 'value'),
-        Input({"type": "control", "id": 'cat_filter'}, 'value')
+        Input({"type": "other", "id": 'cat_filter'}, 'value')
     ]
 )
 def update_data_for_byob(category_x: str,

@@ -18,7 +18,7 @@ def create_header() -> html.Div:
                                 src='assets/CLF WBLCA Benchmark Project Logo_blue (1).png',
                                 height="80px",
                             ),
-                            href='https://lifecyclelab.org'
+                            href='https://carbonleadershipforum.org/clf-wblca-v2/'
                         ),
                         width=3,
                         align='center'
