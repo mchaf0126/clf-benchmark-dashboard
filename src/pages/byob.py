@@ -394,6 +394,8 @@ def update_chart(byob_data: dict):
     patched_figure["layout"]["yaxis"]["title"]["text"] = field_name_map.get(categories)
     patched_figure["layout"]["yaxis"]["categoryarray"] = category_order
     patched_figure["layout"]["yaxis"]["categoryorder"] = "array"
+    patched_figure["layout"]["font"]["family"] = "Source Sans Pro"
+    print(byob_figure)
 
     return patched_figure
 

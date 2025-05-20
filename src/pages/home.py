@@ -12,7 +12,7 @@ typology_jumbotron = create_jumbotron(
 )
 
 project_number_jumbotron = create_jumbotron(
-    subtitle='New Construction Projects',
+    subtitle='Projects in Dataset',
     main_text_id='project_number_jumbotron'
 )
 
