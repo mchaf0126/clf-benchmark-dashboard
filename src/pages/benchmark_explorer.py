@@ -193,7 +193,7 @@ def layout(state: str = None):
                 ]
             ),
             dcc.Dropdown(
-                id={"type": "control", "id": 'cat_filter'},
+                id={"type": "other", "id": 'cat_filter'},
                 value=state.get('cat_filter'),
                 multi=True,
                 clearable=False,
@@ -281,7 +281,7 @@ def layout(state: str = None):
 
 
 @callback(
-    Output({"type": "control", "id": 'cat_filter'}, 'disabled'),
+    Output({"type": "other", "id": 'cat_filter'}, 'disabled'),
     Input({"type": "control", "id": 'enable_filters_toggle'}, 'value')
 )
 def enable_filters(enable_filters_toggle):
@@ -292,8 +292,8 @@ def enable_filters(enable_filters_toggle):
 
 @callback(
     [
-        Output({"type": "control", "id": 'cat_filter'}, 'options'),
-        Output({"type": "control", "id": 'cat_filter'}, 'value')
+        Output({"type": "other", "id": 'cat_filter'}, 'options'),
+        Output({"type": "other", "id": 'cat_filter'}, 'value')
     ],
     [
         Input({"type": "control", "id": 'enable_filters_toggle'}, 'value'),
