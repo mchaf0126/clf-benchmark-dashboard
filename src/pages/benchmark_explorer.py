@@ -18,7 +18,7 @@ import json
 
 config = app_config
 
-register_page(__name__, path='/byob')
+register_page(__name__, path='/benchmark_explorer')
 load_figure_template('pulse')
 
 categorical_dropdown_yaml = config.get('categorical_dropdown_byob')

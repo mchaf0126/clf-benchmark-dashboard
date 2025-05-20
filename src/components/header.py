@@ -45,7 +45,7 @@ def create_header() -> html.Div:
                                 dbc.NavItem(
                                         dbc.NavLink(
                                             'Benchmark Explorer',
-                                            href='/byob',
+                                            href='/benchmark_explorer',
                                             className='fs-5 text-white fw-bolder'
                                         ),
                                 ),
