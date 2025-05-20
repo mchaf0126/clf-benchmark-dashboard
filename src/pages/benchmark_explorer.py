@@ -18,7 +18,7 @@ import json
 
 config = app_config
 
-register_page(__name__, path='/byob')
+register_page(__name__, path='/benchmark_explorer')
 load_figure_template('pulse')
 
 categorical_dropdown_yaml = config.get('categorical_dropdown_byob')
@@ -395,7 +395,6 @@ def update_chart(byob_data: dict):
     patched_figure["layout"]["yaxis"]["categoryarray"] = category_order
     patched_figure["layout"]["yaxis"]["categoryorder"] = "array"
     patched_figure["layout"]["font"]["family"] = "Source Sans Pro"
-    print(byob_figure)
 
     return patched_figure
 

@@ -89,20 +89,11 @@ categorical_dropdown_byob:
   label: Categorical Variable  
   dropdown_list:
     - 
-      label: Country
-      value: site_country
-    - 
       label: Region
       value: site_region
     - 
       label: State or Province
       value: site_state_province
-    - 
-      label: Climate Zone
-      value: site_clim_zone
-    - 
-      label: Project Type
-      value: bldg_proj_type
     - 
       label: IBC Construction Type
       value: bldg_ibc_type
@@ -113,9 +104,6 @@ categorical_dropdown_byob:
       label: Primary Building Use Type
       value: bldg_prim_use
     - 
-      label: Secondary Building Use Type
-      value: bldg_sec_use
-    - 
       label: Stories Above Grade
       value: bldg_stories_above
     - 
@@ -124,9 +112,6 @@ categorical_dropdown_byob:
     - 
       label: Building Height
       value: bldg_height
-    - 
-      label: Seismic Site Class
-      value: str_seis_site_cls
     - 
       label: Seismic Design Category
       value: str_sdc
@@ -140,9 +125,6 @@ categorical_dropdown_byob:
       label: Primary Lateral Force Resisting System
       value: str_lat_sys
     - 
-      label: Podium
-      value: str_podium
-    - 
       label: Foundation Type
       value: str_fdn_type
     - 
@@ -155,14 +137,8 @@ categorical_dropdown_byob:
       label: Software
       value: lca_software
     - 
-      label: Purpose of Assessment
-      value: lca_purp_of_assessment
-    - 
       label: Physical Scope Summary
       value: lca_phys_scope
-    - 
-      label: Embodied Carbon Reductions
-      value: lca_ec_reductions
   first_item: site_state_province
   dropdown_id: categorical_dropdown_byob
   tooltip: Categorical values are those that can take on 

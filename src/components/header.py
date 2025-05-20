@@ -42,22 +42,13 @@ def create_header() -> html.Div:
                                             className='fs-5 text-white fw-bolder'
                                         ),
                                 ),
-                                dbc.DropdownMenu(
-                                    label='Explore the data',
-                                    children=[
-                                        dbc.DropdownMenuItem(
-                                            "Box plot",
-                                            href="box_plot"
+                                dbc.NavItem(
+                                        dbc.NavLink(
+                                            'Benchmark Explorer',
+                                            href='/benchmark_explorer',
+                                            className='fs-5 text-white fw-bolder'
                                         ),
-                                        dbc.DropdownMenuItem(
-                                            "Scatter plot",
-                                            href="scatter_plot"
-                                        ),
-                                    ],
-                                    nav=True,
-                                    toggleClassName='fs-5 text-white fw-bolder',
-                                    color='white',
-                                )
+                                ),
                             ],
                             horizontal='end'
                         ),
