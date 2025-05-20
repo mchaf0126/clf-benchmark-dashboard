@@ -303,6 +303,17 @@ total_impact_dropdown_byob:
     These values will be plotted on the y-axis of the graph.
   tooltip_id: total_impact_dropdown_tooltip_byob
 
+enable_filters_toggle:
+  label: ""
+  toggle_list:
+    - label: Enable categorical filtering
+      value: 1
+  first_item: []
+  toggle_id: enable_filters_toggle
+  tooltip: This toggle enable you to filter projects based on the 
+    categorical filters chosed in the dropdown below.
+  tooltip_id: enable_filters_toggle_tooltip
+
 new_constr_toggle_cat:
   label: ""
   toggle_list:

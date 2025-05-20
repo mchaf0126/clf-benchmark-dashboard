@@ -24,6 +24,9 @@ load_figure_template('pulse')
 categorical_dropdown_yaml = config.get('categorical_dropdown_byob')
 assert categorical_dropdown_yaml is not None, 'The config for cat. dropdowns could not be set'
 
+enable_filters_toggle_yaml = config.get('enable_filters_toggle')
+assert enable_filters_toggle_yaml is not None, 'The config for cat. dropdowns could not be set'
+
 total_impact_dropdown_yaml = config.get('total_impact_dropdown_byob')
 assert total_impact_dropdown_yaml is not None, 'The config for total impacts could not be set'
 
@@ -94,6 +97,13 @@ total_impact_tooltip = create_tooltip(
     target_id=total_impact_dropdown_yaml['tooltip_id']
 )
 
+enable_filters_toggle = create_toggle(
+    toggle_list=enable_filters_toggle_yaml['toggle_list'],
+    first_item=enable_filters_toggle_yaml['first_item'],
+    toggle_id=enable_filters_toggle_yaml['toggle_id'],
+    tooltip_id=enable_filters_toggle_yaml['tooltip_id'],
+)
+
 new_constr_toggle = create_toggle(
     toggle_list=new_constr_toggle_yaml['toggle_list'],
     first_item=new_constr_toggle_yaml['first_item'],
@@ -144,24 +154,49 @@ sort_box_tooltip = create_tooltip(
     target_id=sort_box_radio_yaml['tooltip_id']
 )
 
+categorical_filter = html.Div(
+    [
+        dbc.Label(
+            [
+                "Categorical values to filter",
+                html.Span(
+                    ' 🛈',
+                    id='cat_filter_tooltip_id'
+                )
+            ]
+        ),
+        dcc.Dropdown(
+            id='cat_filter',
+            multi=True,
+            clearable=False,
+            persistence=True,
+            optionHeight=60,
+            placeholder='If enabled, please select a filter'
+        ),
+    ],
+    className='mb-4'
+)
+
 controls_byob = dbc.Accordion(
     [
         dbc.AccordionItem(
             [
                 categorical_dropdown,
                 categorical_tooltip,
-                total_impact_dropdown,
-                total_impact_tooltip,
+                enable_filters_toggle,
+                categorical_filter
             ],
-            title="Axis Controls",
+            title="Categorical Controls",
             item_id='axis_controls'
         ),
         dbc.AccordionItem(
             [
+                total_impact_dropdown,
+                total_impact_tooltip,
                 lcs_checklist,
                 scope_checklist,
             ],            
-            title="Project Filters",
+            title="Impact Controls",
             item_id='proj_filters'
         ),
         dbc.AccordionItem(
@@ -210,7 +245,7 @@ layout = html.Div(
                     [
                         controls_byob
                     ], xs=4, sm=4, md=4, lg=4, xl=3, xxl=3,
-                    style={'max-height': '800px'}
+                    style={'max-height': '700px'}
                 ),
                 dbc.Col(
                     [
@@ -237,6 +272,44 @@ layout = html.Div(
 
 
 @callback(
+    Output('cat_filter', 'disabled'),
+    Input('enable_filters_toggle', 'value')
+)
+def enable_filters(enable_filters_toggle):
+    print(enable_filters_toggle)
+    if enable_filters_toggle == []:
+        return True
+    else:
+        return False
+
+@callback(
+    [
+        Output('cat_filter', 'options'),
+        Output('cat_filter', 'value')
+    ],
+    [
+        Input('enable_filters_toggle', 'value'),
+        Input('categorical_dropdown_byob', 'value')
+    ]
+)
+def add_filter_dropdown(cat_filters_toggle: list,
+                        category_x: str):
+    if cat_filters_toggle == []:
+        return ([], None)
+    else:
+        # path to directories of files
+        current_file_path = Path(__file__)
+        main_directory = current_file_path.parents[2]
+        metadata_directory = main_directory.joinpath('data/buildings_metadata.pkl')
+        metadata_df = pd.read_pickle(metadata_directory)
+        metadata_df = metadata_df[
+            (metadata_df['bldg_proj_type'] == 'New Construction')
+            & (metadata_df['bldg_prim_use'] != "Parking")
+        ]
+        return metadata_df[category_x].dropna().unique(), metadata_df[category_x].unique()[0]
+
+
+@callback(
     Output('byob_data', 'data'),
     [
         Input('categorical_dropdown_byob', 'value'),
@@ -245,7 +318,8 @@ layout = html.Div(
         Input({'type': 'lcs', 'id': ALL}, 'value'),
         Input({'type': 'scope', 'id': ALL}, 'value'),
         Input('outlier_toggle_byob', 'value'),
-        Input('sort_box_plot_byob', 'value')
+        Input('sort_box_plot_byob', 'value'),
+        Input('cat_filter', 'value')
     ]
 )
 def update_data_for_byob(category_x: str,
@@ -254,7 +328,8 @@ def update_data_for_byob(category_x: str,
                          lcs: list,
                          scope: list,
                          outlier_toggle_byob: list,
-                         sort_box_byob: str):
+                         sort_box_byob: str,
+                         cat_filter: list):
     # path to directories of files
     current_file_path = Path(__file__)
     main_directory = current_file_path.parents[2]
@@ -270,6 +345,7 @@ def update_data_for_byob(category_x: str,
         "Ozone Depletion Potential Intensity": "odp",
         "Natural Resource Depletion Intensity": "nred",
     }
+    print(cat_filter)
 
     # read files
     metadata_df = pd.read_pickle(metadata_directory)
@@ -280,8 +356,25 @@ def update_data_for_byob(category_x: str,
     scope = sum(scope, [])
 
     # new construction filter
-    # if new_constr_toggle_byob == [1]:
-    metadata_df = metadata_df[metadata_df['bldg_proj_type'] == 'New Construction']
+    metadata_df = metadata_df[
+        (metadata_df['bldg_proj_type'] == 'New Construction')
+        & (metadata_df['bldg_prim_use'] != "Parking")
+    ]
+
+    # cat_value_filter
+    if cat_filter is None:
+        cat_filter = []
+    elif len(cat_filter) == 0:
+        cat_filter = []
+    elif isinstance(cat_filter, str):
+        cat_filter = [cat_filter]
+        metadata_df = metadata_df[
+            metadata_df[category_x].isin(cat_filter)
+        ]
+    else: 
+        metadata_df = metadata_df[
+            metadata_df[category_x].isin(cat_filter)
+        ]
 
     # filter based on LCS and omniclass element
     new_impacts = impacts_by_lcs_scope_df.loc[
@@ -336,6 +429,7 @@ def update_data_for_byob(category_x: str,
         'byob_data': final_impacts.to_dict(),
         'sort': category_order
     }
+
     
 @callback(
     Output('byob_graph', 'figure'),
@@ -415,8 +509,8 @@ def test_one(figure_data):
     ],
     prevent_initial_call=True,
 )
-def func(n_clicks,
-         byob_data):
+def create_download_table(n_clicks,
+                          byob_data):
     df = pd.DataFrame.from_dict(byob_data.get('byob_data'))    
     column_list = list(df.columns)
     categories = column_list[0]

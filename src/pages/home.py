@@ -1,3 +1,4 @@
+from pathlib import Path
 import pandas as pd
 from dash import html, dcc, register_page, Input, Output, callback
 import dash_bootstrap_components as dbc
@@ -6,19 +7,24 @@ from src.components.jumbotron import create_jumbotron
 
 register_page(__name__, path='/')
 
+current_file_path = Path(__file__)
+main_directory = current_file_path.parents[2]
+metadata_directory = main_directory.joinpath('data/buildings_metadata.pkl')
+buildings_metadata_df = pd.read_pickle(metadata_directory)
+
 typology_jumbotron = create_jumbotron(
     subtitle='Unique Building Typologies',
-    main_text_id='typology_jumbotron'
+    main_text=len(buildings_metadata_df['bldg_prim_use'].unique()),
 )
 
 project_number_jumbotron = create_jumbotron(
     subtitle='Projects in Dataset',
-    main_text_id='project_number_jumbotron'
+    main_text=buildings_metadata_df.shape[0]
 )
 
 avg_impact_jumbotron = create_jumbotron(
     subtitle='Average kgCO2e / m2',
-    main_text_id='avg_impact_jumbotron'
+    main_text=round(buildings_metadata_df['eci_a_to_c_gfa'].mean())
 )
 
 layout = html.Div(
@@ -219,25 +225,6 @@ layout = html.Div(
         ),
     ]
 )
-
-
-@callback(
-    [
-        Output('typology_jumbotron', 'children'),
-        Output('project_number_jumbotron', 'children'),
-        Output('avg_impact_jumbotron', 'children'),
-    ],
-    Input('buildings_metadata', 'data')
-)
-def update_chart(buildings_metadata):
-    df = pd.DataFrame.from_dict(buildings_metadata.get('buildings_metadata'))
-
-    typology_jumbotron_main_text = len(df['bldg_prim_use'].unique())
-    project_number_jumbotron_main_text = df.shape[0]
-    avg_impact_jumbotron_main_text = round(df['eci_a_to_c_gfa'].mean())
-
-    return typology_jumbotron_main_text, project_number_jumbotron_main_text, \
-        avg_impact_jumbotron_main_text
 
 # *  **Stacked bar chart** - a way to compare average impacts.
 # This chart will show the _average_ impacts of a categorical
