@@ -1,8 +1,9 @@
 import textwrap
+import base64
 from pathlib import Path
 import plotly.express as px
 import pandas as pd
-from dash import html, dcc, callback, Input, Output, State, register_page, ALL, Patch
+from dash import html, dcc, callback, Input, Output, State, register_page, ALL, Patch, ctx
 import dash_bootstrap_components as dbc
 from src.components.dropdowns import create_dropdown
 from src.components.toggle import create_toggle
@@ -57,168 +58,6 @@ assert category_order_map is not None, 'The config for category orders could not
 # cfa_gfa_map = config.get('cfa_gfa_map')
 # assert cfa_gfa_map is not None, 'The config for cfa/gfa map could not be set'
 
-categorical_dropdown = create_dropdown(
-    label=categorical_dropdown_yaml['label'],
-    tooltip_id=categorical_dropdown_yaml['tooltip_id'],
-    dropdown_list=categorical_dropdown_yaml['dropdown_list'],
-    first_item=categorical_dropdown_yaml['first_item'],
-    dropdown_id=categorical_dropdown_yaml['dropdown_id']
-)
-
-categorical_tooltip = create_tooltip(
-    tooltip_text=categorical_dropdown_yaml['tooltip'],
-    target_id=categorical_dropdown_yaml['tooltip_id']
-)
-
-lcs_checklist = create_checklist(
-    label=lcs_checklist_yaml['label'],
-    checklist=lcs_checklist_yaml['checklist'],
-    first_item=lcs_checklist_yaml['first_item'],
-    checklist_id={"type": "lcs", "id": 'lcs_checklist'}
-)
-
-scope_checklist = create_checklist(
-    label=scope_checklist_yaml['label'],
-    checklist=scope_checklist_yaml['checklist'],
-    first_item=scope_checklist_yaml['first_item'],
-    checklist_id={"type": "scope", "id": 'scope_checklist'}
-)
-
-total_impact_dropdown = create_dropdown(
-    label=total_impact_dropdown_yaml['label'],
-    tooltip_id=total_impact_dropdown_yaml['tooltip_id'],
-    dropdown_list=total_impact_dropdown_yaml['dropdown_list'],
-    first_item=total_impact_dropdown_yaml['first_item'],
-    dropdown_id=total_impact_dropdown_yaml['dropdown_id']
-)
-
-total_impact_tooltip = create_tooltip(
-    tooltip_text=total_impact_dropdown_yaml['tooltip'],
-    target_id=total_impact_dropdown_yaml['tooltip_id']
-)
-
-enable_filters_toggle = create_toggle(
-    toggle_list=enable_filters_toggle_yaml['toggle_list'],
-    first_item=enable_filters_toggle_yaml['first_item'],
-    toggle_id=enable_filters_toggle_yaml['toggle_id'],
-    tooltip_id=enable_filters_toggle_yaml['tooltip_id'],
-)
-
-new_constr_toggle = create_toggle(
-    toggle_list=new_constr_toggle_yaml['toggle_list'],
-    first_item=new_constr_toggle_yaml['first_item'],
-    toggle_id=new_constr_toggle_yaml['toggle_id'],
-    tooltip_id=new_constr_toggle_yaml['tooltip_id'],
-)
-
-new_constr_tooltip = create_tooltip(
-    tooltip_text=new_constr_toggle_yaml['tooltip'],
-    target_id=new_constr_toggle_yaml['tooltip_id']
-)
-
-outlier_toggle = create_toggle(
-    toggle_list=outlier_toggle_yaml['toggle_list'],
-    first_item=outlier_toggle_yaml['first_item'],
-    toggle_id=outlier_toggle_yaml['toggle_id'],
-    tooltip_id=outlier_toggle_yaml['tooltip_id'],
-)
-
-outlier_tooltip = create_tooltip(
-    tooltip_text=outlier_toggle_yaml['tooltip'],
-    target_id=outlier_toggle_yaml['tooltip_id']
-)
-
-floor_area_radio = create_radio_items(
-    label=floor_area_radio_yaml['label'],
-    tooltip_id=floor_area_radio_yaml['tooltip_id'],
-    radio_list=floor_area_radio_yaml['radio_list'],
-    first_item=floor_area_radio_yaml['first_item'],
-    radio_id=floor_area_radio_yaml['radio_id']
-)
-
-floor_area_tooltip = create_tooltip(
-    tooltip_text=floor_area_radio_yaml['tooltip'],
-    target_id=floor_area_radio_yaml['tooltip_id']
-)
-
-sort_box_radio = create_radio_items(
-    label=sort_box_radio_yaml['label'],
-    tooltip_id=sort_box_radio_yaml['tooltip_id'],
-    radio_list=sort_box_radio_yaml['radio_list'],
-    first_item=sort_box_radio_yaml['first_item'],
-    radio_id=sort_box_radio_yaml['radio_id']
-)
-
-sort_box_tooltip = create_tooltip(
-    tooltip_text=sort_box_radio_yaml['tooltip'],
-    target_id=sort_box_radio_yaml['tooltip_id']
-)
-
-categorical_filter = html.Div(
-    [
-        dbc.Label(
-            [
-                "Categorical values to filter",
-                html.Span(
-                    ' 🛈',
-                    id='cat_filter_tooltip_id'
-                )
-            ]
-        ),
-        dcc.Dropdown(
-            id='cat_filter',
-            multi=True,
-            clearable=False,
-            persistence=True,
-            optionHeight=60,
-            placeholder='If enabled, please select a filter'
-        ),
-    ],
-    className='mb-4'
-)
-
-controls_byob = dbc.Accordion(
-    [
-        dbc.AccordionItem(
-            [
-                categorical_dropdown,
-                categorical_tooltip,
-                enable_filters_toggle,
-                categorical_filter
-            ],
-            title="Categorical Controls",
-            item_id='axis_controls'
-        ),
-        dbc.AccordionItem(
-            [
-                total_impact_dropdown,
-                total_impact_tooltip,
-                lcs_checklist,
-                scope_checklist,
-            ],            
-            title="Impact Controls",
-            item_id='proj_filters'
-        ),
-        dbc.AccordionItem(
-            [
-                floor_area_radio,
-                floor_area_tooltip,
-                sort_box_radio,
-                sort_box_tooltip,
-                # new_constr_toggle,
-                # new_constr_tooltip,
-                outlier_toggle,
-                outlier_tooltip
-            ],            
-            title="Additional Filters",
-            item_id='addl_filters'
-        ),
-    ],
-    start_collapsed=True,
-    always_open=True,
-    active_item=['axis_controls', 'proj_filters', 'addl_filters'],
-    class_name='overflow-scroll h-100',
-)
 
 byob_figure = px.box(
     color_discrete_sequence=["#FFB71B"],
@@ -237,46 +76,215 @@ byob_figure = px.box(
 )
 # table = create_datatable(table_id='results_table_cat')
 
-layout = html.Div(
-    children=[
-        dbc.Row(
-            [
-                dbc.Col(
-                    [
-                        controls_byob
-                    ], xs=4, sm=4, md=4, lg=4, xl=3, xxl=3,
-                    style={'max-height': '700px'}
-                ),
-                dbc.Col(
-                    [
-                        dcc.Graph(figure=byob_figure, id="byob_graph"),
-                        html.Div([
-                            dbc.Button(
-                                "Download Table Contents",
-                                color='primary',
-                                id="btn-download-tbl-byob",
-                                active=True,
-                                className='my-2 fw-bold'
-                            ),
-                            dcc.Download(id="download-tbl-byob"),
-                        ]),
-                        html.Div(id='help_div')
-                    ], xs=8, sm=8, md=8, lg=8, xl=7, xxl=7,
-                ),
-            ],
-            justify='center',
-            className='mb-4'
-        ),
-    ],
-)
+def layout(state: str = None):
+    """Home page layout
+
+    # It takes in a keyword arguments defined in `routing_callback_inputs`:
+    # * state (serialised state in the URL hash), it does not trigger re-render
+    # """
+    # Define default state values
+    defaults = {
+        categorical_dropdown_yaml['dropdown_id']: categorical_dropdown_yaml['first_item'],
+        lcs_checklist_yaml['checklist_id']: lcs_checklist_yaml['first_item'],
+        scope_checklist_yaml['checklist_id']: scope_checklist_yaml['first_item'],
+        total_impact_dropdown_yaml['dropdown_id']: total_impact_dropdown_yaml['first_item'],
+        enable_filters_toggle_yaml['toggle_id']: enable_filters_toggle_yaml['first_item'],
+        outlier_toggle_yaml['toggle_id']: outlier_toggle_yaml['first_item'],
+        floor_area_radio_yaml['radio_id']: floor_area_radio_yaml['first_item'],
+        "cat_filter": []
+    }
+    # Decode the state from the hash
+    state = defaults | (json.loads(base64.b64decode(state)) if state else {})
+
+    categorical_dropdown = create_dropdown(
+        label=categorical_dropdown_yaml['label'],
+        tooltip_id=categorical_dropdown_yaml['tooltip_id'],
+        dropdown_list=categorical_dropdown_yaml['dropdown_list'],
+        first_item=state.get(categorical_dropdown_yaml['dropdown_id']),
+        dropdown_id={"type": "control", "id": categorical_dropdown_yaml['dropdown_id']}
+    )
+
+    categorical_tooltip = create_tooltip(
+        tooltip_text=categorical_dropdown_yaml['tooltip'],
+        target_id=categorical_dropdown_yaml['tooltip_id']
+    )
+
+    lcs_checklist = create_checklist(
+        label=lcs_checklist_yaml['label'],
+        checklist=lcs_checklist_yaml['checklist'],
+        first_item=state.get(lcs_checklist_yaml['checklist_id']),
+        checklist_id={"type": "control", "id": lcs_checklist_yaml['checklist_id']}
+    )
+
+    scope_checklist = create_checklist(
+        label=scope_checklist_yaml['label'],
+        checklist=scope_checklist_yaml['checklist'],
+        first_item=state.get(scope_checklist_yaml['checklist_id']),
+        checklist_id={"type": "control", "id": scope_checklist_yaml['checklist_id']}
+    )
+
+    total_impact_dropdown = create_dropdown(
+        label=total_impact_dropdown_yaml['label'],
+        tooltip_id=total_impact_dropdown_yaml['tooltip_id'],
+        dropdown_list=total_impact_dropdown_yaml['dropdown_list'],
+        first_item=state.get(total_impact_dropdown_yaml['dropdown_id']),
+        dropdown_id={"type": "control", "id": total_impact_dropdown_yaml['dropdown_id']}
+    )
+
+    total_impact_tooltip = create_tooltip(
+        tooltip_text=total_impact_dropdown_yaml['tooltip'],
+        target_id=total_impact_dropdown_yaml['tooltip_id']
+    )
+
+    enable_filters_toggle = create_toggle(
+        toggle_list=enable_filters_toggle_yaml['toggle_list'],
+        first_item=state.get(enable_filters_toggle_yaml['toggle_id']),
+        toggle_id={"type": "control", "id": enable_filters_toggle_yaml['toggle_id']},
+        tooltip_id=enable_filters_toggle_yaml['tooltip_id'],
+    )
+
+    outlier_toggle = create_toggle(
+        toggle_list=outlier_toggle_yaml['toggle_list'],
+        first_item=state.get(outlier_toggle_yaml['toggle_id']),
+        toggle_id={"type": "control", "id": outlier_toggle_yaml['toggle_id']},
+        tooltip_id=outlier_toggle_yaml['tooltip_id'],
+    )
+
+    outlier_tooltip = create_tooltip(
+        tooltip_text=outlier_toggle_yaml['tooltip'],
+        target_id=outlier_toggle_yaml['tooltip_id']
+    )
+
+    floor_area_radio = create_radio_items(
+        label=floor_area_radio_yaml['label'],
+        tooltip_id=floor_area_radio_yaml['tooltip_id'],
+        radio_list=floor_area_radio_yaml['radio_list'],
+        first_item=state.get(floor_area_radio_yaml['radio_id']),
+        radio_id={"type": "control", "id": floor_area_radio_yaml['radio_id']}
+    )
+
+    floor_area_tooltip = create_tooltip(
+        tooltip_text=floor_area_radio_yaml['tooltip'],
+        target_id=floor_area_radio_yaml['tooltip_id']
+    )
+
+    sort_box_radio = create_radio_items(
+        label=sort_box_radio_yaml['label'],
+        tooltip_id=sort_box_radio_yaml['tooltip_id'],
+        radio_list=sort_box_radio_yaml['radio_list'],
+        first_item=sort_box_radio_yaml['first_item'],
+        radio_id=sort_box_radio_yaml['radio_id']
+    )
+
+    sort_box_tooltip = create_tooltip(
+        tooltip_text=sort_box_radio_yaml['tooltip'],
+        target_id=sort_box_radio_yaml['tooltip_id']
+    )
+
+    categorical_filter = html.Div(
+        [
+            dbc.Label(
+                [
+                    "Categorical values to filter",
+                    html.Span(
+                        ' 🛈',
+                        id='cat_filter_tooltip_id'
+                    )
+                ]
+            ),
+            dcc.Dropdown(
+                id={"type": "control", "id": 'cat_filter'},
+                value=state.get('cat_filter'),
+                multi=True,
+                clearable=False,
+                persistence=True,
+                optionHeight=80,
+                placeholder='If enabled, please select a filter'
+            ),
+        ],
+        className='mb-4'
+    )
+
+    controls_byob = dbc.Accordion(
+        [
+            dbc.AccordionItem(
+                [
+                    categorical_dropdown,
+                    categorical_tooltip,
+                    enable_filters_toggle,
+                    categorical_filter
+                ],
+                title="Categorical Controls",
+                item_id='axis_controls'
+            ),
+            dbc.AccordionItem(
+                [
+                    total_impact_dropdown,
+                    total_impact_tooltip,
+                    lcs_checklist,
+                    scope_checklist,
+                ],            
+                title="Impact Controls",
+                item_id='proj_filters'
+            ),
+            dbc.AccordionItem(
+                [
+                    floor_area_radio,
+                    floor_area_tooltip,
+                    sort_box_radio,
+                    sort_box_tooltip,
+                    outlier_toggle,
+                    outlier_tooltip
+                ],            
+                title="Additional Filters",
+                item_id='addl_filters'
+            ),
+        ],
+        start_collapsed=True,
+        always_open=True,
+        active_item=['axis_controls', 'proj_filters', 'addl_filters'],
+        class_name='overflow-scroll h-100',
+    )
+
+    return html.Div(
+        children=[
+            dbc.Row(
+                [
+                    dbc.Col(
+                        [
+                            controls_byob
+                        ], xs=4, sm=4, md=4, lg=4, xl=3, xxl=3,
+                        style={'max-height': '700px'}
+                    ),
+                    dbc.Col(
+                        [
+                            dcc.Graph(figure=byob_figure, id="byob_graph"),
+                            html.Div([
+                                dbc.Button(
+                                    "Download Table Contents",
+                                    color='primary',
+                                    id="btn-download-tbl-byob",
+                                    active=True,
+                                    className='my-2 fw-bold'
+                                ),
+                                dcc.Download(id="download-tbl-byob"),
+                            ]),
+                            html.Div(id='help_div')
+                        ], xs=8, sm=8, md=8, lg=8, xl=7, xxl=7,
+                    ),
+                ],
+                justify='center',
+                className='mb-4'
+            ),
+        ],
+    )
 
 
 @callback(
-    Output('cat_filter', 'disabled'),
-    Input('enable_filters_toggle', 'value')
+    Output({"type": "control", "id": 'cat_filter'}, 'disabled'),
+    Input({"type": "control", "id": 'enable_filters_toggle'}, 'value')
 )
 def enable_filters(enable_filters_toggle):
-    print(enable_filters_toggle)
     if enable_filters_toggle == []:
         return True
     else:
@@ -284,12 +292,12 @@ def enable_filters(enable_filters_toggle):
 
 @callback(
     [
-        Output('cat_filter', 'options'),
-        Output('cat_filter', 'value')
+        Output({"type": "control", "id": 'cat_filter'}, 'options'),
+        Output({"type": "control", "id": 'cat_filter'}, 'value')
     ],
     [
-        Input('enable_filters_toggle', 'value'),
-        Input('categorical_dropdown_byob', 'value')
+        Input({"type": "control", "id": 'enable_filters_toggle'}, 'value'),
+        Input({"type": "control", "id": 'categorical_dropdown_byob'}, 'value')
     ]
 )
 def add_filter_dropdown(cat_filters_toggle: list,
@@ -312,21 +320,21 @@ def add_filter_dropdown(cat_filters_toggle: list,
 @callback(
     Output('byob_data', 'data'),
     [
-        Input('categorical_dropdown_byob', 'value'),
-        Input('total_impact_dropdown_byob', 'value'),
-        Input('floor_area_normal_byob', 'value'),
-        Input({'type': 'lcs', 'id': ALL}, 'value'),
-        Input({'type': 'scope', 'id': ALL}, 'value'),
-        Input('outlier_toggle_byob', 'value'),
+        Input({"type": "control", "id": 'categorical_dropdown_byob'}, 'value'),
+        Input({"type": "control", "id": 'total_impact_dropdown_byob'}, 'value'),
+        Input({"type": "control", "id": 'floor_area_normal_byob'}, 'value'),
+        Input({"type": "control", "id": 'scope_checklist'}, 'value'),
+        Input({"type": "control", "id": "lcs_checklist"}, 'value'),
+        Input({"type": "control", "id": 'outlier_toggle_byob'}, 'value'),
         Input('sort_box_plot_byob', 'value'),
-        Input('cat_filter', 'value')
+        Input({"type": "control", "id": 'cat_filter'}, 'value')
     ]
 )
 def update_data_for_byob(category_x: str,
                          objective: str,
                          cfa_gfa_type: str,
-                         lcs: list,
                          scope: list,
+                         lcs: list,
                          outlier_toggle_byob: list,
                          sort_box_byob: str,
                          cat_filter: list):
@@ -345,15 +353,14 @@ def update_data_for_byob(category_x: str,
         "Ozone Depletion Potential Intensity": "odp",
         "Natural Resource Depletion Intensity": "nred",
     }
-    print(cat_filter)
 
     # read files
     metadata_df = pd.read_pickle(metadata_directory)
     impacts_by_lcs_scope_df = pd.read_parquet(impacts_directory)
 
-    # turn checklists into workable lists
-    lcs = sum(lcs, [])
-    scope = sum(scope, [])
+    # # turn checklists into workable lists
+    # lcs = sum(lcs, [])
+    # scope = sum(scope, [])
 
     # new construction filter
     metadata_df = metadata_df[
@@ -590,3 +597,19 @@ def create_download_table(n_clicks,
         f"{categories} values by {values}.csv",
         index=False
     )
+
+
+@callback(
+    Output("main-url", "hash"),
+    Input({"type": "control", "id": ALL}, "value"),
+)
+def update_hash(_values):
+    """Update the hash in the URL Location component to represent the app state.
+
+    The app state is json serialised then base64 encoded and is treated with the
+    reverse process in the layout function.
+    """
+    return "#" + base64.urlsafe_b64encode(
+        json.dumps({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]})
+        .encode("utf-8")
+    ).decode("utf-8")
