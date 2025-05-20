@@ -170,7 +170,7 @@ categorical_filter = html.Div(
             multi=True,
             clearable=False,
             persistence=True,
-            optionHeight=60,
+            optionHeight=80,
             placeholder='If enabled, please select a filter'
         ),
     ],
