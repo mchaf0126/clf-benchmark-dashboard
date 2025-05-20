@@ -16,7 +16,7 @@ def create_header() -> html.Div:
                         html.A(
                             html.Img(
                                 src='assets/CLF WBLCA Benchmark Project Logo_blue (1).png',
-                                height="100px",
+                                height="80px",
                             ),
                             href='https://lifecyclelab.org'
                         ),

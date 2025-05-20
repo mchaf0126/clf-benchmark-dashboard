@@ -11,13 +11,6 @@ app = Dash(
     suppress_callback_exceptions=True,
 )
 server = app.server
-current_file_path = Path(__file__)
-main_directory = current_file_path.parents[1]
-metadata_directory = main_directory.joinpath('data/buildings_metadata.pkl')
-impacts_directory = main_directory.joinpath('data/impacts_grouped_by_lcs_and_scope.parquet')
-
-buildings_metadata_df = pd.read_pickle(metadata_directory)
-impacts_by_lcs_scope_df = pd.read_parquet(impacts_directory)
 
 load_figure_template('bootstrap')
 
@@ -25,20 +18,6 @@ header = create_header()
 
 app.layout = dbc.Container(
     [
-        dcc.Store(
-            data={
-                'buildings_metadata': buildings_metadata_df.to_dict()
-            },
-            id='buildings_metadata',
-            storage_type='memory',
-        ),
-        dcc.Store(
-            data={
-                'impacts_by_lcs_scope': impacts_by_lcs_scope_df.to_dict()
-            },
-            id='impacts_by_lcs_scope',
-            storage_type='memory',
-        ),
         dcc.Store(
             id='byob_data',
             storage_type='memory',
