@@ -37,6 +37,9 @@ assert lcs_checklist_yaml is not None, 'The config for lcs checklist could not b
 scope_checklist_yaml = config.get('scope_checklist')
 assert scope_checklist_yaml is not None, 'The config for scope checklist could not be set'
 
+proj_type_checklist_yaml = config.get('proj_type_checklist')
+assert proj_type_checklist_yaml is not None, 'The config for proj_type checklist could not be set'
+
 new_constr_toggle_yaml = config.get('new_constr_toggle_byob')
 assert new_constr_toggle_yaml is not None, 'The config for new construction could not be set'
 
@@ -54,9 +57,6 @@ assert field_name_map is not None, 'The config for field names could not be set'
 
 category_order_map = config.get('category_order_map')
 assert category_order_map is not None, 'The config for category orders could not be set'
-
-# cfa_gfa_map = config.get('cfa_gfa_map')
-# assert cfa_gfa_map is not None, 'The config for cfa/gfa map could not be set'
 
 
 byob_figure = px.box(
@@ -87,6 +87,7 @@ def layout(state: str = None):
         categorical_dropdown_yaml['dropdown_id']: categorical_dropdown_yaml['first_item'],
         lcs_checklist_yaml['checklist_id']: lcs_checklist_yaml['first_item'],
         scope_checklist_yaml['checklist_id']: scope_checklist_yaml['first_item'],
+        proj_type_checklist_yaml['checklist_id']: proj_type_checklist_yaml['first_item'],
         total_impact_dropdown_yaml['dropdown_id']: total_impact_dropdown_yaml['first_item'],
         enable_filters_toggle_yaml['toggle_id']: enable_filters_toggle_yaml['first_item'],
         outlier_toggle_yaml['toggle_id']: outlier_toggle_yaml['first_item'],
@@ -121,6 +122,13 @@ def layout(state: str = None):
         checklist=scope_checklist_yaml['checklist'],
         first_item=state.get(scope_checklist_yaml['checklist_id']),
         checklist_id={"type": "control", "id": scope_checklist_yaml['checklist_id']}
+    )
+
+    proj_type_checklist = create_checklist(
+        label=proj_type_checklist_yaml['label'],
+        checklist=proj_type_checklist_yaml['checklist'],
+        first_item=state.get(proj_type_checklist_yaml['checklist_id']),
+        checklist_id={"type": "control", "id": proj_type_checklist_yaml['checklist_id']}
     )
 
     total_impact_dropdown = create_dropdown(
@@ -213,6 +221,7 @@ def layout(state: str = None):
                     total_impact_tooltip,
                     lcs_checklist,
                     scope_checklist,
+                    proj_type_checklist
                 ],            
                 title="Impact Controls",
                 item_id='proj_filters'
@@ -324,6 +333,7 @@ def add_filter_dropdown(cat_filters_toggle: list,
         Input({"type": "control", "id": 'total_impact_dropdown_byob'}, 'value'),
         Input({"type": "control", "id": 'floor_area_normal_byob'}, 'value'),
         Input({"type": "control", "id": 'scope_checklist'}, 'value'),
+        Input({"type": "control", "id": 'proj_type_checklist'}, 'value'),
         Input({"type": "control", "id": "lcs_checklist"}, 'value'),
         Input({"type": "control", "id": 'outlier_toggle_byob'}, 'value'),
         Input('sort_box_plot_byob', 'value'),
@@ -334,6 +344,7 @@ def update_data_for_byob(category_x: str,
                          objective: str,
                          cfa_gfa_type: str,
                          scope: list,
+                         proj_type: list,
                          lcs: list,
                          outlier_toggle_byob: list,
                          sort_box_byob: str,
@@ -364,7 +375,7 @@ def update_data_for_byob(category_x: str,
 
     # new construction filter
     metadata_df = metadata_df[
-        (metadata_df['bldg_proj_type'] == 'New Construction')
+        (metadata_df['bldg_proj_type'].isin(proj_type))
         & (metadata_df['bldg_prim_use'] != "Parking")
     ]
 
