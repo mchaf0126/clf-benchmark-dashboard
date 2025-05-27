@@ -906,3 +906,23 @@ scope_checklist:
   checklist_id: scope_checklist
   tooltip: TBD
   tooltip_id: TBD
+
+proj_type_checklist: 
+  label: Project Type  
+  checklist: 
+    - 
+      label: New Construction
+      value: New Construction
+    -  
+      label: Major Renovation
+      value: Major Renovation
+    -  
+      label: Minor Renovation
+      value: Minor Renovation
+    -  
+      label: Tenant Improvement
+      value: Tenant Improvement
+  first_item: [New Construction]
+  checklist_id: proj_type_checklist
+  tooltip: TBD
+  tooltip_id: TBD
