@@ -69,6 +69,7 @@ byob_figure = px.box(
     type='linear'
 ).update_traces(
     quartilemethod='inclusive',
+    boxmean=True,
     hovertemplate='Impact = %{x}<extra></extra>',
     jitter=0.5
 ).update_layout(
