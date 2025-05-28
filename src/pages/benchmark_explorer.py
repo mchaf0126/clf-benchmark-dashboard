@@ -84,12 +84,6 @@ byob_figure = px.box(
     margin={'pad': 10},
     font={'family': 'Source Sans Pro'}
 )
-# ).add_vline(
-#     label={
-#         'text': 'test',
-#         
-#     }
-# )
 # table = create_datatable(table_id='results_table_cat')
 
 def layout(state: str = None):
@@ -244,7 +238,6 @@ def layout(state: str = None):
                 value=state.get('cat_filter'),
                 multi=True,
                 clearable=False,
-                persistence=True,
                 optionHeight=80,
                 placeholder='If enabled, please select a filter'
             ),
@@ -290,13 +283,9 @@ def layout(state: str = None):
             ),
             dbc.AccordionItem(
                 [
-                    dbc.InputGroup(
-                        [
-                            line_toggle_byob,
-                            line_number_input,
-                            line_name_input
-                        ]
-                    )
+                    line_toggle_byob,
+                    line_number_input,
+                    line_name_input
                 ],
                 title="Reference Line",
                 item_id='ref_line'
@@ -443,14 +432,9 @@ def update_data_for_byob(category_x: str,
     metadata_df = pd.read_pickle(metadata_directory)
     impacts_by_lcs_scope_df = pd.read_parquet(impacts_directory)
 
-    # # turn checklists into workable lists
-    # lcs = sum(lcs, [])
-    # scope = sum(scope, [])
-
     # new construction filter
     metadata_df = metadata_df[
         (metadata_df['bldg_proj_type'].isin(proj_type))
-        & (metadata_df['bldg_prim_use'] != "Parking")
     ]
 
     # cat_value_filter
@@ -614,17 +598,8 @@ def update_chart(byob_data: dict):
           "color": "white",
         },
         "type": "line",
-        "x0": 0,
-        "x1": 0,
-        "xref": "x",
-        "y0": 0,
-        "y1": 1,
-        "yref": "y domain",
         "layer": "below"
     }
-
-    
-         
 
     patched_figure = Patch()
     patched_figure["data"][0]["x"] = df[values].values
