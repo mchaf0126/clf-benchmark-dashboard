@@ -439,6 +439,16 @@ def update_data_for_byob(category_x: str,
             )
         )
         category_order = grouped_medians.index.to_list()
+    elif sort_box_byob == 'sample_size':
+        grouped_medians = (
+            final_impacts.groupby(by=category_x)
+            .count()
+            .sort_values(
+                by=objective,
+                ascending=True
+            )
+        )
+        category_order = grouped_medians.index.to_list()
     else:
         category_order = category_order_map.get(category_x)
         category_order = list(reversed(category_order))

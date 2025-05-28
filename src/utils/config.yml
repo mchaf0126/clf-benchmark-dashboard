@@ -457,6 +457,8 @@ sort_box_plot_byob:
       value: median
     - label: Categorical value
       value: cat_value
+    - label: Sample Size
+      value: sample_size
   first_item: median
   radio_id: sort_box_plot_byob
   tooltip: Selecting "Median" sorts box plots from 
