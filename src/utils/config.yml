@@ -379,11 +379,11 @@ outlier_toggle_cont:
 outlier_toggle_byob:
   label: ""
   toggle_list:
-    - label: Remove outliers 
+    - label: Crop outliers 
       value: 1
   first_item: []
   toggle_id: outlier_toggle_byob
-  tooltip: This toggle will remove outliers from the scatter plot.
+  tooltip: This toggle will Crop outliers from the box plot.
     A project is considered an outlier if the selected impact or continuous variable
     of the project is 3 times the interquartile range of 
     all project impacts in the dataset.
