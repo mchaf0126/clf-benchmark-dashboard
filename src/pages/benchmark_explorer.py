@@ -10,8 +10,7 @@ from src.components.toggle import create_toggle
 from src.components.radio_items import create_radio_items
 from src.components.tooltip import create_tooltip
 from src.components.checklists import create_checklist
-from src.components.datatable import create_datatable, \
-    create_float_table_entry, create_string_table_entry, create_int_table_entry
+from src.components.inputs import create_float_input, create_str_input
 from src.utils.load_config import app_config
 from src.utils.general import create_graph_xshift
 from dash_bootstrap_templates import load_figure_template
@@ -58,6 +57,15 @@ assert field_name_map is not None, 'The config for field names could not be set'
 category_order_map = config.get('category_order_map')
 assert category_order_map is not None, 'The config for category orders could not be set'
 
+line_toggle_byob_yaml = config.get("line_toggle_byob")
+assert line_toggle_byob_yaml is not None, "The config for line toggle could not be set"
+
+line_number_input_yaml = config.get("line_number_input")
+assert line_number_input_yaml is not None, "The config for line number input could not be set"
+
+line_name_input_yaml = config.get("line_name_input")
+assert line_name_input_yaml is not None, "The config for line name input could not be set"
+
 
 byob_figure = px.box(
     color_discrete_sequence=["#FFB71B"],
@@ -75,18 +83,11 @@ byob_figure = px.box(
 ).update_layout(
     margin={'pad': 10},
     font={'family': 'Source Sans Pro'}
-).add_vline(
-    x=0,
-    line_color='white'
 )
 # ).add_vline(
-#     x=0,
-#     line_dash="dot",
-#     line_color='#AA182C',
 #     label={
 #         'text': 'test',
-#         'textposition': 'end',
-#         'textangle': 360,
+#         
 #     }
 # )
 # table = create_datatable(table_id='results_table_cat')
@@ -107,6 +108,7 @@ def layout(state: str = None):
         enable_filters_toggle_yaml['toggle_id']: enable_filters_toggle_yaml['first_item'],
         outlier_toggle_yaml['toggle_id']: outlier_toggle_yaml['first_item'],
         floor_area_radio_yaml['radio_id']: floor_area_radio_yaml['first_item'],
+        line_toggle_byob_yaml['toggle_id']: line_toggle_byob_yaml['first_item'],
         "cat_filter": []
     }
     # Decode the state from the hash
@@ -204,6 +206,28 @@ def layout(state: str = None):
         target_id=sort_box_radio_yaml['tooltip_id']
     )
 
+    line_toggle_byob = create_toggle(
+        toggle_list=line_toggle_byob_yaml['toggle_list'],
+        first_item=state.get(line_toggle_byob_yaml['toggle_id']),
+        toggle_id=line_toggle_byob_yaml['toggle_id'],
+        tooltip_id=line_toggle_byob_yaml['tooltip_id'],
+    )
+
+    line_number_input = create_float_input(
+        label=line_number_input_yaml["label"],
+        placeholder=line_number_input_yaml["placeholder"],
+        input_id=line_number_input_yaml["input_id"],
+        tooltip_id=line_number_input_yaml["tooltip_id"]
+    )
+
+    line_name_input = create_str_input(
+        label=line_name_input_yaml["label"],
+        placeholder=line_name_input_yaml["placeholder"],
+        input_id=line_name_input_yaml["input_id"],
+        tooltip_id=line_name_input_yaml["tooltip_id"]
+    )
+
+
     categorical_filter = html.Div(
         [
             dbc.Label(
@@ -258,15 +282,29 @@ def layout(state: str = None):
                     sort_box_radio,
                     sort_box_tooltip,
                     outlier_toggle,
-                    outlier_tooltip
+                    outlier_tooltip,
+                    
                 ],            
                 title="Additional Filters",
                 item_id='addl_filters'
             ),
+            dbc.AccordionItem(
+                [
+                    dbc.InputGroup(
+                        [
+                            line_toggle_byob,
+                            line_number_input,
+                            line_name_input
+                        ]
+                    )
+                ],
+                title="Reference Line",
+                item_id='ref_line'
+            )
         ],
         start_collapsed=True,
         always_open=True,
-        active_item=['axis_controls', 'proj_filters', 'addl_filters'],
+        active_item=['axis_controls', 'proj_filters', 'addl_filters', 'ref_line'],
         class_name='overflow-scroll h-100',
     )
 
@@ -313,6 +351,20 @@ def enable_filters(enable_filters_toggle):
         return True
     else:
         return False
+    
+
+@callback(
+    [
+        Output('line_number_input', 'disabled'),
+        Output('line_name_input', 'disabled'),
+    ],
+    Input("ref_line_toggle", 'value')
+)
+def enable_filters(enable_filters_toggle):
+    if enable_filters_toggle == []:
+        return True, True
+    else:
+        return False, False
 
 @callback(
     [
@@ -352,7 +404,10 @@ def add_filter_dropdown(cat_filters_toggle: list,
         Input({"type": "control", "id": "lcs_checklist"}, 'value'),
         Input({"type": "control", "id": 'outlier_toggle_byob'}, 'value'),
         Input('sort_box_plot_byob', 'value'),
-        Input({"type": "other", "id": 'cat_filter'}, 'value')
+        Input({"type": "other", "id": 'cat_filter'}, 'value'),
+        Input("ref_line_toggle", 'value'),
+        Input("line_number_input", 'value'),
+        Input("line_name_input", 'value')
     ]
 )
 def update_data_for_byob(category_x: str,
@@ -363,7 +418,11 @@ def update_data_for_byob(category_x: str,
                          lcs: list,
                          outlier_toggle_byob: list,
                          sort_box_byob: str,
-                         cat_filter: list):
+                         cat_filter: list,
+                         ref_line_toggle: list,
+                         ref_line_number: float,
+                         ref_line_name: str
+                         ):
     # path to directories of files
     current_file_path = Path(__file__)
     main_directory = current_file_path.parents[2]
@@ -434,6 +493,11 @@ def update_data_for_byob(category_x: str,
             (final_impacts[objective] < Q3 + 3 * IQR)
             & (final_impacts[objective] > Q1 - 3 * IQR)
         ]
+    
+    # set reference line visibility
+    ref_line_toggle_boolean = False
+    if ref_line_toggle == [1]:
+        ref_line_toggle_boolean = True
 
     # wrap text for formatting
     def customwrap(s, width=25):
@@ -471,8 +535,9 @@ def update_data_for_byob(category_x: str,
     return {
         'byob_data': final_impacts.to_dict(),
         'sort': category_order,
-        'v_line': True,
-        'v_line_location': 10
+        'v_line': ref_line_toggle_boolean,
+        'v_line_location': ref_line_number,
+        'v_line_text': ref_line_name
     }
 
     
@@ -520,22 +585,47 @@ def update_chart(byob_data: dict):
     elif values == 'Ozone Depletion Potential Intensity':
         tickformat_decimal =',.8f'
     else:
-        tickformat_decimal =',.0f'    
+        tickformat_decimal =',.0f'
 
-    vertical_line = {
-        'label': {'text': 'test', 'textangle': 0, 'textposition': 'end'},
-        'line': {'color': '#AA182C', 'dash': 'dot'},
-        'type': 'line',
-        'x0': byob_data.get('v_line_location'),
-        'x1': byob_data.get('v_line_location'),
-        'xref': 'x',
-        'y0': 0,
-        'y1': 1,
-        'yref': 'y domain',
-        'layer': 'above'
+    ref_line_location = byob_data.get("v_line_location")
+    if byob_data.get("v_line_location", None) is None:
+        ref_line_location = 0
+        
+    shape = {
+        "label": {
+          "textangle": 0,
+          "textposition": "end",
+          "text": byob_data.get("v_line_text")
+        },
+        "line": {
+          "color": "#AA182C",
+          "dash": "dot"
+        },
+        "type": "line",
+        "x0": ref_line_location,
+        "x1": ref_line_location,
+        "xref": "x",
+        "y0": 0,
+        "y1": 1,
+        "yref": "y domain"
+    }
+    no_shape = {
+        "line": {
+          "color": "white",
+        },
+        "type": "line",
+        "x0": 0,
+        "x1": 0,
+        "xref": "x",
+        "y0": 0,
+        "y1": 1,
+        "yref": "y domain",
+        "layer": "below"
     }
 
-    print(byob_figure)
+    
+         
+
     patched_figure = Patch()
     patched_figure["data"][0]["x"] = df[values].values
     patched_figure["data"][0]["y"] = df[categories].values
@@ -548,7 +638,9 @@ def update_chart(byob_data: dict):
     patched_figure["layout"]["yaxis"]["categoryarray"] = category_order
     patched_figure["layout"]["yaxis"]["categoryorder"] = "array"
     if byob_data.get('v_line'):
-        patched_figure["layout"]["shapes"][0] = vertical_line
+        patched_figure["layout"]["shapes"][0] = shape
+    else: 
+        patched_figure["layout"]["shapes"][0] = no_shape
 
     return patched_figure
 

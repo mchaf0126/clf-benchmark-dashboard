@@ -928,3 +928,28 @@ proj_type_checklist:
   checklist_id: proj_type_checklist
   tooltip: TBD
   tooltip_id: TBD
+
+line_toggle_byob:
+  label: ""
+  toggle_list:
+    - label: Enable reference line
+      value: 1
+  first_item: []
+  toggle_id: ref_line_toggle
+  tooltip: TBD
+  tooltip_id: TBD
+
+line_number_input:
+  label: Value of vertical line
+  placeholder: Integer 
+  input_id: line_number_input
+  tooltip: TBD
+  tooltip_id: TBD
+
+line_name_input:
+  label: Name of reference value
+  placeholder: Text 
+  input_id: line_name_input
+  tooltip: TBD
+  tooltip_id: TBD
+
