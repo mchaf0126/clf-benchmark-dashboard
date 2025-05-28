@@ -76,7 +76,8 @@ byob_figure = px.box(
     margin={'pad': 10},
     font={'family': 'Source Sans Pro'}
 ).add_vline(
-    x=0
+    x=0,
+    line_color='white'
 )
 # ).add_vline(
 #     x=0,
@@ -469,7 +470,9 @@ def update_data_for_byob(category_x: str,
 
     return {
         'byob_data': final_impacts.to_dict(),
-        'sort': category_order
+        'sort': category_order,
+        'v_line': True,
+        'v_line_location': 10
     }
 
     
@@ -519,12 +522,12 @@ def update_chart(byob_data: dict):
     else:
         tickformat_decimal =',.0f'    
 
-    shape = {
+    vertical_line = {
         'label': {'text': 'test', 'textangle': 0, 'textposition': 'end'},
         'line': {'color': '#AA182C', 'dash': 'dot'},
         'type': 'line',
-        'x0': 5,
-        'x1': 5,
+        'x0': byob_data.get('v_line_location'),
+        'x1': byob_data.get('v_line_location'),
         'xref': 'x',
         'y0': 0,
         'y1': 1,
@@ -538,13 +541,14 @@ def update_chart(byob_data: dict):
     patched_figure["data"][0]["y"] = df[categories].values
 
     patched_figure["layout"]["annotations"] = annotations
-    patched_figure["layout"]["shapes"][0] = shape
     patched_figure["layout"]["xaxis"]["title"]["text"] = f"{values} {units_map.get(values)}"
     patched_figure["layout"]["xaxis"]["range"] = [0, max_of_df+xshift]
     patched_figure["layout"]["xaxis"]["tickformat"] = tickformat_decimal
     patched_figure["layout"]["yaxis"]["title"]["text"] = field_name_map.get(categories)
     patched_figure["layout"]["yaxis"]["categoryarray"] = category_order
     patched_figure["layout"]["yaxis"]["categoryorder"] = "array"
+    if byob_data.get('v_line'):
+        patched_figure["layout"]["shapes"][0] = vertical_line
 
     return patched_figure
 
