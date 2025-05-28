@@ -74,7 +74,20 @@ byob_figure = px.box(
     jitter=0.5
 ).update_layout(
     margin={'pad': 10},
+    font={'family': 'Source Sans Pro'}
+).add_vline(
+    x=0
 )
+# ).add_vline(
+#     x=0,
+#     line_dash="dot",
+#     line_color='#AA182C',
+#     label={
+#         'text': 'test',
+#         'textposition': 'end',
+#         'textangle': 360,
+#     }
+# )
 # table = create_datatable(table_id='results_table_cat')
 
 def layout(state: str = None):
@@ -506,28 +519,43 @@ def update_chart(byob_data: dict):
     else:
         tickformat_decimal =',.0f'    
 
+    shape = {
+        'label': {'text': 'test', 'textangle': 0, 'textposition': 'end'},
+        'line': {'color': '#AA182C', 'dash': 'dot'},
+        'type': 'line',
+        'x0': 5,
+        'x1': 5,
+        'xref': 'x',
+        'y0': 0,
+        'y1': 1,
+        'yref': 'y domain',
+        'layer': 'above'
+    }
+
+    print(byob_figure)
     patched_figure = Patch()
     patched_figure["data"][0]["x"] = df[values].values
     patched_figure["data"][0]["y"] = df[categories].values
 
     patched_figure["layout"]["annotations"] = annotations
+    patched_figure["layout"]["shapes"][0] = shape
     patched_figure["layout"]["xaxis"]["title"]["text"] = f"{values} {units_map.get(values)}"
     patched_figure["layout"]["xaxis"]["range"] = [0, max_of_df+xshift]
     patched_figure["layout"]["xaxis"]["tickformat"] = tickformat_decimal
     patched_figure["layout"]["yaxis"]["title"]["text"] = field_name_map.get(categories)
     patched_figure["layout"]["yaxis"]["categoryarray"] = category_order
     patched_figure["layout"]["yaxis"]["categoryorder"] = "array"
-    patched_figure["layout"]["font"]["family"] = "Source Sans Pro"
 
     return patched_figure
 
 
-@callback(
-    Output('help_div', 'children'),
-    Input('byob_figure', 'figure')
-)
-def test_one(figure_data):
-    return json.dumps(figure_data, indent=2)
+# @callback(
+#     Output('help_div', 'children'),
+#     Input('byob_graph', 'figure')
+# )
+# def test_one(figure_data):
+#     print(json.dumps(figure_data, indent=2))
+#     return json.dumps(figure_data, indent=2)
 
 
 @callback(
