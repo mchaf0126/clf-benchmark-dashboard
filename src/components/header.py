@@ -25,7 +25,8 @@ def create_header() -> html.Div:
                     ),
                     dbc.Col(
                         dbc.NavbarBrand(
-                            'Interactive Dashboard',
+                            'Benchmark Explorer',
+                            href='/benchmark_explorer',
                             className='fs-3 text-white fw-bolder text-wrap'
                         ),
                         width=6,
@@ -39,13 +40,6 @@ def create_header() -> html.Div:
                                         dbc.NavLink(
                                             'Home',
                                             href='/',
-                                            className='fs-5 text-white fw-bolder'
-                                        ),
-                                ),
-                                dbc.NavItem(
-                                        dbc.NavLink(
-                                            'Benchmark Explorer',
-                                            href='/benchmark_explorer',
                                             className='fs-5 text-white fw-bolder'
                                         ),
                                 ),
