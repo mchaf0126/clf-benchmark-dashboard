@@ -138,8 +138,8 @@ categorical_dropdown_byob:
       value: lca_software
     - 
       label: Physical Scope Summary
-      value: bldg_prim_use
-  first_item: site_state_province
+      value: lca_phys_scope
+  first_item: bldg_prim_use
   dropdown_id: categorical_dropdown_byob
   tooltip: Categorical values are those that can take on 
     one of a limited number of possible values. These values will 
