@@ -969,3 +969,13 @@ caption_orders:
     - Major Renovation
     - Minor Renovation
     - Tenant Improvement
+  
+cat_selection_toggle_byob:
+  label: ""
+  toggle_list:
+    - label: Enable categorical selection
+      value: 1
+  first_item: [1]
+  toggle_id: cat_selection_toggle_byob
+  tooltip: TBD
+  tooltip_id: TBD
