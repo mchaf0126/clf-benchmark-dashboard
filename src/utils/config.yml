@@ -649,6 +649,7 @@ field_name_map:
   median: median
   sample_size: sample size 
   cat_value: predetermined categorical values
+  All: Selected Project Types
 
 category_order_map:
   site_country:
@@ -977,5 +978,14 @@ cat_selection_toggle_byob:
       value: 1
   first_item: [1]
   toggle_id: cat_selection_toggle_byob
+  tooltip: TBD
+  tooltip_id: TBD
+
+cat_filter:
+  label: Categorical values to filter
+  dropdown_list:
+  first_item:
+  dropdown_id: cat_filter
+  placeholder: If enabled, please select a filter
   tooltip: TBD
   tooltip_id: TBD

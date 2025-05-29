@@ -5,7 +5,7 @@ import plotly.express as px
 import pandas as pd
 from dash import html, dcc, callback, Input, Output, State, register_page, ALL, Patch, ctx
 import dash_bootstrap_components as dbc
-from src.components.dropdowns import create_dropdown
+from src.components.dropdowns import create_dropdown, create_multi_dropdown
 from src.components.toggle import create_toggle
 from src.components.radio_items import create_radio_items
 from src.components.tooltip import create_tooltip
@@ -47,6 +47,9 @@ assert outlier_toggle_yaml is not None, 'The config for outlier toggle could not
 
 cat_selection_toggle_yaml = config.get('cat_selection_toggle_byob')
 assert cat_selection_toggle_yaml is not None, 'The config for categorical selection toggle could not be set'
+
+cat_filter_yaml = config.get('cat_filter')
+assert cat_filter_yaml is not None, 'The config for cat filter could not be set'
 
 floor_area_radio_yaml = config.get('floor_area_normalization_byob')
 assert floor_area_radio_yaml is not None, 'The config for floor area norm. could not be set'
@@ -113,7 +116,7 @@ def layout(state: str = None):
         outlier_toggle_yaml['toggle_id']: outlier_toggle_yaml['first_item'],
         floor_area_radio_yaml['radio_id']: floor_area_radio_yaml['first_item'],
         line_toggle_byob_yaml['toggle_id']: line_toggle_byob_yaml['first_item'],
-        "cat_filter": [],
+        cat_filter_yaml['dropdown_id']: [],
         cat_selection_toggle_yaml['toggle_id']: cat_selection_toggle_yaml['first_item']
     }
     # Decode the state from the hash
@@ -239,28 +242,11 @@ def layout(state: str = None):
         tooltip_id=line_name_input_yaml["tooltip_id"]
     )
 
-
-    categorical_filter = html.Div(
-        [
-            dbc.Label(
-                [
-                    "Categorical values to filter",
-                    html.Span(
-                        ' 🛈',
-                        id='cat_filter_tooltip_id'
-                    )
-                ]
-            ),
-            dcc.Dropdown(
-                id={"type": "other", "id": 'cat_filter'},
-                value=state.get('cat_filter'),
-                multi=True,
-                clearable=False,
-                optionHeight=80,
-                placeholder='If enabled, please select a filter'
-            ),
-        ],
-        className='mb-4'
+    categorical_filter = create_multi_dropdown(
+        label=cat_filter_yaml["label"],
+        tooltip_id=cat_filter_yaml["tooltip_id"],
+        dropdown_id={"type": "other", "id": cat_filter_yaml["dropdown_id"]},
+        placeholder="If enabled, please select a filter"
     )
 
     controls_byob = dbc.Accordion(
