@@ -649,6 +649,7 @@ field_name_map:
   median: median
   sample_size: sample size 
   cat_value: predetermined categorical values
+  All: Selected Project Types
 
 category_order_map:
   site_country:
@@ -979,3 +980,55 @@ cat_selection_toggle_byob:
   toggle_id: cat_selection_toggle_byob
   tooltip: TBD
   tooltip_id: TBD
+
+cat_filter:
+  label: Categorical values to filter
+  dropdown_list:
+  first_item:
+  dropdown_id: cat_filter
+  placeholder: If enabled, please select a filter
+  tooltip: TBD
+  tooltip_id: TBD
+
+mat_filter_toggle_byob:
+  label: ""
+  toggle_list:
+    - label: Enable material selection
+      value: 1
+  first_item: []
+  toggle_id: mat_filter_toggle_byob
+  tooltip: TBD
+  tooltip_id: TBD
+
+mat_filter:
+  label: Materials to filter
+  dropdown_list:
+  first_item:
+  dropdown_id: mat_filter
+  placeholder: If enabled, please select a filter
+  tooltip: TBD
+  tooltip_id: TBD
+
+material_list: 
+  - Acoustic ceilings
+  - Adhesives and sealants
+  - Air and vapor barriers
+  - Aluminum
+  - Applied fireproofing
+  - Cladding
+  - Coatings
+  - Concrete
+  - Doors and frames
+  - Flooring and tile
+  - Glazing
+  - Gypsum
+  - Insulation  
+  - Masonry
+  - Other
+  - Other metals
+  - Roofing and waterproofing
+  - Steel
+  - Synthetic composites
+  - Wall coverings
+  - Windows and frames
+  - Wood and composites
