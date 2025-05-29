@@ -45,6 +45,9 @@ assert new_constr_toggle_yaml is not None, 'The config for new construction coul
 outlier_toggle_yaml = config.get('outlier_toggle_byob')
 assert outlier_toggle_yaml is not None, 'The config for outlier toggle could not be set'
 
+cat_selection_toggle_yaml = config.get('cat_selection_toggle_byob')
+assert cat_selection_toggle_yaml is not None, 'The config for categorical selection toggle could not be set'
+
 floor_area_radio_yaml = config.get('floor_area_normalization_byob')
 assert floor_area_radio_yaml is not None, 'The config for floor area norm. could not be set'
 
@@ -110,7 +113,8 @@ def layout(state: str = None):
         outlier_toggle_yaml['toggle_id']: outlier_toggle_yaml['first_item'],
         floor_area_radio_yaml['radio_id']: floor_area_radio_yaml['first_item'],
         line_toggle_byob_yaml['toggle_id']: line_toggle_byob_yaml['first_item'],
-        "cat_filter": []
+        "cat_filter": [],
+        cat_selection_toggle_yaml['toggle_id']: cat_selection_toggle_yaml['first_item']
     }
     # Decode the state from the hash
     state = defaults | (json.loads(base64.b64decode(state)) if state else {})
@@ -179,6 +183,13 @@ def layout(state: str = None):
     outlier_tooltip = create_tooltip(
         tooltip_text=outlier_toggle_yaml['tooltip'],
         target_id=outlier_toggle_yaml['tooltip_id']
+    )
+
+    cat_selection_toggle = create_toggle(
+        toggle_list=cat_selection_toggle_yaml['toggle_list'],
+        first_item=state.get(cat_selection_toggle_yaml['toggle_id']),
+        toggle_id={"type": "control", "id": cat_selection_toggle_yaml['toggle_id']},
+        tooltip_id=cat_selection_toggle_yaml['tooltip_id'],
     )
 
     floor_area_radio = create_radio_items(
@@ -267,6 +278,7 @@ def layout(state: str = None):
             ),
             dbc.AccordionItem(
                 [
+                    cat_selection_toggle,
                     categorical_dropdown,
                     categorical_tooltip,
                     enable_filters_toggle,
@@ -397,6 +409,7 @@ def add_filter_dropdown(cat_filters_toggle: list,
         Input({"type": "control", "id": 'scope_checklist'}, 'value'),
         Input({"type": "control", "id": 'proj_type_checklist'}, 'value'),
         Input({"type": "control", "id": "lcs_checklist"}, 'value'),
+        Input({"type": "control", "id": "cat_selection_toggle_byob"}, "value"),
         Input({"type": "control", "id": 'outlier_toggle_byob'}, 'value'),
         Input('sort_box_plot_byob', 'value'),
         Input({"type": "other", "id": 'cat_filter'}, 'value'),
@@ -411,6 +424,7 @@ def update_data_for_byob(category_x: str,
                          scope: list,
                          proj_type: list,
                          lcs: list,
+                         cat_selection_toggle: list,
                          outlier_toggle_byob: list,
                          sort_box_byob: str,
                          cat_filter: list,
@@ -442,21 +456,25 @@ def update_data_for_byob(category_x: str,
     metadata_df = metadata_df[
         (metadata_df['bldg_proj_type'].isin(proj_type))
     ]
+    print(cat_selection_toggle)
 
-    # cat_value_filter
-    if cat_filter is None:
-        cat_filter = []
-    elif len(cat_filter) == 0:
-        cat_filter = []
-    elif isinstance(cat_filter, str):
-        cat_filter = [cat_filter]
-        metadata_df = metadata_df[
-            metadata_df[category_x].isin(cat_filter)
-        ]
-    else: 
-        metadata_df = metadata_df[
-            metadata_df[category_x].isin(cat_filter)
-        ]
+    # cat selection toggle
+    if cat_selection_toggle == [1]:
+        # cat_value_filter
+        print('hi')
+        if cat_filter is None:
+            cat_filter = []
+        elif len(cat_filter) == 0:
+            cat_filter = []
+        elif isinstance(cat_filter, str):
+            cat_filter = [cat_filter]
+            metadata_df = metadata_df[
+                metadata_df[category_x].isin(cat_filter)
+            ]
+        else: 
+            metadata_df = metadata_df[
+                metadata_df[category_x].isin(cat_filter)
+            ]
 
     # filter based on LCS and omniclass element
     new_impacts = impacts_by_lcs_scope_df.loc[
@@ -466,7 +484,12 @@ def update_data_for_byob(category_x: str,
 
     # create impacts and intensity metric
     new_impacts_gb = new_impacts.groupby('project_index')[intensity_metric_map.get(objective)].sum()
-    final_impacts = metadata_df[['project_index', category_x, cfa_gfa_type]].set_index('project_index').merge(
+    if cat_selection_toggle == [1]:
+        metadata_gb = metadata_df[['project_index', category_x, cfa_gfa_type]]
+    else: 
+        metadata_gb =  metadata_df[['project_index', cfa_gfa_type]]
+
+    final_impacts = metadata_gb.set_index('project_index').merge(
         new_impacts_gb,
         how='left',
         left_index=True,
@@ -488,40 +511,46 @@ def update_data_for_byob(category_x: str,
     ref_line_toggle_boolean = False
     if ref_line_toggle == [1]:
         ref_line_toggle_boolean = True
+    
 
     # wrap text for formatting
     def customwrap(s, width=25):
         if type(s) is not float:
             return "<br>".join(textwrap.wrap(s, width=width))
-    final_impacts[category_x] = final_impacts[category_x].map(customwrap)
+    if cat_selection_toggle == [1]:
+        final_impacts[category_x] = final_impacts[category_x].map(customwrap)
     final_impacts = final_impacts.drop(columns=[intensity_metric_map.get(objective), cfa_gfa_type])
 
     # category orders
-    if sort_box_byob == 'median':
-        grouped_medians = (
-            final_impacts.groupby(by=category_x)
-            .median()
-            .sort_values(
-                by=objective,
-                ascending=True
+    if cat_selection_toggle == [1]:
+        if sort_box_byob == 'median':
+            grouped_medians = (
+                final_impacts.groupby(by=category_x)
+                .median()
+                .sort_values(
+                    by=objective,
+                    ascending=True
+                )
             )
-        )
-        category_order = grouped_medians.index.to_list()
-    elif sort_box_byob == 'sample_size':
-        grouped_medians = (
-            final_impacts.groupby(by=category_x)
-            .count()
-            .sort_values(
-                by=objective,
-                ascending=True
+            category_order = grouped_medians.index.to_list()
+        elif sort_box_byob == 'sample_size':
+            grouped_medians = (
+                final_impacts.groupby(by=category_x)
+                .count()
+                .sort_values(
+                    by=objective,
+                    ascending=True
+                )
             )
-        )
-        category_order = grouped_medians.index.to_list()
+            category_order = grouped_medians.index.to_list()
+        else:
+            category_order = category_order_map.get(category_x)
+            category_order = [item for item in category_order if item in list(final_impacts[category_x].unique())]
+            category_order = list(reversed(category_order))
+            category_order = [customwrap(s) for s in category_order]
     else:
-        category_order = category_order_map.get(category_x)
-        category_order = [item for item in category_order if item in list(final_impacts[category_x].unique())]
-        category_order = list(reversed(category_order))
-        category_order = [customwrap(s) for s in category_order]
+        category_order = []
+    
 
     return {
         'byob_data': final_impacts.to_dict(),
@@ -600,8 +629,13 @@ def update_chart(byob_data: dict):
     df = pd.DataFrame.from_dict(byob_data.get('byob_data'))
     category_order = byob_data.get('sort')
     column_list = list(df.columns)
-    categories = column_list[0]
-    values = column_list[1]
+    if len(column_list) == 1:
+        values = column_list[0]
+        categories = "All"
+        df[categories] = categories
+    else:
+        categories = column_list[0]
+        values = column_list[1]
     
     annotations = []
     max_of_df = df[values].max()
