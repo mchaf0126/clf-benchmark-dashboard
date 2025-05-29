@@ -580,7 +580,6 @@ def create_notes_below_graph(category_x: str,
         crop_option = "have not been"
     
     return [
-        dcc.Markdown("### Notes"),
         dcc.Markdown(
             f"""
             This box plot represents the {field_name_map.get(category_x)} plotted by {objective}. 
