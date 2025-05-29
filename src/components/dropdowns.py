@@ -76,7 +76,7 @@ def create_multi_dropdown(label: str,
                 multi=True,
                 clearable=False,
                 persistence=False,
-                optionHeight=80,
+                optionHeight=60,
                 placeholder=placeholder
             ),
         ],
