@@ -91,14 +91,6 @@ byob_figure = px.box(
     line_color='white',
     layer='below'
 )
-
-no_shape = {
-        "line": {
-          "color": "white",
-        },
-        "type": "line",
-        "layer": "below"
-    }
 # table = create_datatable(table_id='results_table_cat')
 
 def layout(state: str = None):
