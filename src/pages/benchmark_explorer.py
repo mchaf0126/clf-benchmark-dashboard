@@ -66,10 +66,13 @@ assert line_number_input_yaml is not None, "The config for line number input cou
 line_name_input_yaml = config.get("line_name_input")
 assert line_name_input_yaml is not None, "The config for line name input could not be set"
 
+caption_orders = config.get("caption_orders")
+assert caption_orders is not None, "The config for caption orders could not be set"
+
 
 byob_figure = px.box(
     color_discrete_sequence=["#FFB71B"],
-    height=600,
+    height=550,
     orientation='h',
     points='all',
 ).update_xaxes(
@@ -83,13 +86,19 @@ byob_figure = px.box(
 ).update_layout(
     margin={'pad': 10},
     font={'family': 'Source Sans Pro'}
+).add_vline(
+    x=0,
+    line_color='white',
+    layer='below'
 )
-# ).add_vline(
-#     label={
-#         'text': 'test',
-#         
-#     }
-# )
+
+no_shape = {
+        "line": {
+          "color": "white",
+        },
+        "type": "line",
+        "layer": "below"
+    }
 # table = create_datatable(table_id='results_table_cat')
 
 def layout(state: str = None):
@@ -244,7 +253,6 @@ def layout(state: str = None):
                 value=state.get('cat_filter'),
                 multi=True,
                 clearable=False,
-                persistence=True,
                 optionHeight=80,
                 placeholder='If enabled, please select a filter'
             ),
@@ -290,13 +298,9 @@ def layout(state: str = None):
             ),
             dbc.AccordionItem(
                 [
-                    dbc.InputGroup(
-                        [
-                            line_toggle_byob,
-                            line_number_input,
-                            line_name_input
-                        ]
-                    )
+                    line_toggle_byob,
+                    line_number_input,
+                    line_name_input
                 ],
                 title="Reference Line",
                 item_id='ref_line'
@@ -316,11 +320,12 @@ def layout(state: str = None):
                         [
                             controls_byob
                         ], xs=4, sm=4, md=4, lg=4, xl=3, xxl=3,
-                        style={'max-height': '700px'}
+                        style={'max-height': '750px'}
                     ),
                     dbc.Col(
                         [
                             dcc.Graph(figure=byob_figure, id="byob_graph"),
+                            html.Div(id='help_div'),
                             html.Div([
                                 dbc.Button(
                                     "Download Table Contents",
@@ -330,8 +335,7 @@ def layout(state: str = None):
                                     className='my-2 fw-bold'
                                 ),
                                 dcc.Download(id="download-tbl-byob"),
-                            ]),
-                            html.Div(id='help_div')
+                            ])
                         ], xs=8, sm=8, md=8, lg=8, xl=7, xxl=7,
                     ),
                 ],
@@ -388,7 +392,6 @@ def add_filter_dropdown(cat_filters_toggle: list,
         metadata_df = pd.read_pickle(metadata_directory)
         metadata_df = metadata_df[
             (metadata_df['bldg_proj_type'] == 'New Construction')
-            & (metadata_df['bldg_prim_use'] != "Parking")
         ]
         return metadata_df[category_x].dropna().unique(), metadata_df[category_x].unique()[0]
 
@@ -443,14 +446,9 @@ def update_data_for_byob(category_x: str,
     metadata_df = pd.read_pickle(metadata_directory)
     impacts_by_lcs_scope_df = pd.read_parquet(impacts_directory)
 
-    # # turn checklists into workable lists
-    # lcs = sum(lcs, [])
-    # scope = sum(scope, [])
-
     # new construction filter
     metadata_df = metadata_df[
         (metadata_df['bldg_proj_type'].isin(proj_type))
-        & (metadata_df['bldg_prim_use'] != "Parking")
     ]
 
     # cat_value_filter
@@ -529,6 +527,7 @@ def update_data_for_byob(category_x: str,
         category_order = grouped_medians.index.to_list()
     else:
         category_order = category_order_map.get(category_x)
+        category_order = [item for item in category_order if item in list(final_impacts[category_x].unique())]
         category_order = list(reversed(category_order))
         category_order = [customwrap(s) for s in category_order]
 
@@ -539,6 +538,55 @@ def update_data_for_byob(category_x: str,
         'v_line_location': ref_line_number,
         'v_line_text': ref_line_name
     }
+
+
+@callback(
+    Output('help_div', 'children'),
+    [
+        Input({"type": "control", "id": 'categorical_dropdown_byob'}, 'value'),
+        Input({"type": "control", "id": 'total_impact_dropdown_byob'}, 'value'),
+        Input({"type": "control", "id": 'floor_area_normal_byob'}, 'value'),
+        Input({"type": "control", "id": 'scope_checklist'}, 'value'),
+        Input({"type": "control", "id": 'proj_type_checklist'}, 'value'),
+        Input({"type": "control", "id": "lcs_checklist"}, 'value'),
+        Input({"type": "control", "id": 'outlier_toggle_byob'}, 'value'),
+        Input('sort_box_plot_byob', 'value'),
+    ]
+)
+def create_notes_below_graph(category_x: str,
+                             objective: str,
+                             cfa_gfa_type: str,
+                             scope: list,
+                             proj_type: list,
+                             lcs: list,
+                             outlier_toggle_byob: list,
+                             sort_box_byob: str,):
+    
+    sorted_lcs = ", ".join(sorted(lcs))
+    sorted_scope = [item for item in caption_orders.get('scope_order') if item in scope]
+    sorted_proj_type = [item for item in caption_orders.get('proj_type_order') if item in proj_type]
+    sorted_scope = ", ".join(sorted_scope)
+    sorted_proj_type = ", ".join(proj_type)
+    if outlier_toggle_byob == [1]:
+        crop_option = "have been"
+    else:
+        crop_option = "have not been"
+    
+    return [
+        dcc.Markdown("### Notes"),
+        dcc.Markdown(
+            f"""
+            This box plot represents the {field_name_map.get(category_x)} plotted by {objective}. 
+            The environmental metric is normalized by {field_name_map.get(cfa_gfa_type)}. The boxes are sorted 
+            by {field_name_map.get(sort_box_byob)}, and outliers {crop_option} cropped. The following
+            additional metrics have been selected:
+            - **Life Cycle Stages**: {sorted_lcs}
+            - **Element Scopes**: {sorted_scope}
+            - **Project Types**: {sorted_proj_type}
+            """
+        )
+    ]
+
 
     
 @callback(
@@ -558,7 +606,7 @@ def update_chart(byob_data: dict):
     }
 
     df = pd.DataFrame.from_dict(byob_data.get('byob_data'))
-    category_order = byob_data.get('sort')    
+    category_order = byob_data.get('sort')
     column_list = list(df.columns)
     categories = column_list[0]
     values = column_list[1]
@@ -613,24 +661,22 @@ def update_chart(byob_data: dict):
         "line": {
           "color": "white",
         },
-        "type": "line",
         "x0": 0,
         "x1": 0,
         "xref": "x",
         "y0": 0,
         "y1": 1,
         "yref": "y domain",
+        "type": "line",
         "layer": "below"
     }
-
-    
-         
 
     patched_figure = Patch()
     patched_figure["data"][0]["x"] = df[values].values
     patched_figure["data"][0]["y"] = df[categories].values
 
     patched_figure["layout"]["annotations"] = annotations
+    patched_figure["layout"]["title"]["text"] = f"{values} of {field_name_map.get(categories)}"
     patched_figure["layout"]["xaxis"]["title"]["text"] = f"{values} {units_map.get(values)}"
     patched_figure["layout"]["xaxis"]["range"] = [0, max_of_df+xshift]
     patched_figure["layout"]["xaxis"]["tickformat"] = tickformat_decimal

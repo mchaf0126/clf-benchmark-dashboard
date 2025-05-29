@@ -70,7 +70,8 @@ def create_float_input(label: str, tooltip_id: str, placeholder: str, input_id: 
                 type='number',
                 id=input_id,
                 persistence=False,
-                maxlength=30
+                maxlength=10,
+                min=0
             ),
         ],
         className='mb-2'
