@@ -524,6 +524,7 @@ def update_data_for_byob(category_x: str,
         category_order = grouped_medians.index.to_list()
     else:
         category_order = category_order_map.get(category_x)
+        category_order = [item for item in category_order if item in list(final_impacts[category_x].unique())]
         category_order = list(reversed(category_order))
         category_order = [customwrap(s) for s in category_order]
 
@@ -557,8 +558,6 @@ def update_chart(byob_data: dict):
     column_list = list(df.columns)
     categories = column_list[0]
     values = column_list[1]
-
-    category_order = list(set(category_order).intersection(set(list(df[categories]))))
     
     annotations = []
     max_of_df = df[values].max()
@@ -639,13 +638,13 @@ def update_chart(byob_data: dict):
     return patched_figure
 
 
-@callback(
-    Output('help_div', 'children'),
-    Input('byob_graph', 'figure')
-)
-def test_one(figure_data):
-    print(json.dumps(figure_data, indent=2))
-    return json.dumps(figure_data, indent=2)
+# @callback(
+#     Output('help_div', 'children'),
+#     Input('byob_graph', 'figure')
+# )
+# def test_one(figure_data):
+#     print(json.dumps(figure_data, indent=2))
+#     return json.dumps(figure_data, indent=2)
 
 
 @callback(
