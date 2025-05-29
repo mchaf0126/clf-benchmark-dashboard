@@ -138,7 +138,7 @@ categorical_dropdown_byob:
       value: lca_software
     - 
       label: Physical Scope Summary
-      value: lca_phys_scope
+      value: bldg_prim_use
   first_item: site_state_province
   dropdown_id: categorical_dropdown_byob
   tooltip: Categorical values are those that can take on 
@@ -881,7 +881,7 @@ lcs_checklist:
     -  
       label: D
       value: D
-  first_item: [A1-A3]
+  first_item: [A1-A3, A4, B4-B5, C2-C4]
   checklist_id: lcs_checklist
   tooltip: TBD
   tooltip_id: TBD
@@ -907,7 +907,7 @@ scope_checklist:
     -  
       label: "Unknown"
       value: "Unknown"
-  first_item: ["Substructure", "Shell - Superstructure"]
+  first_item: ["Substructure", "Shell - Superstructure", "Shell - Enclosure"]
   checklist_id: scope_checklist
   tooltip: TBD
   tooltip_id: TBD
