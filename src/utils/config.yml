@@ -646,6 +646,9 @@ field_name_map:
   str_grid_long: Typical Column Grid, Long Direction
   str_grid_short: Typical Column Grid, Short Direction
   lca_ec_reduction_percent: Embodied Carbon Reduction Percentage
+  median: median
+  sample_size: sample size 
+  cat_value: predetermined categorical values
 
 category_order_map:
   site_country:
@@ -953,3 +956,16 @@ line_name_input:
   tooltip: TBD
   tooltip_id: TBD
 
+caption_orders:
+  scope_order:
+    - Substructure
+    - "Shell - Superstructure"
+    - "Shell - Enclosure"
+    - "Interiors - Construction"
+    - "Interiors - Finishes"
+    - Unknown
+  proj_type_order:
+    - New Construction
+    - Major Renovation
+    - Minor Renovation
+    - Tenant Improvement

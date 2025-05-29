@@ -66,10 +66,13 @@ assert line_number_input_yaml is not None, "The config for line number input cou
 line_name_input_yaml = config.get("line_name_input")
 assert line_name_input_yaml is not None, "The config for line name input could not be set"
 
+caption_orders = config.get("caption_orders")
+assert caption_orders is not None, "The config for caption orders could not be set"
+
 
 byob_figure = px.box(
     color_discrete_sequence=["#FFB71B"],
-    height=600,
+    height=550,
     orientation='h',
     points='all',
 ).update_xaxes(
@@ -317,11 +320,12 @@ def layout(state: str = None):
                         [
                             controls_byob
                         ], xs=4, sm=4, md=4, lg=4, xl=3, xxl=3,
-                        style={'max-height': '700px'}
+                        style={'max-height': '750px'}
                     ),
                     dbc.Col(
                         [
                             dcc.Graph(figure=byob_figure, id="byob_graph"),
+                            html.Div(id='help_div'),
                             html.Div([
                                 dbc.Button(
                                     "Download Table Contents",
@@ -331,8 +335,7 @@ def layout(state: str = None):
                                     className='my-2 fw-bold'
                                 ),
                                 dcc.Download(id="download-tbl-byob"),
-                            ]),
-                            html.Div(id='help_div')
+                            ])
                         ], xs=8, sm=8, md=8, lg=8, xl=7, xxl=7,
                     ),
                 ],
@@ -536,6 +539,55 @@ def update_data_for_byob(category_x: str,
         'v_line_text': ref_line_name
     }
 
+
+@callback(
+    Output('help_div', 'children'),
+    [
+        Input({"type": "control", "id": 'categorical_dropdown_byob'}, 'value'),
+        Input({"type": "control", "id": 'total_impact_dropdown_byob'}, 'value'),
+        Input({"type": "control", "id": 'floor_area_normal_byob'}, 'value'),
+        Input({"type": "control", "id": 'scope_checklist'}, 'value'),
+        Input({"type": "control", "id": 'proj_type_checklist'}, 'value'),
+        Input({"type": "control", "id": "lcs_checklist"}, 'value'),
+        Input({"type": "control", "id": 'outlier_toggle_byob'}, 'value'),
+        Input('sort_box_plot_byob', 'value'),
+    ]
+)
+def create_notes_below_graph(category_x: str,
+                             objective: str,
+                             cfa_gfa_type: str,
+                             scope: list,
+                             proj_type: list,
+                             lcs: list,
+                             outlier_toggle_byob: list,
+                             sort_box_byob: str,):
+    
+    sorted_lcs = ", ".join(sorted(lcs))
+    sorted_scope = [item for item in caption_orders.get('scope_order') if item in scope]
+    sorted_proj_type = [item for item in caption_orders.get('proj_type_order') if item in proj_type]
+    sorted_scope = ", ".join(sorted_scope)
+    sorted_proj_type = ", ".join(proj_type)
+    if outlier_toggle_byob == [1]:
+        crop_option = "have been"
+    else:
+        crop_option = "have not been"
+    
+    return [
+        dcc.Markdown("### Notes"),
+        dcc.Markdown(
+            f"""
+            This box plot represents the {field_name_map.get(category_x)} plotted by {objective}. 
+            The environmental metric is normalized by {field_name_map.get(cfa_gfa_type)}. The boxes are sorted 
+            by {field_name_map.get(sort_box_byob)}, and outliers {crop_option} cropped. The following
+            additional metrics have been selected:
+            - **Life Cycle Stages**: {sorted_lcs}
+            - **Element Scopes**: {sorted_scope}
+            - **Project Types**: {sorted_proj_type}
+            """
+        )
+    ]
+
+
     
 @callback(
     Output('byob_graph', 'figure'),
@@ -624,6 +676,7 @@ def update_chart(byob_data: dict):
     patched_figure["data"][0]["y"] = df[categories].values
 
     patched_figure["layout"]["annotations"] = annotations
+    patched_figure["layout"]["title"]["text"] = f"{values} of {field_name_map.get(categories)}"
     patched_figure["layout"]["xaxis"]["title"]["text"] = f"{values} {units_map.get(values)}"
     patched_figure["layout"]["xaxis"]["range"] = [0, max_of_df+xshift]
     patched_figure["layout"]["xaxis"]["tickformat"] = tickformat_decimal
