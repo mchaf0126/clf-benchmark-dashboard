@@ -49,7 +49,13 @@ cat_selection_toggle_yaml = config.get('cat_selection_toggle_byob')
 assert cat_selection_toggle_yaml is not None, 'The config for categorical selection toggle could not be set'
 
 cat_filter_yaml = config.get('cat_filter')
-assert cat_filter_yaml is not None, 'The config for cat filter could not be set'
+assert cat_filter_yaml is not None, 'The config for cat filters could not be set'
+
+mat_filter_toggle_yaml = config.get('mat_filter_toggle_byob')
+assert mat_filter_toggle_yaml is not None, 'The config for material filter toggle could not be set'
+
+mat_filter_yaml = config.get('mat_filter')
+assert mat_filter_yaml is not None, 'The config for material filters could not be set'
 
 floor_area_radio_yaml = config.get('floor_area_normalization_byob')
 assert floor_area_radio_yaml is not None, 'The config for floor area norm. could not be set'
@@ -74,6 +80,9 @@ assert line_name_input_yaml is not None, "The config for line name input could n
 
 caption_orders = config.get("caption_orders")
 assert caption_orders is not None, "The config for caption orders could not be set"
+
+material_list = config.get("material_list")
+assert material_list is not None, "The config for caption orders could not be set"
 
 
 byob_figure = px.box(
@@ -117,7 +126,8 @@ def layout(state: str = None):
         floor_area_radio_yaml['radio_id']: floor_area_radio_yaml['first_item'],
         line_toggle_byob_yaml['toggle_id']: line_toggle_byob_yaml['first_item'],
         cat_filter_yaml['dropdown_id']: [],
-        cat_selection_toggle_yaml['toggle_id']: cat_selection_toggle_yaml['first_item']
+        cat_selection_toggle_yaml['toggle_id']: cat_selection_toggle_yaml['first_item'],
+        mat_filter_toggle_yaml['toggle_id']: mat_filter_toggle_yaml['first_item']
     }
     # Decode the state from the hash
     state = defaults | (json.loads(base64.b64decode(state)) if state else {})
@@ -195,6 +205,13 @@ def layout(state: str = None):
         tooltip_id=cat_selection_toggle_yaml['tooltip_id'],
     )
 
+    mat_filter_toggle = create_toggle(
+        toggle_list=mat_filter_toggle_yaml['toggle_list'],
+        first_item=state.get(mat_filter_toggle_yaml['toggle_id']),
+        toggle_id={"type": "other", "id": mat_filter_toggle_yaml['toggle_id']},
+        tooltip_id=mat_filter_toggle_yaml['tooltip_id'],
+    )
+
     floor_area_radio = create_radio_items(
         label=floor_area_radio_yaml['label'],
         tooltip_id=floor_area_radio_yaml['tooltip_id'],
@@ -249,6 +266,13 @@ def layout(state: str = None):
         placeholder="If enabled, please select a filter"
     )
 
+    material_filter = create_multi_dropdown(
+        label=mat_filter_yaml["label"],
+        tooltip_id=mat_filter_yaml["tooltip_id"],
+        dropdown_id={"type": "other", "id": mat_filter_yaml["dropdown_id"]},
+        placeholder="If enabled, please select a filter"
+    )
+
     controls_byob = dbc.Accordion(
         [
             dbc.AccordionItem(
@@ -268,7 +292,9 @@ def layout(state: str = None):
                     categorical_dropdown,
                     categorical_tooltip,
                     enable_filters_toggle,
-                    categorical_filter
+                    categorical_filter,
+                    mat_filter_toggle,
+                    material_filter
                 ],
                 title="Categorical Controls",
                 item_id='axis_controls'
@@ -348,6 +374,17 @@ def enable_filters(enable_filters_toggle):
     
 
 @callback(
+    Output({"type": "other", "id": 'mat_filter'}, 'disabled'),
+    Input({"type": "other", "id": 'mat_filter_toggle_byob'}, 'value')
+)
+def enable_filters(enable_filters_toggle):
+    if enable_filters_toggle == []:
+        return True
+    else:
+        return False
+    
+
+@callback(
     [
         Output('line_number_input', 'disabled'),
         Output('line_name_input', 'disabled'),
@@ -359,6 +396,7 @@ def enable_filters(enable_filters_toggle):
         return True, True
     else:
         return False, False
+
 
 @callback(
     [
@@ -387,6 +425,22 @@ def add_filter_dropdown(cat_filters_toggle: list,
 
 
 @callback(
+    [
+        Output({"type": "other", "id": 'mat_filter'}, 'options'),
+        Output({"type": "other", "id": 'mat_filter'}, 'value')
+    ],
+    [
+        Input({"type": "other", "id": 'mat_filter_toggle_byob'}, 'value'),
+    ]
+)
+def add_filter_dropdown(mat_filters_toggle: list):
+    if mat_filters_toggle == []:
+        return ([], None)
+    else:
+        return material_list, "Concrete"
+
+
+@callback(
     Output('byob_data', 'data'),
     [
         Input({"type": "control", "id": 'categorical_dropdown_byob'}, 'value'),
@@ -396,6 +450,8 @@ def add_filter_dropdown(cat_filters_toggle: list,
         Input({"type": "control", "id": 'proj_type_checklist'}, 'value'),
         Input({"type": "control", "id": "lcs_checklist"}, 'value'),
         Input({"type": "control", "id": "cat_selection_toggle_byob"}, "value"),
+        Input({"type": "other", "id": "mat_filter_toggle_byob"}, "value"),
+        Input({"type": "other", "id": "mat_filter"}, "value"),
         Input({"type": "control", "id": 'outlier_toggle_byob'}, 'value'),
         Input('sort_box_plot_byob', 'value'),
         Input({"type": "other", "id": 'cat_filter'}, 'value'),
@@ -411,6 +467,8 @@ def update_data_for_byob(category_x: str,
                          proj_type: list,
                          lcs: list,
                          cat_selection_toggle: list,
+                         mat_filter_toggle: list,
+                         mat_filter: list,
                          outlier_toggle_byob: list,
                          sort_box_byob: str,
                          cat_filter: list,
@@ -442,12 +500,10 @@ def update_data_for_byob(category_x: str,
     metadata_df = metadata_df[
         (metadata_df['bldg_proj_type'].isin(proj_type))
     ]
-    print(cat_selection_toggle)
 
     # cat selection toggle
     if cat_selection_toggle == [1]:
         # cat_value_filter
-        print('hi')
         if cat_filter is None:
             cat_filter = []
         elif len(cat_filter) == 0:
@@ -461,11 +517,28 @@ def update_data_for_byob(category_x: str,
             metadata_df = metadata_df[
                 metadata_df[category_x].isin(cat_filter)
             ]
+    
+    # material selection toggle
+    if mat_filter_toggle == [1]:
+        # mat_value_filter
+        if mat_filter is None:
+            mat_filter = []
+        elif len(mat_filter) == 0:
+            mat_filter = []
+        elif isinstance(mat_filter, str):
+            mat_filter = [mat_filter]
+            impacts_by_lcs_scope_df = impacts_by_lcs_scope_df[
+                impacts_by_lcs_scope_df["mat_group"].isin(mat_filter)
+            ]
+        else: 
+            impacts_by_lcs_scope_df = impacts_by_lcs_scope_df[
+                impacts_by_lcs_scope_df["mat_group"].isin(mat_filter)
+            ]
 
     # filter based on LCS and omniclass element
     new_impacts = impacts_by_lcs_scope_df.loc[
         ((impacts_by_lcs_scope_df['life_cycle_stage'].isin(lcs))
-        & (impacts_by_lcs_scope_df)['omniclass_element'].isin(scope)), :
+        & (impacts_by_lcs_scope_df)['omniclass_element'].isin(scope)), 
     ]
 
     # create impacts and intensity metric
