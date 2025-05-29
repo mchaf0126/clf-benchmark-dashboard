@@ -83,7 +83,19 @@ byob_figure = px.box(
 ).update_layout(
     margin={'pad': 10},
     font={'family': 'Source Sans Pro'}
+).add_vline(
+    x=0,
+    line_color='white',
+    layer='below'
 )
+
+no_shape = {
+        "line": {
+          "color": "white",
+        },
+        "type": "line",
+        "layer": "below"
+    }
 # table = create_datatable(table_id='results_table_cat')
 
 def layout(state: str = None):
@@ -377,7 +389,6 @@ def add_filter_dropdown(cat_filters_toggle: list,
         metadata_df = pd.read_pickle(metadata_directory)
         metadata_df = metadata_df[
             (metadata_df['bldg_proj_type'] == 'New Construction')
-            & (metadata_df['bldg_prim_use'] != "Parking")
         ]
         return metadata_df[category_x].dropna().unique(), metadata_df[category_x].unique()[0]
 
@@ -542,10 +553,12 @@ def update_chart(byob_data: dict):
     }
 
     df = pd.DataFrame.from_dict(byob_data.get('byob_data'))
-    category_order = byob_data.get('sort')    
+    category_order = byob_data.get('sort')
     column_list = list(df.columns)
     categories = column_list[0]
     values = column_list[1]
+
+    category_order = list(set(category_order).intersection(set(list(df[categories]))))
     
     annotations = []
     max_of_df = df[values].max()
@@ -597,6 +610,12 @@ def update_chart(byob_data: dict):
         "line": {
           "color": "white",
         },
+        "x0": 0,
+        "x1": 0,
+        "xref": "x",
+        "y0": 0,
+        "y1": 1,
+        "yref": "y domain",
         "type": "line",
         "layer": "below"
     }
@@ -620,13 +639,13 @@ def update_chart(byob_data: dict):
     return patched_figure
 
 
-# @callback(
-#     Output('help_div', 'children'),
-#     Input('byob_graph', 'figure')
-# )
-# def test_one(figure_data):
-#     print(json.dumps(figure_data, indent=2))
-#     return json.dumps(figure_data, indent=2)
+@callback(
+    Output('help_div', 'children'),
+    Input('byob_graph', 'figure')
+)
+def test_one(figure_data):
+    print(json.dumps(figure_data, indent=2))
+    return json.dumps(figure_data, indent=2)
 
 
 @callback(
