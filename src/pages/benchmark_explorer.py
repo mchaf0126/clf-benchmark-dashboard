@@ -1,5 +1,6 @@
 import textwrap
 import base64
+from itertools import cycle
 from pathlib import Path
 import plotly.express as px
 import pandas as pd
@@ -87,7 +88,7 @@ assert material_list is not None, "The config for caption orders could not be se
 
 byob_figure = px.box(
     color_discrete_sequence=["#FFB71B"],
-    height=550,
+    height=600,
     orientation='h',
     points='all',
 ).update_xaxes(
@@ -100,7 +101,9 @@ byob_figure = px.box(
     jitter=0.5
 ).update_layout(
     margin={'pad': 10},
-    font={'family': 'Source Sans Pro'}
+    font={'family': 'Source Sans Pro'},
+    legend_traceorder="reversed",
+    boxgroupgap=0.4,
 ).add_vline(
     x=0,
     line_color='white',
@@ -341,7 +344,7 @@ def layout(state: str = None):
                     dbc.Col(
                         [
                             dcc.Graph(figure=byob_figure, id="byob_graph"),
-                            html.Div(id='help_div'),
+                            html.Div(id='caption'),
                             html.Div([
                                 dbc.Button(
                                     "Download Table Contents",
@@ -351,7 +354,8 @@ def layout(state: str = None):
                                     className='my-2 fw-bold'
                                 ),
                                 dcc.Download(id="download-tbl-byob"),
-                            ])
+                            ]),
+                            html.Div(id='help_div'),
                         ], xs=8, sm=8, md=8, lg=8, xl=7, xxl=7,
                     ),
                 ],
@@ -544,7 +548,7 @@ def update_data_for_byob(category_x: str,
     # create impacts and intensity metric
     new_impacts_gb = new_impacts.groupby('project_index')[intensity_metric_map.get(objective)].sum()
     if cat_selection_toggle == [1]:
-        metadata_gb = metadata_df[['project_index', category_x, cfa_gfa_type]]
+        metadata_gb = metadata_df[['project_index', category_x, "str_sys_summary", cfa_gfa_type]]
     else: 
         metadata_gb =  metadata_df[['project_index', cfa_gfa_type]]
 
@@ -579,12 +583,13 @@ def update_data_for_byob(category_x: str,
     if cat_selection_toggle == [1]:
         final_impacts[category_x] = final_impacts[category_x].map(customwrap)
     final_impacts = final_impacts.drop(columns=[intensity_metric_map.get(objective), cfa_gfa_type])
+    print(final_impacts)
 
     # category orders
     if cat_selection_toggle == [1]:
         if sort_box_byob == 'median':
             grouped_medians = (
-                final_impacts.groupby(by=category_x)
+                final_impacts[[objective, category_x]].groupby(by=category_x)
                 .median()
                 .sort_values(
                     by=objective,
@@ -594,7 +599,7 @@ def update_data_for_byob(category_x: str,
             category_order = grouped_medians.index.to_list()
         elif sort_box_byob == 'sample_size':
             grouped_medians = (
-                final_impacts.groupby(by=category_x)
+                final_impacts[[objective, category_x]].groupby(by=category_x)
                 .count()
                 .sort_values(
                     by=objective,
@@ -621,7 +626,7 @@ def update_data_for_byob(category_x: str,
 
 
 @callback(
-    Output('help_div', 'children'),
+    Output('caption', 'children'),
     [
         Input({"type": "control", "id": 'categorical_dropdown_byob'}, 'value'),
         Input({"type": "control", "id": 'total_impact_dropdown_byob'}, 'value'),
@@ -693,7 +698,8 @@ def update_chart(byob_data: dict):
         df[categories] = categories
     else:
         categories = column_list[0]
-        values = column_list[1]
+        color_col = column_list[1]
+        values = column_list[2]
     
     annotations = []
     max_of_df = df[values].max()
@@ -754,10 +760,47 @@ def update_chart(byob_data: dict):
         "type": "line",
         "layer": "below"
     }
-
+    grouped_boxes = []
+    colors_for_grouped_boxes = [
+        "#FFB71B",
+        "#6E6F72",
+        "#8DC6EB",
+        "#AA182C",
+        "#0075A9",
+        "#E47E3D",
+        "#4A9462",
+        "#414042",
+        "#31006F",
+    ]
+    if len(column_list) > 1:
+        for unique_value, repeated_color in zip(df[color_col].unique(), cycle(colors_for_grouped_boxes)):
+            temp_box = { 
+                "alignmentgroup": "True", 
+                "boxpoints": "all", 
+                "hovertemplate": "Impact=%{x}<extra></extra>",
+                "legendgroup": unique_value, 
+                "marker": { 
+                    "color": repeated_color
+                }, 
+                "name": unique_value, 
+                "notched": False, 
+                "offsetgroup": unique_value, 
+                "orientation": "h", 
+                "showlegend": True, 
+                "x": df[df[color_col] == unique_value][values].values, 
+                "xaxis": "x", 
+                "y": df[df[color_col] == unique_value][categories].values, 
+                "yaxis": "y", 
+                "type": "box" 
+            }
+            grouped_boxes.append(temp_box)
+    
     patched_figure = Patch()
-    patched_figure["data"][0]["x"] = df[values].values
-    patched_figure["data"][0]["y"] = df[categories].values
+    if len(column_list) > 1:
+        patched_figure["data"] = list(reversed(grouped_boxes))
+    else:
+        patched_figure["data"][0]["x"] = df[values].values
+        patched_figure["data"][0]["y"] = df[categories].values
 
     patched_figure["layout"]["annotations"] = annotations
     patched_figure["layout"]["title"]["text"] = f"{values} of {field_name_map.get(categories)}"
