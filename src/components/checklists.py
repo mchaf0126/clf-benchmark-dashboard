@@ -5,7 +5,8 @@ import dash_bootstrap_components as dbc
 def create_checklist(label: str,
                      checklist: list,
                      first_item: str,
-                     checklist_id: str) -> html.Div:
+                     checklist_id: str,
+                     tooltip_id: str) -> html.Div:
     """_summary_
 
     Args:
@@ -20,7 +21,15 @@ def create_checklist(label: str,
 
     checklist = html.Div(
         [
-            dbc.Label(label),
+            dbc.Label(
+                [
+                    label,
+                    html.Span(
+                        ' 🛈',
+                        id=tooltip_id
+                    )
+                ]
+            ),
             dbc.Checklist(
                 options=checklist,
                 value=first_item,

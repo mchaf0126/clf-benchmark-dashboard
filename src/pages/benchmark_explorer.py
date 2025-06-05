@@ -22,31 +22,28 @@ config = app_config
 register_page(__name__, path='/benchmark_explorer')
 load_figure_template('pulse')
 
-categorical_dropdown_yaml = config.get('categorical_dropdown_byob')
+categorical_dropdown_yaml = config.get('cat_d_one')
 assert categorical_dropdown_yaml is not None, 'The config for cat. dropdowns could not be set'
 
-enable_filters_toggle_yaml = config.get('enable_filters_toggle')
+enable_filters_toggle_yaml = config.get('cat_fil_one')
 assert enable_filters_toggle_yaml is not None, 'The config for cat. dropdowns could not be set'
 
-total_impact_dropdown_yaml = config.get('total_impact_dropdown_byob')
+total_impact_dropdown_yaml = config.get('tot_imp_d')
 assert total_impact_dropdown_yaml is not None, 'The config for total impacts could not be set'
 
-lcs_checklist_yaml = config.get('lcs_checklist')
+lcs_checklist_yaml = config.get('lcs_c')
 assert lcs_checklist_yaml is not None, 'The config for lcs checklist could not be set'
 
-scope_checklist_yaml = config.get('scope_checklist')
+scope_checklist_yaml = config.get('scope_c')
 assert scope_checklist_yaml is not None, 'The config for scope checklist could not be set'
 
-proj_type_checklist_yaml = config.get('proj_type_checklist')
+proj_type_checklist_yaml = config.get('proj_typ_c')
 assert proj_type_checklist_yaml is not None, 'The config for proj_type checklist could not be set'
 
-new_constr_toggle_yaml = config.get('new_constr_toggle_byob')
-assert new_constr_toggle_yaml is not None, 'The config for new construction could not be set'
-
-outlier_toggle_yaml = config.get('outlier_toggle_byob')
+outlier_toggle_yaml = config.get('outlier_t')
 assert outlier_toggle_yaml is not None, 'The config for outlier toggle could not be set'
 
-cat_selection_toggle_yaml = config.get('cat_selection_toggle_byob')
+cat_selection_toggle_yaml = config.get('cat_sel_t')
 assert cat_selection_toggle_yaml is not None, 'The config for categorical selection toggle could not be set'
 
 cat_filter_yaml = config.get('cat_filter')
@@ -70,7 +67,7 @@ assert mat_filter_toggle_yaml is not None, 'The config for material filter toggl
 mat_filter_yaml = config.get('mat_filter')
 assert mat_filter_yaml is not None, 'The config for material filters could not be set'
 
-floor_area_radio_yaml = config.get('floor_area_normalization_byob')
+floor_area_radio_yaml = config.get('fl_area_norm')
 assert floor_area_radio_yaml is not None, 'The config for floor area norm. could not be set'
 
 sort_box_radio_yaml = config.get('sort_box_plot_byob')
@@ -121,7 +118,6 @@ byob_figure = px.box(
     line_color='white',
     layer='below'
 )
-# table = create_datatable(table_id='results_table_cat')
 
 def layout(state: str = None):
     """Home page layout
@@ -148,7 +144,7 @@ def layout(state: str = None):
         second_cat_filter_toggle_yaml['toggle_id']: second_cat_filter_toggle_yaml['first_item'],
     }
     # Decode the state from the hash
-    state = defaults | (msgpack.unpackb(base64.b64decode(state)) if state else {})
+    state = defaults | (msgpack.unpackb(base64.urlsafe_b64decode(state)) if state else {})
 
     categorical_dropdown = create_dropdown(
         label=categorical_dropdown_yaml['label'],
@@ -167,21 +163,24 @@ def layout(state: str = None):
         label=lcs_checklist_yaml['label'],
         checklist=lcs_checklist_yaml['checklist'],
         first_item=state.get(lcs_checklist_yaml['checklist_id']),
-        checklist_id={"type": "control", "id": lcs_checklist_yaml['checklist_id']}
+        checklist_id={"type": "control", "id": lcs_checklist_yaml['checklist_id']},
+        tooltip_id=lcs_checklist_yaml['tooltip_id']
     )
 
     scope_checklist = create_checklist(
         label=scope_checklist_yaml['label'],
         checklist=scope_checklist_yaml['checklist'],
         first_item=state.get(scope_checklist_yaml['checklist_id']),
-        checklist_id={"type": "control", "id": scope_checklist_yaml['checklist_id']}
+        checklist_id={"type": "control", "id": scope_checklist_yaml['checklist_id']},
+        tooltip_id=lcs_checklist_yaml['tooltip_id']
     )
 
     proj_type_checklist = create_checklist(
         label=proj_type_checklist_yaml['label'],
         checklist=proj_type_checklist_yaml['checklist'],
         first_item=state.get(proj_type_checklist_yaml['checklist_id']),
-        checklist_id={"type": "control", "id": proj_type_checklist_yaml['checklist_id']}
+        checklist_id={"type": "control", "id": proj_type_checklist_yaml['checklist_id']},
+        tooltip_id=lcs_checklist_yaml['tooltip_id']
     )
 
     total_impact_dropdown = create_dropdown(
@@ -416,12 +415,12 @@ def layout(state: str = None):
 
 @callback(
     [
-        Output({"type": "control", "id": 'enable_filters_toggle'}, 'options'),
+        Output({"type": "control", "id": 'cat_fil_one'}, 'options'),
         Output({"type": "other", "id": 'second_cat_selection_toggle'}, 'options'),
         Output({"type": "other", "id": 'second_cat_filter_toggle'}, 'options'),
     ],
     [
-        Input({"type": "control", "id": 'cat_selection_toggle_byob'}, 'value'),
+        Input({"type": "control", "id": 'cat_sel_t'}, 'value'),
         Input({"type": "other", "id": 'second_cat_selection_toggle'}, 'value'),
     ]
 )
@@ -443,14 +442,14 @@ def enable_filters(cat_selection_toggle: list, second_cat_selection_toggle: list
 
 @callback(
     [
-        Output({"type": "control", "id": 'categorical_dropdown_byob'}, 'disabled'),
+        Output({"type": "control", "id": 'cat_d_one'}, 'disabled'),
         Output({"type": "other", "id": 'cat_filter'}, 'disabled'),
         Output({"type": "other", "id": 'second_cat_dropdown'}, 'disabled'),
         Output({"type": "other", "id": 'second_cat_filter'}, 'disabled'),
     ],
     [
-        Input({"type": "control", "id": 'cat_selection_toggle_byob'}, 'value'),
-        Input({"type": "control", "id": 'enable_filters_toggle'}, 'value'),
+        Input({"type": "control", "id": 'cat_sel_t'}, 'value'),
+        Input({"type": "control", "id": 'cat_fil_one'}, 'value'),
         Input({"type": "other", "id": 'second_cat_selection_toggle'}, 'value'),
         Input({"type": "other", "id": 'second_cat_filter_toggle'}, 'value'),
     ]   
@@ -512,8 +511,8 @@ def enable_filters(enable_filters_toggle):
     ],
     [
         Input({"type": "other", "id": 'second_cat_selection_toggle'}, 'value'),
-        Input({"type": "control", "id": 'categorical_dropdown_byob'}, 'value'),
-        Input({"type": "control", "id": 'categorical_dropdown_byob'}, 'options')
+        Input({"type": "control", "id": 'cat_d_one'}, 'value'),
+        Input({"type": "control", "id": 'cat_d_one'}, 'options')
     ]
 )
 def add_filter_dropdown(cat_filters_toggle: list,
@@ -570,8 +569,8 @@ def add_filter_dropdown(second_cat_filters_toggle: list,
         Output({"type": "other", "id": 'cat_filter'}, 'value')
     ],
     [
-        Input({"type": "control", "id": 'enable_filters_toggle'}, 'value'),
-        Input({"type": "control", "id": 'categorical_dropdown_byob'}, 'value')
+        Input({"type": "control", "id": 'cat_fil_one'}, 'value'),
+        Input({"type": "control", "id": 'cat_d_one'}, 'value')
     ]
 )
 def add_filter_dropdown(cat_filters_toggle: list,
@@ -610,20 +609,20 @@ def add_filter_dropdown(mat_filters_toggle: list):
 @callback(
     Output('byob_data', 'data'),
     [
-        Input({"type": "control", "id": 'categorical_dropdown_byob'}, 'value'),
-        Input({"type": "control", "id": 'total_impact_dropdown_byob'}, 'value'),
-        Input({"type": "control", "id": 'floor_area_normal_byob'}, 'value'),
-        Input({"type": "control", "id": 'scope_checklist'}, 'value'),
-        Input({"type": "control", "id": 'proj_type_checklist'}, 'value'),
-        Input({"type": "control", "id": "lcs_checklist"}, 'value'),
-        Input({"type": "control", "id": "cat_selection_toggle_byob"}, "value"),
+        Input({"type": "control", "id": 'cat_d_one'}, 'value'),
+        Input({"type": "control", "id": 'tot_imp_d'}, 'value'),
+        Input({"type": "control", "id": 'fl_area_norm'}, 'value'),
+        Input({"type": "control", "id": 'scope_c'}, 'value'),
+        Input({"type": "control", "id": 'proj_typ_c'}, 'value'),
+        Input({"type": "control", "id": "lcs_c"}, 'value'),
+        Input({"type": "control", "id": "cat_sel_t"}, "value"),
         Input({"type": "other", "id": "second_cat_selection_toggle"}, "value"),
         Input({"type": "other", "id": 'second_cat_dropdown'}, 'value'),
         Input({"type": "other", "id": 'second_cat_filter_toggle'}, 'value'),
         Input({"type": "other", "id": 'second_cat_filter'}, 'value'),
         Input({"type": "other", "id": "mat_filter_toggle_byob"}, "value"),
         Input({"type": "other", "id": "mat_filter"}, "value"),
-        Input({"type": "control", "id": 'outlier_toggle_byob'}, 'value'),
+        Input({"type": "control", "id": 'outlier_t'}, 'value'),
         Input('sort_box_plot_byob', 'value'),
         Input({"type": "other", "id": 'cat_filter'}, 'value'),
         Input("ref_line_toggle", 'value'),
@@ -656,6 +655,18 @@ def update_data_for_byob(category_x: str,
     main_directory = current_file_path.parents[2]
     metadata_directory = main_directory.joinpath('data/buildings_metadata.pkl')
     impacts_directory = main_directory.joinpath('data/impacts_grouped_by_lcs_and_scope.parquet')
+
+    intensity_metric_value_map = total_impact_dropdown_yaml.get("value_map")
+    objective = intensity_metric_value_map.get(objective)
+
+    lcs_value_map = lcs_checklist_yaml.get("value_map")
+    lcs = [lcs_value_map.get(item) for item in lcs]
+
+    scope_value_map = scope_checklist_yaml.get("value_map")
+    scope = [scope_value_map.get(item) for item in scope]
+
+    proj_type_value_map = proj_type_checklist_yaml.get("value_map")
+    proj_type = [proj_type_value_map.get(item) for item in proj_type]
 
     # intensity metric map
     intensity_metric_map = {
@@ -817,13 +828,13 @@ def update_data_for_byob(category_x: str,
 @callback(
     Output('caption', 'children'),
     [
-        Input({"type": "control", "id": 'categorical_dropdown_byob'}, 'value'),
-        Input({"type": "control", "id": 'total_impact_dropdown_byob'}, 'value'),
-        Input({"type": "control", "id": 'floor_area_normal_byob'}, 'value'),
-        Input({"type": "control", "id": 'scope_checklist'}, 'value'),
-        Input({"type": "control", "id": 'proj_type_checklist'}, 'value'),
-        Input({"type": "control", "id": "lcs_checklist"}, 'value'),
-        Input({"type": "control", "id": 'outlier_toggle_byob'}, 'value'),
+        Input({"type": "control", "id": 'cat_d_one'}, 'value'),
+        Input({"type": "control", "id": 'tot_imp_d'}, 'value'),
+        Input({"type": "control", "id": 'fl_area_norm'}, 'value'),
+        Input({"type": "control", "id": 'scope_c'}, 'value'),
+        Input({"type": "control", "id": 'proj_typ_c'}, 'value'),
+        Input({"type": "control", "id": "lcs_c"}, 'value'),
+        Input({"type": "control", "id": 'outlier_t'}, 'value'),
         Input('sort_box_plot_byob', 'value'),
     ]
 )
@@ -836,6 +847,15 @@ def create_notes_below_graph(category_x: str,
                              outlier_toggle_byob: list,
                              sort_box_byob: str,):
     
+    lcs_value_map = lcs_checklist_yaml.get("value_map")
+    lcs = [lcs_value_map.get(item) for item in lcs]
+
+    scope_value_map = scope_checklist_yaml.get("value_map")
+    scope = [scope_value_map.get(item) for item in scope]
+
+    proj_type_value_map = proj_type_checklist_yaml.get("value_map")
+    proj_type = [proj_type_value_map.get(item) for item in proj_type]
+    
     sorted_lcs = ", ".join(sorted(lcs))
     sorted_scope = [item for item in caption_orders.get('scope_order') if item in scope]
     sorted_proj_type = [item for item in caption_orders.get('proj_type_order') if item in proj_type]
@@ -845,6 +865,10 @@ def create_notes_below_graph(category_x: str,
         crop_option = "have been"
     else:
         crop_option = "have not been"
+
+    intensity_metric_value_map = total_impact_dropdown_yaml.get("value_map")
+    objective = intensity_metric_value_map.get(objective)
+
     
     return [
         dcc.Markdown(
@@ -1146,6 +1170,7 @@ def update_hash(_values):
     The app state is json serialised then base64 encoded and is treated with the
     reverse process in the layout function.
     """
+    print({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]})
     return "#" + base64.urlsafe_b64encode(
         msgpack.packb({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]})
     ).decode("utf-8")

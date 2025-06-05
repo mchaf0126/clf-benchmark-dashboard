@@ -1,5 +1,5 @@
 ---
-categorical_dropdown_byob:
+cat_d_one:
   label: Categorical Variable  
   dropdown_list:
     - 
@@ -54,79 +54,74 @@ categorical_dropdown_byob:
       label: Physical Scope Summary
       value: lca_phys_scope
   first_item: bldg_prim_use
-  dropdown_id: categorical_dropdown_byob
+  dropdown_id: cat_d_one
   tooltip: Categorical values are those that can take on 
     one of a limited number of possible values. These values will 
     become the categories plotted on the y-axis of the box plot.
   tooltip_id: categorical_dropdown_byob_tooltip
 
-total_impact_dropdown_byob: 
+tot_imp_d: 
   label: Impacts  
   dropdown_list: 
     - 
       label: Embodied Carbon Intensity
-      value: Embodied Carbon Intensity
+      value: 1
     -  
       label: Eutrophication Potential Intensity
-      value: Eutrophication Potential Intensity
+      value: 2
     -  
       label: Acidification Potential Intensity
-      value: Acidification Potential Intensity
+      value: 3
     -  
       label: Smog Formation Potential Intensity
-      value: Smog Formation Potential Intensity
+      value: 4
     -  
       label: Ozone Depletion Potential Intensity
-      value: Ozone Depletion Potential Intensity
+      value: 5
     -  
       label: Natural Resource Depletion Intensity
-      value: Natural Resource Depletion Intensity
-  first_item: Embodied Carbon Intensity
-  dropdown_id: total_impact_dropdown_byob
+      value: 6
+  first_item: 1
+  dropdown_id: tot_imp_d
   tooltip: Each environmental metric contained in the dataset
     is represented in this dropdown. They are either divided by
     floor area to create "intensity" metrics, or are divided by
     other numeric values such as occupants or residential units. 
     These values will be plotted on the y-axis of the graph.
   tooltip_id: total_impact_dropdown_tooltip_byob
+  value_map:
+    1: Embodied Carbon Intensity
+    2: Eutrophication Potential Intensity
+    3: Acidification Potential Intensity
+    4: Smog Formation Potential Intensity
+    5: Ozone Depletion Potential Intensity
+    6: Natural Resource Depletion Intensity
 
-enable_filters_toggle:
+cat_fil_one:
   label: ""
   toggle_list:
     - label: Enable categorical filtering
       value: 1
   first_item: []
-  toggle_id: enable_filters_toggle
+  toggle_id: cat_fil_one
   tooltip: This toggle enable you to filter projects based on the 
     categorical filters chosed in the dropdown below.
   tooltip_id: enable_filters_toggle_tooltip
 
-new_constr_toggle_byob:
-  label: ""
-  toggle_list:
-    - label: New construction only 
-      value: 1
-  first_item: []
-  toggle_id: new_constr_toggle_byob
-  tooltip: This toggle will remove projects with
-    a project type of "Minor Renovation", "Major Renovation",
-    or "Tenant Improvement".
-  tooltip_id: new_constr_toggle_tooltip_byob
-
-outlier_toggle_byob:
+outlier_t:
   label: ""
   toggle_list:
     - label: Crop outliers 
       value: 1
   first_item: []
-  toggle_id: outlier_toggle_byob
+  toggle_id: outlier_t
   tooltip: This toggle will Crop outliers from the box plot.
     A project is considered an outlier if the selected impact or continuous variable
     of the project is 3 times the interquartile range of 
     all project impacts in the dataset.
   tooltip_id: outlier_toggle_tooltip_byob
 
-floor_area_normalization_byob:
+fl_area_norm:
   label: "Normalize intensity by:  "
   radio_list:
     - label: Constructed Floor Area
@@ -134,7 +129,7 @@ floor_area_normalization_byob:
     - label: Gross Internal Floor Area
       value: bldg_gfa
   first_item: bldg_gfa
-  radio_id: floor_area_normal_byob
+  radio_id: fl_area_norm
   tooltip: "Total constructed floor area (CFA) 
     includes the gross internal floor area (GFA) of the 
     building and the gross floor area of any 
@@ -433,74 +428,92 @@ category_order_map:
     - Yes
     - No
   
-lcs_checklist: 
+lcs_c: 
   label: Life Cycle Stage 
   checklist: 
     - 
       label: A1-A3
-      value: A1-A3
+      value: 1
     -  
       label: A4
-      value: A4
+      value: 2
     -  
       label: B4-B5
-      value: B4-B5
+      value: 3
     -  
       label: C2-C4
-      value: C2-C4
+      value: 4
     -  
       label: D
-      value: D
-  first_item: [A1-A3, A4, B4-B5, C2-C4]
-  checklist_id: lcs_checklist
+      value: 5
+  first_item: [1, 2, 3, 4]
+  checklist_id: lcs_c
   tooltip: TBD
   tooltip_id: TBD
+  value_map:
+    1: A1-A3
+    2: A4
+    3: B4-B5
+    4: C2-C4
+    5: D
 
-scope_checklist: 
+scope_c: 
   label: Scope  
   checklist: 
     - 
       label: Substructure
-      value: Substructure
+      value: 1
     -  
       label: "Shell - Superstructure"
-      value: "Shell - Superstructure"
+      value: 2
     -  
       label: "Shell - Enclosure"
-      value: "Shell - Enclosure"
+      value: 3
     -  
       label: "Interiors - Finishes"
-      value: "Interiors - Finishes"
+      value: 4
     -  
       label: "Interiors - Construction"
-      value: "Interiors - Construction"
+      value: 5
     -  
       label: "Unknown"
-      value: "Unknown"
-  first_item: ["Substructure", "Shell - Superstructure", "Shell - Enclosure"]
-  checklist_id: scope_checklist
+      value: 6
+  first_item: [1, 2, 3]
+  checklist_id: scope_c
   tooltip: TBD
   tooltip_id: TBD
+  value_map:
+    1: Substructure
+    2: "Shell - Superstructure"
+    3: "Shell - Enclosure"
+    4: "Interiors - Finishes"
+    5: "Interiors - Construction"
+    6: "Unknown"
 
-proj_type_checklist: 
+proj_typ_c: 
   label: Project Type  
   checklist: 
     - 
       label: New Construction
-      value: New Construction
+      value: 1
     -  
       label: Major Renovation
-      value: Major Renovation
+      value: 2
     -  
       label: Minor Renovation
-      value: Minor Renovation
+      value: 3
     -  
       label: Tenant Improvement
-      value: Tenant Improvement
-  first_item: [New Construction]
-  checklist_id: proj_type_checklist
+      value: 4
+  first_item: [1]
+  checklist_id: proj_typ_c
   tooltip: TBD
   tooltip_id: TBD
+  value_map:
+    1: New Construction
+    2: Major Renovation
+    3: Minor Renovation
+    4: Tenant Improvement
 
 line_toggle_byob:
   label: ""
@@ -540,13 +553,13 @@ caption_orders:
     - Minor Renovation
     - Tenant Improvement
   
-cat_selection_toggle_byob:
+cat_sel_t:
   label: ""
   toggle_list:
     - label: Enable categorical selection
       value: 1
   first_item: [1]
-  toggle_id: cat_selection_toggle_byob
+  toggle_id: cat_sel_t
   tooltip: TBD
   tooltip_id: TBD
 
