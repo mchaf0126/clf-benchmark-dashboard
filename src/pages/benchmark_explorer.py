@@ -1171,6 +1171,9 @@ def update_hash(_values):
     reverse process in the layout function.
     """
     # print({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]})
+    print({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]})
+    if len({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]}) == 0:
+        return ""
     return "#" + base64.urlsafe_b64encode(
         msgpack.packb({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]})
     ).decode("utf-8")
