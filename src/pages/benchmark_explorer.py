@@ -58,6 +58,9 @@ assert second_cat_selection_toggle_yaml is not None, 'The config for second cat 
 second_cat_dropdown_yaml = config.get('second_cat_dropdown')
 assert second_cat_dropdown_yaml is not None, 'The config for second cat dropdown could not be set'
 
+second_cat_filter_toggle_yaml = config.get('second_cat_filter_toggle')
+assert second_cat_filter_toggle_yaml is not None, 'The config for second cat filter toggle could not be set'
+
 second_cat_filter_yaml = config.get('second_cat_filter')
 assert second_cat_filter_yaml is not None, 'The config for second cat filters could not be set'
 
@@ -142,6 +145,7 @@ def layout(state: str = None):
         mat_filter_toggle_yaml['toggle_id']: mat_filter_toggle_yaml['first_item'],
         second_cat_selection_toggle_yaml['toggle_id']: second_cat_selection_toggle_yaml['first_item'],
         second_cat_dropdown_yaml['dropdown_id']: [],
+        second_cat_filter_toggle_yaml['toggle_id']: second_cat_filter_toggle_yaml['first_item'],
     }
     # Decode the state from the hash
     state = defaults | (msgpack.unpackb(base64.b64decode(state)) if state else {})
@@ -232,6 +236,13 @@ def layout(state: str = None):
         dropdown_list=[],
         first_item=state.get(second_cat_dropdown_yaml['dropdown_id']),
         dropdown_id={"type": "other", "id": second_cat_dropdown_yaml['dropdown_id']}
+    )
+
+    second_cat_filter_toggle = create_toggle(
+        toggle_list=second_cat_filter_toggle_yaml['toggle_list'],
+        first_item=state.get(second_cat_filter_toggle_yaml['toggle_id']),
+        toggle_id={"type": "other", "id": second_cat_filter_toggle_yaml['toggle_id']},
+        tooltip_id=second_cat_filter_toggle_yaml['tooltip_id'],
     )
 
     mat_filter_toggle = create_toggle(
@@ -331,6 +342,7 @@ def layout(state: str = None):
                     categorical_filter,
                     second_cat_selection_toggle,
                     second_categorical_dropdown,
+                    second_cat_filter_toggle,
                     second_categorical_filter,
                     mat_filter_toggle,
                     material_filter
@@ -406,18 +418,27 @@ def layout(state: str = None):
     [
         Output({"type": "control", "id": 'enable_filters_toggle'}, 'options'),
         Output({"type": "other", "id": 'second_cat_selection_toggle'}, 'options'),
+        Output({"type": "other", "id": 'second_cat_filter_toggle'}, 'options'),
     ],
-    Input({"type": "control", "id": 'cat_selection_toggle_byob'}, 'value'),
+    [
+        Input({"type": "control", "id": 'cat_selection_toggle_byob'}, 'value'),
+        Input({"type": "other", "id": 'second_cat_selection_toggle'}, 'value'),
+    ]
 )
-def enable_filters(cat_selection_toggle: list,):
+def enable_filters(cat_selection_toggle: list, second_cat_selection_toggle: list):
     if cat_selection_toggle == [1]:
         enable_filters_toggle = [{"label": "Enable categorical filtering", "value": 1}]
-        second_cat_filter_toggle =[{"label": "Enable second categorical selection", "value": 1}]
-        return enable_filters_toggle, second_cat_filter_toggle
+        second_cat_selection =[{"label": "Enable second categorical selection", "value": 1}]
+        if second_cat_selection_toggle == [1]:
+            second_cat_filter_toggle =[{"label": "Enable second categorical filter", "value": 1}]
+        else:
+            second_cat_filter_toggle =[{"label": "Enable second categorical filter", "value": 1, "disabled": True}]
+        return enable_filters_toggle, second_cat_selection, second_cat_filter_toggle
     else:
         enable_filters_toggle = [{"label": "Enable categorical filtering", "value": 1, "disabled": True}]
-        second_cat_filter_toggle = [{"label": "Enable second categorical selection", "value": 1, "disabled": True}]
-        return enable_filters_toggle, second_cat_filter_toggle
+        second_cat_selection =[{"label": "Enable second categorical selection", "value": 1, "disabled": True}]
+        second_cat_filter_toggle =[{"label": "Enable second categorical filter", "value": 1, "disabled": True}]
+        return enable_filters_toggle, second_cat_selection, second_cat_filter_toggle
 
 
 @callback(
@@ -431,22 +452,30 @@ def enable_filters(cat_selection_toggle: list,):
         Input({"type": "control", "id": 'cat_selection_toggle_byob'}, 'value'),
         Input({"type": "control", "id": 'enable_filters_toggle'}, 'value'),
         Input({"type": "other", "id": 'second_cat_selection_toggle'}, 'value'),
+        Input({"type": "other", "id": 'second_cat_filter_toggle'}, 'value'),
     ]   
 )
 def enable_filters(cat_selection_toggle: list,
                    enable_filters_toggle: list,
-                   second_cat_selection_toggle: list):
+                   second_cat_selection_toggle: list,
+                   second_cat_filter_toggle: list):
     if cat_selection_toggle == [1]:
         if enable_filters_toggle == [1]:
             if second_cat_selection_toggle == [1]:
-                return False, False, False, False
+                if second_cat_filter_toggle == [1]:
+                    return False, False, False, False
+                else:
+                    return False, False, False, True
             else:
                 return False, False, True, True
         else:
             if second_cat_selection_toggle == [1]:
-                return False, True, False, False
+                if second_cat_filter_toggle == [1]:
+                    return False, False, False, False
+                else:
+                    return False, False, False, True
             else:
-                return False, True, True, True
+                return False, False, True, True
     else:
         return True, True, True, True
     
@@ -507,6 +536,36 @@ def add_filter_dropdown(cat_filters_toggle: list,
 
 @callback(
     [
+        Output({"type": "other", "id": 'second_cat_filter'}, 'options'),
+        Output({"type": "other", "id": 'second_cat_filter'}, 'value')
+    ],
+    [
+        Input({"type": "other", "id": 'second_cat_filter_toggle'}, 'value'),
+        Input({"type": "other", "id": 'second_cat_selection_toggle'}, 'value'),
+        Input({"type": "other", "id": 'second_cat_dropdown'}, 'value')
+    ]
+)
+def add_filter_dropdown(second_cat_filters_toggle: list,
+                        second_cat_selection_toggle: list,
+                        second_category_x: str):
+    if second_cat_filters_toggle == []:
+        return ([], None)
+    if second_cat_selection_toggle == []:
+        return ([], None)
+    else:
+        # path to directories of files
+        current_file_path = Path(__file__)
+        main_directory = current_file_path.parents[2]
+        metadata_directory = main_directory.joinpath('data/buildings_metadata.pkl')
+        metadata_df = pd.read_pickle(metadata_directory)
+        metadata_df = metadata_df[
+            (metadata_df['bldg_proj_type'] == 'New Construction')
+        ]
+        return metadata_df[second_category_x].dropna().unique(), metadata_df[second_category_x].unique()[0]
+
+
+@callback(
+    [
         Output({"type": "other", "id": 'cat_filter'}, 'options'),
         Output({"type": "other", "id": 'cat_filter'}, 'value')
     ],
@@ -518,7 +577,7 @@ def add_filter_dropdown(cat_filters_toggle: list,
 def add_filter_dropdown(cat_filters_toggle: list,
                         category_x: str):
     if cat_filters_toggle == []:
-        return ([], None)
+        return [], None
     else:
         # path to directories of files
         current_file_path = Path(__file__)
@@ -529,6 +588,7 @@ def add_filter_dropdown(cat_filters_toggle: list,
             (metadata_df['bldg_proj_type'] == 'New Construction')
         ]
         return metadata_df[category_x].dropna().unique(), metadata_df[category_x].unique()[0]
+
 
 
 @callback(
@@ -559,6 +619,8 @@ def add_filter_dropdown(mat_filters_toggle: list):
         Input({"type": "control", "id": "cat_selection_toggle_byob"}, "value"),
         Input({"type": "other", "id": "second_cat_selection_toggle"}, "value"),
         Input({"type": "other", "id": 'second_cat_dropdown'}, 'value'),
+        Input({"type": "other", "id": 'second_cat_filter_toggle'}, 'value'),
+        Input({"type": "other", "id": 'second_cat_filter'}, 'value'),
         Input({"type": "other", "id": "mat_filter_toggle_byob"}, "value"),
         Input({"type": "other", "id": "mat_filter"}, "value"),
         Input({"type": "control", "id": 'outlier_toggle_byob'}, 'value'),
@@ -578,6 +640,8 @@ def update_data_for_byob(category_x: str,
                          cat_selection_toggle: list,
                          second_cat_selection_toggle: list,
                          second_cat_value: str,
+                         second_cat_filter_toggle: list,
+                         second_cat_filter: list,
                          mat_filter_toggle: list,
                          mat_filter: list,
                          outlier_toggle_byob: list,
@@ -627,6 +691,22 @@ def update_data_for_byob(category_x: str,
         else: 
             metadata_df = metadata_df[
                 metadata_df[category_x].isin(cat_filter)
+            ]
+
+    if (second_cat_filter_toggle == [1]) & (cat_selection_toggle == [1]):
+        # cat_value_filter
+        if second_cat_filter is None:
+            second_cat_filter = []
+        elif len(second_cat_filter) == 0:
+            second_cat_filter = []
+        elif isinstance(second_cat_filter, str):
+            second_cat_filter = [second_cat_filter]
+            metadata_df = metadata_df[
+                metadata_df[second_cat_value].isin(second_cat_filter)
+            ]
+        else: 
+            metadata_df = metadata_df[
+                metadata_df[second_cat_value].isin(second_cat_filter)
             ]
     
     # material selection toggle
@@ -802,7 +882,6 @@ def update_chart(byob_data: dict):
     df = starting_df.copy()
     category_order = byob_data.get('sort')
     column_list = list(df.columns)
-    print((column_list))
     if len(column_list) == 1:
         values = column_list[0]
         categories = "All"

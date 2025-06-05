@@ -1008,6 +1008,16 @@ second_cat_dropdown:
   tooltip: TBD
   tooltip_id: TBD
 
+second_cat_filter_toggle:
+  label: ""
+  toggle_list:
+    - label: Enable second categorical filter
+      value: 1
+  first_item: []
+  toggle_id: second_cat_filter_toggle
+  tooltip: TBD
+  tooltip_id: TBD
+
 second_cat_filter:
   label: Second categorical values to filter
   dropdown_list:
