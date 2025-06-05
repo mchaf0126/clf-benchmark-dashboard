@@ -1,5 +1,5 @@
 ---
-cat_d_one:
+cat_d_1:
   label: Categorical Variable  
   dropdown_list:
     - 
@@ -54,7 +54,7 @@ cat_d_one:
       label: Physical Scope Summary
       value: lca_phys_scope
   first_item: bldg_prim_use
-  dropdown_id: cat_d_one
+  dropdown_id: cat_d_1
   tooltip: Categorical values are those that can take on 
     one of a limited number of possible values. These values will 
     become the categories plotted on the y-axis of the box plot.
@@ -97,31 +97,31 @@ tot_imp_d:
     5: Ozone Depletion Potential Intensity
     6: Natural Resource Depletion Intensity
 
-cat_fil_one:
+cat_fil_1:
   label: ""
   toggle_list:
     - label: Enable categorical filtering
       value: 1
   first_item: []
-  toggle_id: cat_fil_one
+  toggle_id: cat_fil_1
   tooltip: This toggle enable you to filter projects based on the 
     categorical filters chosed in the dropdown below.
   tooltip_id: enable_filters_toggle_tooltip
 
-outlier_t:
+out_t:
   label: ""
   toggle_list:
     - label: Crop outliers 
       value: 1
   first_item: []
-  toggle_id: outlier_t
+  toggle_id: out_t
   tooltip: This toggle will Crop outliers from the box plot.
     A project is considered an outlier if the selected impact or continuous variable
     of the project is 3 times the interquartile range of 
     all project impacts in the dataset.
   tooltip_id: outlier_toggle_tooltip_byob
 
-fl_area_norm:
+fl_norm:
   label: "Normalize intensity by:  "
   radio_list:
     - label: Constructed Floor Area
@@ -129,7 +129,7 @@ fl_area_norm:
     - label: Gross Internal Floor Area
       value: bldg_gfa
   first_item: bldg_gfa
-  radio_id: fl_area_norm
+  radio_id: fl_norm
   tooltip: "Total constructed floor area (CFA) 
     includes the gross internal floor area (GFA) of the 
     building and the gross floor area of any 
@@ -490,7 +490,7 @@ scope_c:
     5: "Interiors - Construction"
     6: "Unknown"
 
-proj_typ_c: 
+p_typ_c: 
   label: Project Type  
   checklist: 
     - 
@@ -506,7 +506,7 @@ proj_typ_c:
       label: Tenant Improvement
       value: 4
   first_item: [1]
-  checklist_id: proj_typ_c
+  checklist_id: p_typ_c
   tooltip: TBD
   tooltip_id: TBD
   value_map:

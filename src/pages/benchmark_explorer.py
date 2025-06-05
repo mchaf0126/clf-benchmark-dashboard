@@ -22,10 +22,10 @@ config = app_config
 register_page(__name__, path='/benchmark_explorer')
 load_figure_template('pulse')
 
-categorical_dropdown_yaml = config.get('cat_d_one')
+categorical_dropdown_yaml = config.get('cat_d_1')
 assert categorical_dropdown_yaml is not None, 'The config for cat. dropdowns could not be set'
 
-enable_filters_toggle_yaml = config.get('cat_fil_one')
+enable_filters_toggle_yaml = config.get('cat_fil_1')
 assert enable_filters_toggle_yaml is not None, 'The config for cat. dropdowns could not be set'
 
 total_impact_dropdown_yaml = config.get('tot_imp_d')
@@ -37,10 +37,10 @@ assert lcs_checklist_yaml is not None, 'The config for lcs checklist could not b
 scope_checklist_yaml = config.get('scope_c')
 assert scope_checklist_yaml is not None, 'The config for scope checklist could not be set'
 
-proj_type_checklist_yaml = config.get('proj_typ_c')
+proj_type_checklist_yaml = config.get('p_typ_c')
 assert proj_type_checklist_yaml is not None, 'The config for proj_type checklist could not be set'
 
-outlier_toggle_yaml = config.get('outlier_t')
+outlier_toggle_yaml = config.get('out_t')
 assert outlier_toggle_yaml is not None, 'The config for outlier toggle could not be set'
 
 cat_selection_toggle_yaml = config.get('cat_sel_t')
@@ -67,7 +67,7 @@ assert mat_filter_toggle_yaml is not None, 'The config for material filter toggl
 mat_filter_yaml = config.get('mat_filter')
 assert mat_filter_yaml is not None, 'The config for material filters could not be set'
 
-floor_area_radio_yaml = config.get('fl_area_norm')
+floor_area_radio_yaml = config.get('fl_norm')
 assert floor_area_radio_yaml is not None, 'The config for floor area norm. could not be set'
 
 sort_box_radio_yaml = config.get('sort_box_plot_byob')
@@ -415,7 +415,7 @@ def layout(state: str = None):
 
 @callback(
     [
-        Output({"type": "control", "id": 'cat_fil_one'}, 'options'),
+        Output({"type": "control", "id": 'cat_fil_1'}, 'options'),
         Output({"type": "other", "id": 'second_cat_selection_toggle'}, 'options'),
         Output({"type": "other", "id": 'second_cat_filter_toggle'}, 'options'),
     ],
@@ -442,14 +442,14 @@ def enable_filters(cat_selection_toggle: list, second_cat_selection_toggle: list
 
 @callback(
     [
-        Output({"type": "control", "id": 'cat_d_one'}, 'disabled'),
+        Output({"type": "control", "id": 'cat_d_1'}, 'disabled'),
         Output({"type": "other", "id": 'cat_filter'}, 'disabled'),
         Output({"type": "other", "id": 'second_cat_dropdown'}, 'disabled'),
         Output({"type": "other", "id": 'second_cat_filter'}, 'disabled'),
     ],
     [
         Input({"type": "control", "id": 'cat_sel_t'}, 'value'),
-        Input({"type": "control", "id": 'cat_fil_one'}, 'value'),
+        Input({"type": "control", "id": 'cat_fil_1'}, 'value'),
         Input({"type": "other", "id": 'second_cat_selection_toggle'}, 'value'),
         Input({"type": "other", "id": 'second_cat_filter_toggle'}, 'value'),
     ]   
@@ -511,8 +511,8 @@ def enable_filters(enable_filters_toggle):
     ],
     [
         Input({"type": "other", "id": 'second_cat_selection_toggle'}, 'value'),
-        Input({"type": "control", "id": 'cat_d_one'}, 'value'),
-        Input({"type": "control", "id": 'cat_d_one'}, 'options')
+        Input({"type": "control", "id": 'cat_d_1'}, 'value'),
+        Input({"type": "control", "id": 'cat_d_1'}, 'options')
     ]
 )
 def add_filter_dropdown(cat_filters_toggle: list,
@@ -569,8 +569,8 @@ def add_filter_dropdown(second_cat_filters_toggle: list,
         Output({"type": "other", "id": 'cat_filter'}, 'value')
     ],
     [
-        Input({"type": "control", "id": 'cat_fil_one'}, 'value'),
-        Input({"type": "control", "id": 'cat_d_one'}, 'value')
+        Input({"type": "control", "id": 'cat_fil_1'}, 'value'),
+        Input({"type": "control", "id": 'cat_d_1'}, 'value')
     ]
 )
 def add_filter_dropdown(cat_filters_toggle: list,
@@ -609,11 +609,11 @@ def add_filter_dropdown(mat_filters_toggle: list):
 @callback(
     Output('byob_data', 'data'),
     [
-        Input({"type": "control", "id": 'cat_d_one'}, 'value'),
+        Input({"type": "control", "id": 'cat_d_1'}, 'value'),
         Input({"type": "control", "id": 'tot_imp_d'}, 'value'),
-        Input({"type": "control", "id": 'fl_area_norm'}, 'value'),
+        Input({"type": "control", "id": 'fl_norm'}, 'value'),
         Input({"type": "control", "id": 'scope_c'}, 'value'),
-        Input({"type": "control", "id": 'proj_typ_c'}, 'value'),
+        Input({"type": "control", "id": 'p_typ_c'}, 'value'),
         Input({"type": "control", "id": "lcs_c"}, 'value'),
         Input({"type": "control", "id": "cat_sel_t"}, "value"),
         Input({"type": "other", "id": "second_cat_selection_toggle"}, "value"),
@@ -622,7 +622,7 @@ def add_filter_dropdown(mat_filters_toggle: list):
         Input({"type": "other", "id": 'second_cat_filter'}, 'value'),
         Input({"type": "other", "id": "mat_filter_toggle_byob"}, "value"),
         Input({"type": "other", "id": "mat_filter"}, "value"),
-        Input({"type": "control", "id": 'outlier_t'}, 'value'),
+        Input({"type": "control", "id": 'out_t'}, 'value'),
         Input('sort_box_plot_byob', 'value'),
         Input({"type": "other", "id": 'cat_filter'}, 'value'),
         Input("ref_line_toggle", 'value'),
@@ -828,13 +828,13 @@ def update_data_for_byob(category_x: str,
 @callback(
     Output('caption', 'children'),
     [
-        Input({"type": "control", "id": 'cat_d_one'}, 'value'),
+        Input({"type": "control", "id": 'cat_d_1'}, 'value'),
         Input({"type": "control", "id": 'tot_imp_d'}, 'value'),
-        Input({"type": "control", "id": 'fl_area_norm'}, 'value'),
+        Input({"type": "control", "id": 'fl_norm'}, 'value'),
         Input({"type": "control", "id": 'scope_c'}, 'value'),
-        Input({"type": "control", "id": 'proj_typ_c'}, 'value'),
+        Input({"type": "control", "id": 'p_typ_c'}, 'value'),
         Input({"type": "control", "id": "lcs_c"}, 'value'),
-        Input({"type": "control", "id": 'outlier_t'}, 'value'),
+        Input({"type": "control", "id": 'out_t'}, 'value'),
         Input('sort_box_plot_byob', 'value'),
     ]
 )
@@ -1170,7 +1170,7 @@ def update_hash(_values):
     The app state is json serialised then base64 encoded and is treated with the
     reverse process in the layout function.
     """
-    print({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]})
+    # print({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]})
     return "#" + base64.urlsafe_b64encode(
         msgpack.packb({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]})
     ).decode("utf-8")
