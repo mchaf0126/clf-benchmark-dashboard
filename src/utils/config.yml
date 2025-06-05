@@ -990,6 +990,43 @@ cat_filter:
   tooltip: TBD
   tooltip_id: TBD
 
+second_cat_selection_toggle:
+  label: ""
+  toggle_list:
+    - label: Enable second categorical selection
+      value: 1
+  first_item: []
+  toggle_id: second_cat_selection_toggle
+  tooltip: TBD
+  tooltip_id: TBD
+
+second_cat_dropdown:
+  label: Second categorical variable
+  dropdown_list:
+  first_item:
+  dropdown_id: second_cat_dropdown
+  tooltip: TBD
+  tooltip_id: TBD
+
+second_cat_filter_toggle:
+  label: ""
+  toggle_list:
+    - label: Enable second categorical filter
+      value: 1
+  first_item: []
+  toggle_id: second_cat_filter_toggle
+  tooltip: TBD
+  tooltip_id: TBD
+
+second_cat_filter:
+  label: Second categorical values to filter
+  dropdown_list:
+  first_item:
+  dropdown_id: second_cat_filter
+  placeholder: If enabled, please select a filter
+  tooltip: TBD
+  tooltip_id: TBD
+
 mat_filter_toggle_byob:
   label: ""
   toggle_list:

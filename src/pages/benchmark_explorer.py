@@ -1,5 +1,6 @@
 import textwrap
 import base64
+from itertools import cycle
 from pathlib import Path
 import plotly.express as px
 import pandas as pd
@@ -14,7 +15,7 @@ from src.components.inputs import create_float_input, create_str_input
 from src.utils.load_config import app_config
 from src.utils.general import create_graph_xshift
 from dash_bootstrap_templates import load_figure_template
-import json
+import msgpack
 
 config = app_config
 
@@ -50,6 +51,18 @@ assert cat_selection_toggle_yaml is not None, 'The config for categorical select
 
 cat_filter_yaml = config.get('cat_filter')
 assert cat_filter_yaml is not None, 'The config for cat filters could not be set'
+
+second_cat_selection_toggle_yaml = config.get('second_cat_selection_toggle')
+assert second_cat_selection_toggle_yaml is not None, 'The config for second cat select could not be set'
+
+second_cat_dropdown_yaml = config.get('second_cat_dropdown')
+assert second_cat_dropdown_yaml is not None, 'The config for second cat dropdown could not be set'
+
+second_cat_filter_toggle_yaml = config.get('second_cat_filter_toggle')
+assert second_cat_filter_toggle_yaml is not None, 'The config for second cat filter toggle could not be set'
+
+second_cat_filter_yaml = config.get('second_cat_filter')
+assert second_cat_filter_yaml is not None, 'The config for second cat filters could not be set'
 
 mat_filter_toggle_yaml = config.get('mat_filter_toggle_byob')
 assert mat_filter_toggle_yaml is not None, 'The config for material filter toggle could not be set'
@@ -87,7 +100,7 @@ assert material_list is not None, "The config for caption orders could not be se
 
 byob_figure = px.box(
     color_discrete_sequence=["#FFB71B"],
-    height=550,
+    height=600,
     orientation='h',
     points='all',
 ).update_xaxes(
@@ -100,7 +113,9 @@ byob_figure = px.box(
     jitter=0.5
 ).update_layout(
     margin={'pad': 10},
-    font={'family': 'Source Sans Pro'}
+    font={'family': 'Source Sans Pro'},
+    legend_traceorder="reversed",
+    boxgroupgap=0.4,
 ).add_vline(
     x=0,
     line_color='white',
@@ -127,10 +142,13 @@ def layout(state: str = None):
         line_toggle_byob_yaml['toggle_id']: line_toggle_byob_yaml['first_item'],
         cat_filter_yaml['dropdown_id']: [],
         cat_selection_toggle_yaml['toggle_id']: cat_selection_toggle_yaml['first_item'],
-        mat_filter_toggle_yaml['toggle_id']: mat_filter_toggle_yaml['first_item']
+        mat_filter_toggle_yaml['toggle_id']: mat_filter_toggle_yaml['first_item'],
+        second_cat_selection_toggle_yaml['toggle_id']: second_cat_selection_toggle_yaml['first_item'],
+        second_cat_dropdown_yaml['dropdown_id']: [],
+        second_cat_filter_toggle_yaml['toggle_id']: second_cat_filter_toggle_yaml['first_item'],
     }
     # Decode the state from the hash
-    state = defaults | (json.loads(base64.b64decode(state)) if state else {})
+    state = defaults | (msgpack.unpackb(base64.b64decode(state)) if state else {})
 
     categorical_dropdown = create_dropdown(
         label=categorical_dropdown_yaml['label'],
@@ -205,6 +223,28 @@ def layout(state: str = None):
         tooltip_id=cat_selection_toggle_yaml['tooltip_id'],
     )
 
+    second_cat_selection_toggle = create_toggle(
+        toggle_list=second_cat_selection_toggle_yaml['toggle_list'],
+        first_item=state.get(second_cat_selection_toggle_yaml['toggle_id']),
+        toggle_id={"type": "other", "id": second_cat_selection_toggle_yaml['toggle_id']},
+        tooltip_id=second_cat_selection_toggle_yaml['tooltip_id'],
+    )
+
+    second_categorical_dropdown = create_dropdown(
+        label=second_cat_dropdown_yaml['label'],
+        tooltip_id=second_cat_dropdown_yaml['tooltip_id'],
+        dropdown_list=[],
+        first_item=state.get(second_cat_dropdown_yaml['dropdown_id']),
+        dropdown_id={"type": "other", "id": second_cat_dropdown_yaml['dropdown_id']}
+    )
+
+    second_cat_filter_toggle = create_toggle(
+        toggle_list=second_cat_filter_toggle_yaml['toggle_list'],
+        first_item=state.get(second_cat_filter_toggle_yaml['toggle_id']),
+        toggle_id={"type": "other", "id": second_cat_filter_toggle_yaml['toggle_id']},
+        tooltip_id=second_cat_filter_toggle_yaml['tooltip_id'],
+    )
+
     mat_filter_toggle = create_toggle(
         toggle_list=mat_filter_toggle_yaml['toggle_list'],
         first_item=state.get(mat_filter_toggle_yaml['toggle_id']),
@@ -266,6 +306,13 @@ def layout(state: str = None):
         placeholder="If enabled, please select a filter"
     )
 
+    second_categorical_filter = create_multi_dropdown(
+        label=second_cat_filter_yaml["label"],
+        tooltip_id=second_cat_filter_yaml["tooltip_id"],
+        dropdown_id={"type": "other", "id": second_cat_filter_yaml["dropdown_id"]},
+        placeholder="If enabled, please select a filter"
+    )
+
     material_filter = create_multi_dropdown(
         label=mat_filter_yaml["label"],
         tooltip_id=mat_filter_yaml["tooltip_id"],
@@ -293,6 +340,10 @@ def layout(state: str = None):
                     categorical_tooltip,
                     enable_filters_toggle,
                     categorical_filter,
+                    second_cat_selection_toggle,
+                    second_categorical_dropdown,
+                    second_cat_filter_toggle,
+                    second_categorical_filter,
                     mat_filter_toggle,
                     material_filter
                 ],
@@ -341,7 +392,7 @@ def layout(state: str = None):
                     dbc.Col(
                         [
                             dcc.Graph(figure=byob_figure, id="byob_graph"),
-                            html.Div(id='help_div'),
+                            html.Div(id='caption'),
                             html.Div([
                                 dbc.Button(
                                     "Download Table Contents",
@@ -351,7 +402,8 @@ def layout(state: str = None):
                                     className='my-2 fw-bold'
                                 ),
                                 dcc.Download(id="download-tbl-byob"),
-                            ])
+                            ]),
+                            html.Div(id='help_div'),
                         ], xs=8, sm=8, md=8, lg=8, xl=7, xxl=7,
                     ),
                 ],
@@ -363,14 +415,69 @@ def layout(state: str = None):
 
 
 @callback(
-    Output({"type": "other", "id": 'cat_filter'}, 'disabled'),
-    Input({"type": "control", "id": 'enable_filters_toggle'}, 'value')
+    [
+        Output({"type": "control", "id": 'enable_filters_toggle'}, 'options'),
+        Output({"type": "other", "id": 'second_cat_selection_toggle'}, 'options'),
+        Output({"type": "other", "id": 'second_cat_filter_toggle'}, 'options'),
+    ],
+    [
+        Input({"type": "control", "id": 'cat_selection_toggle_byob'}, 'value'),
+        Input({"type": "other", "id": 'second_cat_selection_toggle'}, 'value'),
+    ]
 )
-def enable_filters(enable_filters_toggle):
-    if enable_filters_toggle == []:
-        return True
+def enable_filters(cat_selection_toggle: list, second_cat_selection_toggle: list):
+    if cat_selection_toggle == [1]:
+        enable_filters_toggle = [{"label": "Enable categorical filtering", "value": 1}]
+        second_cat_selection =[{"label": "Enable second categorical selection", "value": 1}]
+        if second_cat_selection_toggle == [1]:
+            second_cat_filter_toggle =[{"label": "Enable second categorical filter", "value": 1}]
+        else:
+            second_cat_filter_toggle =[{"label": "Enable second categorical filter", "value": 1, "disabled": True}]
+        return enable_filters_toggle, second_cat_selection, second_cat_filter_toggle
     else:
-        return False
+        enable_filters_toggle = [{"label": "Enable categorical filtering", "value": 1, "disabled": True}]
+        second_cat_selection =[{"label": "Enable second categorical selection", "value": 1, "disabled": True}]
+        second_cat_filter_toggle =[{"label": "Enable second categorical filter", "value": 1, "disabled": True}]
+        return enable_filters_toggle, second_cat_selection, second_cat_filter_toggle
+
+
+@callback(
+    [
+        Output({"type": "control", "id": 'categorical_dropdown_byob'}, 'disabled'),
+        Output({"type": "other", "id": 'cat_filter'}, 'disabled'),
+        Output({"type": "other", "id": 'second_cat_dropdown'}, 'disabled'),
+        Output({"type": "other", "id": 'second_cat_filter'}, 'disabled'),
+    ],
+    [
+        Input({"type": "control", "id": 'cat_selection_toggle_byob'}, 'value'),
+        Input({"type": "control", "id": 'enable_filters_toggle'}, 'value'),
+        Input({"type": "other", "id": 'second_cat_selection_toggle'}, 'value'),
+        Input({"type": "other", "id": 'second_cat_filter_toggle'}, 'value'),
+    ]   
+)
+def enable_filters(cat_selection_toggle: list,
+                   enable_filters_toggle: list,
+                   second_cat_selection_toggle: list,
+                   second_cat_filter_toggle: list):
+    if cat_selection_toggle == [1]:
+        if enable_filters_toggle == [1]:
+            if second_cat_selection_toggle == [1]:
+                if second_cat_filter_toggle == [1]:
+                    return False, False, False, False
+                else:
+                    return False, False, False, True
+            else:
+                return False, False, True, True
+        else:
+            if second_cat_selection_toggle == [1]:
+                if second_cat_filter_toggle == [1]:
+                    return False, False, False, False
+                else:
+                    return False, False, False, True
+            else:
+                return False, False, True, True
+    else:
+        return True, True, True, True
     
 
 @callback(
@@ -400,6 +507,65 @@ def enable_filters(enable_filters_toggle):
 
 @callback(
     [
+        Output({"type": "other", "id": 'second_cat_dropdown'}, 'options'),
+        Output({"type": "other", "id": 'second_cat_dropdown'}, 'value')
+    ],
+    [
+        Input({"type": "other", "id": 'second_cat_selection_toggle'}, 'value'),
+        Input({"type": "control", "id": 'categorical_dropdown_byob'}, 'value'),
+        Input({"type": "control", "id": 'categorical_dropdown_byob'}, 'options')
+    ]
+)
+def add_filter_dropdown(cat_filters_toggle: list,
+                        category_x: str,
+                        category_x_options: dict):
+    if cat_filters_toggle == []:
+        return ([], None)
+    else:
+        # path to directories of files
+        current_file_path = Path(__file__)
+        main_directory = current_file_path.parents[2]
+        metadata_directory = main_directory.joinpath('data/buildings_metadata.pkl')
+        metadata_df = pd.read_pickle(metadata_directory)
+        metadata_df = metadata_df[
+            (metadata_df[category_x] == 'New Construction')
+        ]
+        reduced_options = [option for option in category_x_options if option.get("value") != category_x]
+        return reduced_options, reduced_options[0].get("value")
+
+
+@callback(
+    [
+        Output({"type": "other", "id": 'second_cat_filter'}, 'options'),
+        Output({"type": "other", "id": 'second_cat_filter'}, 'value')
+    ],
+    [
+        Input({"type": "other", "id": 'second_cat_filter_toggle'}, 'value'),
+        Input({"type": "other", "id": 'second_cat_selection_toggle'}, 'value'),
+        Input({"type": "other", "id": 'second_cat_dropdown'}, 'value')
+    ]
+)
+def add_filter_dropdown(second_cat_filters_toggle: list,
+                        second_cat_selection_toggle: list,
+                        second_category_x: str):
+    if second_cat_filters_toggle == []:
+        return ([], None)
+    if second_cat_selection_toggle == []:
+        return ([], None)
+    else:
+        # path to directories of files
+        current_file_path = Path(__file__)
+        main_directory = current_file_path.parents[2]
+        metadata_directory = main_directory.joinpath('data/buildings_metadata.pkl')
+        metadata_df = pd.read_pickle(metadata_directory)
+        metadata_df = metadata_df[
+            (metadata_df['bldg_proj_type'] == 'New Construction')
+        ]
+        return metadata_df[second_category_x].dropna().unique(), metadata_df[second_category_x].unique()[0]
+
+
+@callback(
+    [
         Output({"type": "other", "id": 'cat_filter'}, 'options'),
         Output({"type": "other", "id": 'cat_filter'}, 'value')
     ],
@@ -411,7 +577,7 @@ def enable_filters(enable_filters_toggle):
 def add_filter_dropdown(cat_filters_toggle: list,
                         category_x: str):
     if cat_filters_toggle == []:
-        return ([], None)
+        return [], None
     else:
         # path to directories of files
         current_file_path = Path(__file__)
@@ -422,6 +588,7 @@ def add_filter_dropdown(cat_filters_toggle: list,
             (metadata_df['bldg_proj_type'] == 'New Construction')
         ]
         return metadata_df[category_x].dropna().unique(), metadata_df[category_x].unique()[0]
+
 
 
 @callback(
@@ -450,6 +617,10 @@ def add_filter_dropdown(mat_filters_toggle: list):
         Input({"type": "control", "id": 'proj_type_checklist'}, 'value'),
         Input({"type": "control", "id": "lcs_checklist"}, 'value'),
         Input({"type": "control", "id": "cat_selection_toggle_byob"}, "value"),
+        Input({"type": "other", "id": "second_cat_selection_toggle"}, "value"),
+        Input({"type": "other", "id": 'second_cat_dropdown'}, 'value'),
+        Input({"type": "other", "id": 'second_cat_filter_toggle'}, 'value'),
+        Input({"type": "other", "id": 'second_cat_filter'}, 'value'),
         Input({"type": "other", "id": "mat_filter_toggle_byob"}, "value"),
         Input({"type": "other", "id": "mat_filter"}, "value"),
         Input({"type": "control", "id": 'outlier_toggle_byob'}, 'value'),
@@ -467,6 +638,10 @@ def update_data_for_byob(category_x: str,
                          proj_type: list,
                          lcs: list,
                          cat_selection_toggle: list,
+                         second_cat_selection_toggle: list,
+                         second_cat_value: str,
+                         second_cat_filter_toggle: list,
+                         second_cat_filter: list,
                          mat_filter_toggle: list,
                          mat_filter: list,
                          outlier_toggle_byob: list,
@@ -517,6 +692,22 @@ def update_data_for_byob(category_x: str,
             metadata_df = metadata_df[
                 metadata_df[category_x].isin(cat_filter)
             ]
+
+    if (second_cat_filter_toggle == [1]) & (cat_selection_toggle == [1]):
+        # cat_value_filter
+        if second_cat_filter is None:
+            second_cat_filter = []
+        elif len(second_cat_filter) == 0:
+            second_cat_filter = []
+        elif isinstance(second_cat_filter, str):
+            second_cat_filter = [second_cat_filter]
+            metadata_df = metadata_df[
+                metadata_df[second_cat_value].isin(second_cat_filter)
+            ]
+        else: 
+            metadata_df = metadata_df[
+                metadata_df[second_cat_value].isin(second_cat_filter)
+            ]
     
     # material selection toggle
     if mat_filter_toggle == [1]:
@@ -544,7 +735,10 @@ def update_data_for_byob(category_x: str,
     # create impacts and intensity metric
     new_impacts_gb = new_impacts.groupby('project_index')[intensity_metric_map.get(objective)].sum()
     if cat_selection_toggle == [1]:
-        metadata_gb = metadata_df[['project_index', category_x, cfa_gfa_type]]
+        if second_cat_selection_toggle == [1]:
+            metadata_gb = metadata_df[['project_index', category_x, second_cat_value, cfa_gfa_type]]
+        else: 
+            metadata_gb = metadata_df[['project_index', category_x, cfa_gfa_type]]
     else: 
         metadata_gb =  metadata_df[['project_index', cfa_gfa_type]]
 
@@ -584,7 +778,7 @@ def update_data_for_byob(category_x: str,
     if cat_selection_toggle == [1]:
         if sort_box_byob == 'median':
             grouped_medians = (
-                final_impacts.groupby(by=category_x)
+                final_impacts[[objective, category_x]].groupby(by=category_x)
                 .median()
                 .sort_values(
                     by=objective,
@@ -594,7 +788,7 @@ def update_data_for_byob(category_x: str,
             category_order = grouped_medians.index.to_list()
         elif sort_box_byob == 'sample_size':
             grouped_medians = (
-                final_impacts.groupby(by=category_x)
+                final_impacts[[objective, category_x]].groupby(by=category_x)
                 .count()
                 .sort_values(
                     by=objective,
@@ -621,7 +815,7 @@ def update_data_for_byob(category_x: str,
 
 
 @callback(
-    Output('help_div', 'children'),
+    Output('caption', 'children'),
     [
         Input({"type": "control", "id": 'categorical_dropdown_byob'}, 'value'),
         Input({"type": "control", "id": 'total_impact_dropdown_byob'}, 'value'),
@@ -684,16 +878,21 @@ def update_chart(byob_data: dict):
         # 'ec_per_res_unit': '(kgCO<sub>2</sub>e/residential unit)',
     }
 
-    df = pd.DataFrame.from_dict(byob_data.get('byob_data'))
+    starting_df = pd.DataFrame.from_dict(byob_data.get('byob_data'))
+    df = starting_df.copy()
     category_order = byob_data.get('sort')
     column_list = list(df.columns)
     if len(column_list) == 1:
         values = column_list[0]
         categories = "All"
         df[categories] = categories
-    else:
+    elif len(column_list) == 2:
         categories = column_list[0]
         values = column_list[1]
+    else:
+        categories = column_list[0]
+        color_col = column_list[1]
+        values = column_list[2]
     
     annotations = []
     max_of_df = df[values].max()
@@ -754,10 +953,73 @@ def update_chart(byob_data: dict):
         "type": "line",
         "layer": "below"
     }
-
+    grouped_boxes = []
+    colors_for_grouped_boxes = [
+        "#FFB71B",
+        "#6E6F72",
+        "#8DC6EB",
+        "#AA182C",
+        "#0075A9",
+        "#E47E3D",
+        "#4A9462",
+        "#414042",
+        "#31006F",
+    ]
+    if len(column_list) > 2:
+        for unique_value, repeated_color in zip(df[color_col].unique(), cycle(colors_for_grouped_boxes)):
+            temp_box = { 
+                "alignmentgroup": "True", 
+                "boxpoints": "all", 
+                "hovertemplate": "Impact=%{x}<extra></extra>",
+                "legendgroup": unique_value, 
+                "marker": { 
+                    "color": repeated_color
+                }, 
+                "name": unique_value, 
+                "notched": False, 
+                "offsetgroup": unique_value, 
+                "orientation": "h", 
+                "showlegend": True, 
+                "x": df[df[color_col] == unique_value][values].values, 
+                "xaxis": "x", 
+                "y": df[df[color_col] == unique_value][categories].values, 
+                "yaxis": "y", 
+                "type": "box" 
+            }
+            grouped_boxes.append(temp_box)
+    else:
+        box_list = [
+            {
+                "alignmentgroup": "True",
+                "boxpoints": "all",
+                "hovertemplate": "Impact = %{x}<extra></extra>",
+                "legendgroup": "",
+                "marker": {
+                    "color": "#FFB71B"
+                },
+                "name": "",
+                "notched": False,
+                "offsetgroup": "",
+                "orientation": "h",
+                "showlegend": False,
+                "x0": " ",
+                "xaxis": "x",
+                "y0": " ",
+                "yaxis": "y",
+                "type": "box",
+                "boxmean": True,
+                "jitter": 0.5,
+                "quartilemethod": "inclusive",
+                "x": df[values].values,
+                "y": df[categories].values
+            }
+        ]
+    
     patched_figure = Patch()
-    patched_figure["data"][0]["x"] = df[values].values
-    patched_figure["data"][0]["y"] = df[categories].values
+    if len(column_list) > 2:
+        patched_figure["data"] = list(reversed(grouped_boxes))
+    else:
+        patched_figure["data"] = box_list
 
     patched_figure["layout"]["annotations"] = annotations
     patched_figure["layout"]["title"]["text"] = f"{values} of {field_name_map.get(categories)}"
@@ -781,7 +1043,6 @@ def update_chart(byob_data: dict):
 # )
 # def test_one(figure_data):
 #     print(json.dumps(figure_data, indent=2))
-#     return json.dumps(figure_data, indent=2)
 
 
 @callback(
@@ -886,6 +1147,5 @@ def update_hash(_values):
     reverse process in the layout function.
     """
     return "#" + base64.urlsafe_b64encode(
-        json.dumps({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]})
-        .encode("utf-8")
+        msgpack.packb({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]})
     ).decode("utf-8")
