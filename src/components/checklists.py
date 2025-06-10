@@ -24,9 +24,11 @@ def create_checklist(label: str,
             dbc.Label(
                 [
                     label,
-                    html.Span(
-                        ' 🛈',
-                        id=tooltip_id
+                    html.Img(
+                        src='assets/info.jpg',
+                        height="25px",
+                        id=tooltip_id,
+                        className='mb-1'
                     )
                 ]
             ),

@@ -23,10 +23,10 @@ def create_toggle(toggle_list: list, first_item: str, toggle_id: str, tooltip_id
                 id=toggle_id,
                 switch=True,
             ),
-            html.Div(
-                '  🛈',
-                id=tooltip_id,
-                className='ms-1'
+            html.Img(
+                src='assets/info.jpg',
+                height="25px",
+                id=tooltip_id
             )
         ],
         className='d-flex mb-4'

@@ -20,9 +20,11 @@ def create_str_input(label: str, tooltip_id: str, placeholder: str, input_id: st
             dbc.Label(
                 [
                     label,
-                    html.Span(
-                        ' 🛈',
-                        id=tooltip_id
+                    html.Img(
+                        src='assets/info.jpg',
+                        height="25px",
+                        id=tooltip_id,
+                        className='mb-1'
                     )
                 ]
             ),
@@ -58,9 +60,11 @@ def create_float_input(label: str, tooltip_id: str, placeholder: str, input_id: 
             dbc.Label(
                 [
                     label,
-                    html.Span(
-                        ' 🛈',
-                        id=tooltip_id
+                    html.Img(
+                        src='assets/info.jpg',
+                        height="25px",
+                        id=tooltip_id,
+                        className='mb-1'
                     )
                 ]
             ),

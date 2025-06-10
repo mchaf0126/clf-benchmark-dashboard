@@ -20,9 +20,11 @@ def create_dropdown(label: str, tooltip_id: str, dropdown_list: list, first_item
             dbc.Label(
                 [
                     label,
-                    html.Span(
-                        ' 🛈',
-                        id=tooltip_id
+                    html.Img(
+                        src='assets/info.jpg',
+                        height="25px",
+                        id=tooltip_id,
+                        className='mb-1'
                     )
                 ]
             ),
@@ -63,9 +65,11 @@ def create_multi_dropdown(label: str,
             dbc.Label(
                 [
                     label,
-                    html.Span(
-                        ' 🛈',
-                        id=tooltip_id
+                    html.Img(
+                        src='assets/info.jpg',
+                        height="25px",
+                        id=tooltip_id,
+                        className='mb-1'
                     )
                 ]
             ),

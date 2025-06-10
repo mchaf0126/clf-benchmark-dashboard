@@ -20,9 +20,11 @@ def create_radio_items(label: str, tooltip_id: str, radio_list: list, first_item
             dbc.Label(
                 [
                     label,
-                    html.Span(
-                        ' 🛈',
-                        id=tooltip_id
+                    html.Img(
+                        src='assets/info.jpg',
+                        height="25px",
+                        id=tooltip_id,
+                        className='mb-1'
                     )
                 ]
             ),
