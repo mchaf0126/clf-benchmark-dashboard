@@ -675,7 +675,7 @@ def update_data_for_byob(category_x: str,
         "Acidification Potential Intensity": "ap",
         "Smog Formation Potential Intensity": "sfp",
         "Ozone Depletion Potential Intensity": "odp",
-        "Natural Resource Depletion Intensity": "nred",
+        "Non Renewable Energy Demand Intensity": "nred",
     }
 
     # read files
@@ -896,8 +896,8 @@ def update_chart(byob_data: dict):
         "Eutrophication Potential Intensity": '(kgNe/m<sup>2</sup>)',
         "Acidification Potential Intensity": '(kgSO<sub>2</sub>e/m<sup>2</sup>)',
         "Smog Formation Potential Intensity": '(kgO<sub>3</sub>e/m<sup>2</sup>)',
-        "Ozone Depletion Potential Intensity": '(CFC-11e/m<sup>2</sup>)',
-        "Natural Resource Depletion Intensity": '(MJ/m<sup>2</sup>)',
+        "Ozone Depletion Potential Intensity": '(kgCFC-11e/m<sup>2</sup>)',
+        "Non Renewable Energy Demand Intensity": '(MJ/m<sup>2</sup>)',
         # 'ec_per_occupant': '(kgCO<sub>2</sub>e/occupant)',
         # 'ec_per_res_unit': '(kgCO<sub>2</sub>e/residential unit)',
     }
