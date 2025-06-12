@@ -79,7 +79,7 @@ tot_imp_d:
       label: Ozone Depletion Potential Intensity
       value: 5
     -  
-      label: Natural Resource Depletion Intensity
+      label: Non Renewable Energy Demand Intensity
       value: 6
   first_item: 1
   dropdown_id: tot_imp_d
@@ -95,7 +95,7 @@ tot_imp_d:
     3: Acidification Potential Intensity
     4: Smog Formation Potential Intensity
     5: Ozone Depletion Potential Intensity
-    6: Natural Resource Depletion Intensity
+    6: Non Renewable Energy Demand Intensity
 
 cat_fil_1:
   label: ""
