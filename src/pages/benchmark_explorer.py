@@ -948,6 +948,7 @@ def create_notes_below_graph(category_x: str,
 def update_chart(byob_data: dict):
     units_map = {
         "Embodied Carbon Intensity": '(kgCO<sub>2</sub>e/m<sup>2</sup>)',
+        "Material Use Intensity": "(kg/m<sup>2</sup>)",
         "Eutrophication Potential Intensity": '(kgNe/m<sup>2</sup>)',
         "Acidification Potential Intensity": '(kgSO<sub>2</sub>e/m<sup>2</sup>)',
         "Smog Formation Potential Intensity": '(kgO<sub>3</sub>e/m<sup>2</sup>)',
