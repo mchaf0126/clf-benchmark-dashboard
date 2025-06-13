@@ -829,6 +829,11 @@ def update_data_for_byob(category_x: str,
     Output('caption', 'children'),
     [
         Input({"type": "control", "id": 'cat_d_1'}, 'value'),
+        Input({"type": "control", "id": "cat_sel_t"}, "value"),
+        Input({"type": "other", "id": 'cat_filter'}, 'value'),
+        Input({"type": "other", "id": "second_cat_selection_toggle"}, "value"),
+        Input({"type":  "other", "id": 'second_cat_dropdown'}, 'value'),
+        Input({"type": "other", "id": 'second_cat_filter'}, 'value'),
         Input({"type": "control", "id": 'tot_imp_d'}, 'value'),
         Input({"type": "control", "id": 'fl_norm'}, 'value'),
         Input({"type": "control", "id": 'scope_c'}, 'value'),
@@ -839,6 +844,11 @@ def update_data_for_byob(category_x: str,
     ]
 )
 def create_notes_below_graph(category_x: str,
+                             cat_selection_toggle: list,
+                             cat_filter,
+                             sec_cat_selection_toggle: list,
+                             sec_cat_x: str,
+                             second_cat_filter,
                              objective: str,
                              cfa_gfa_type: str,
                              scope: list,
@@ -854,7 +864,31 @@ def create_notes_below_graph(category_x: str,
     scope = [scope_value_map.get(item) for item in scope]
 
     proj_type_value_map = proj_type_checklist_yaml.get("value_map")
-    proj_type = [proj_type_value_map.get(item) for item in proj_type]
+    proj_type = [proj_type_value_map.get(item) for item in proj_type]\
+    
+    if cat_selection_toggle == [1]:
+        if (cat_filter is None):
+            cat_selection_one_text = f'- **{field_name_map.get(category_x)}**: All'
+        elif (len(cat_filter) == 0):
+            cat_selection_one_text = f'- **{field_name_map.get(category_x)}**: All'
+        elif isinstance(cat_filter, str):
+            cat_selection_one_text = f'- **{field_name_map.get(category_x)}**: {cat_filter}'
+        else: 
+            cat_selection_one_text = f'- **{field_name_map.get(category_x)}**: {", ".join([item for item in category_order_map.get(category_x) if item in cat_filter])}'
+    else:
+        cat_selection_one_text = f''
+    
+    if sec_cat_selection_toggle == [1]:
+        if (second_cat_filter is None):
+            cat_selection_two_text = f'- **{field_name_map.get(sec_cat_x)}**: All'
+        elif (len(second_cat_filter) == 0):
+            cat_selection_two_text = f'- **{field_name_map.get(sec_cat_x)}**: All'
+        elif isinstance(second_cat_filter, str):
+            cat_selection_two_text = f'- **{field_name_map.get(sec_cat_x)}**: {second_cat_filter}'
+        else: 
+            cat_selection_two_text = f'- **{field_name_map.get(sec_cat_x)}**: {", ".join([item for item in category_order_map.get(sec_cat_x) if item in second_cat_filter])}'
+    else:
+        cat_selection_two_text = f''
     
     sorted_lcs = ", ".join(sorted(lcs))
     sorted_scope = [item for item in caption_orders.get('scope_order') if item in scope]
@@ -875,11 +909,13 @@ def create_notes_below_graph(category_x: str,
             f"""
             This box plot represents the {field_name_map.get(category_x)} plotted by {objective}. 
             The environmental metric is normalized by {field_name_map.get(cfa_gfa_type)}. The boxes are sorted 
-            by {field_name_map.get(sort_box_byob)}, and outliers {crop_option} cropped. The following
-            additional metrics have been selected:
+            by {field_name_map.get(sort_box_byob)}, and outliers {crop_option} cropped. A subset of the data 
+            is being displayed that represents:
             - **Life Cycle Stages**: {sorted_lcs}
             - **Element Scopes**: {sorted_scope}
             - **Project Types**: {sorted_proj_type}
+            {cat_selection_one_text}
+            {cat_selection_two_text}
             """
         )
     ]
