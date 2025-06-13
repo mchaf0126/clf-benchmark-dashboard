@@ -874,7 +874,7 @@ def create_notes_below_graph(category_x: str,
         elif isinstance(cat_filter, str):
             cat_selection_one_text = f'- **{field_name_map.get(category_x)}**: {cat_filter}'
         else: 
-            cat_selection_one_text = f'- **{field_name_map.get(category_x)}**: {", ".join([item for item in category_order_map.get(category_x) if item in cat_filter])}'
+            cat_selection_one_text = f'- **{field_name_map.get(category_x)}**: {", ".join(cat_filter)}'
     else:
         cat_selection_one_text = f''
     
@@ -886,7 +886,7 @@ def create_notes_below_graph(category_x: str,
         elif isinstance(second_cat_filter, str):
             cat_selection_two_text = f'- **{field_name_map.get(sec_cat_x)}**: {second_cat_filter}'
         else: 
-            cat_selection_two_text = f'- **{field_name_map.get(sec_cat_x)}**: {", ".join([item for item in category_order_map.get(sec_cat_x) if item in second_cat_filter])}'
+            cat_selection_two_text = f'- **{field_name_map.get(sec_cat_x)}**: {", ".join(second_cat_filter)}'
     else:
         cat_selection_two_text = f''
     
