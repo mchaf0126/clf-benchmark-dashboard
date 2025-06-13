@@ -834,6 +834,8 @@ def update_data_for_byob(category_x: str,
         Input({"type": "other", "id": "second_cat_selection_toggle"}, "value"),
         Input({"type":  "other", "id": 'second_cat_dropdown'}, 'value'),
         Input({"type": "other", "id": 'second_cat_filter'}, 'value'),
+        Input({"type": "other", "id": "mat_filter_toggle_byob"}, "value"),
+        Input({"type": "other", "id": "mat_filter"}, "value"),
         Input({"type": "control", "id": 'tot_imp_d'}, 'value'),
         Input({"type": "control", "id": 'fl_norm'}, 'value'),
         Input({"type": "control", "id": 'scope_c'}, 'value'),
@@ -849,6 +851,8 @@ def create_notes_below_graph(category_x: str,
                              sec_cat_selection_toggle: list,
                              sec_cat_x: str,
                              second_cat_filter,
+                             mat_filter_toggle: list,
+                             mat_filter,
                              objective: str,
                              cfa_gfa_type: str,
                              scope: list,
@@ -874,7 +878,7 @@ def create_notes_below_graph(category_x: str,
         elif isinstance(cat_filter, str):
             cat_selection_one_text = f'- **{field_name_map.get(category_x)}**: {cat_filter}'
         else: 
-            cat_selection_one_text = f'- **{field_name_map.get(category_x)}**: {", ".join([item for item in category_order_map.get(category_x) if item in cat_filter])}'
+            cat_selection_one_text = f'- **{field_name_map.get(category_x)}**: {", ".join(cat_filter)}'
     else:
         cat_selection_one_text = f''
     
@@ -886,9 +890,21 @@ def create_notes_below_graph(category_x: str,
         elif isinstance(second_cat_filter, str):
             cat_selection_two_text = f'- **{field_name_map.get(sec_cat_x)}**: {second_cat_filter}'
         else: 
-            cat_selection_two_text = f'- **{field_name_map.get(sec_cat_x)}**: {", ".join([item for item in category_order_map.get(sec_cat_x) if item in second_cat_filter])}'
+            cat_selection_two_text = f'- **{field_name_map.get(sec_cat_x)}**: {", ".join(second_cat_filter)}'
     else:
         cat_selection_two_text = f''
+
+    if mat_filter_toggle == [1]:
+        if (mat_filter is None):
+            mat_text = f'- **Material Data**: All'
+        elif (len(mat_filter) == 0):
+            mat_text = f'- **Material Data**: All'
+        elif isinstance(mat_filter, str):
+            mat_text = f'- **Material Data**: {mat_filter} only'
+        else: 
+            mat_text = f'- **Material Data**: {", ".join(mat_filter)}'
+    else:
+        mat_text = f'- **Material Data**: All'
     
     sorted_lcs = ", ".join(sorted(lcs))
     sorted_scope = [item for item in caption_orders.get('scope_order') if item in scope]
@@ -914,8 +930,10 @@ def create_notes_below_graph(category_x: str,
             - **Life Cycle Stages**: {sorted_lcs}
             - **Element Scopes**: {sorted_scope}
             - **Project Types**: {sorted_proj_type}
+            {mat_text}
             {cat_selection_one_text}
             {cat_selection_two_text}
+        
             """
         )
     ]
