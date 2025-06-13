@@ -22,6 +22,19 @@ config = app_config
 register_page(__name__, path='/benchmark_explorer')
 load_figure_template('pulse')
 
+### Glossary of symbols for variables
+# c = category
+# ch = checklist
+# d = dropdown
+# f = filter
+# fl = floor
+# m = material
+# t = toggle
+# p = project
+# lcs = life cycle stage
+# out = outlier
+# s = selection
+
 categorical_dropdown_yaml = config.get('cat_d_1')
 assert categorical_dropdown_yaml is not None, 'The config for cat. dropdowns could not be set'
 
