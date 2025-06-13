@@ -907,7 +907,7 @@ def create_notes_below_graph(category_x: str,
     return [
         dcc.Markdown(
             f"""
-            This box plot represents the {field_name_map.get(category_x)} plotted by {objective}. 
+            This box plot represents the projects plotted by {objective}. 
             The environmental metric is normalized by {field_name_map.get(cfa_gfa_type)}. The boxes are sorted 
             by {field_name_map.get(sort_box_byob)}, and outliers {crop_option} cropped. A subset of the data 
             is being displayed that represents:
