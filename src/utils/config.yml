@@ -66,21 +66,24 @@ tot_imp_d:
     - 
       label: Embodied Carbon Intensity
       value: 1
-    -  
-      label: Eutrophication Potential Intensity
+    -
+      label: Material Use Intensity
       value: 2
     -  
-      label: Acidification Potential Intensity
+      label: Eutrophication Potential Intensity
       value: 3
     -  
-      label: Smog Formation Potential Intensity
+      label: Acidification Potential Intensity
       value: 4
     -  
-      label: Ozone Depletion Potential Intensity
+      label: Smog Formation Potential Intensity
       value: 5
     -  
-      label: Non Renewable Energy Demand Intensity
+      label: Ozone Depletion Potential Intensity
       value: 6
+    -  
+      label: Non Renewable Energy Demand Intensity
+      value: 7
   first_item: 1
   dropdown_id: tot_imp_d
   tooltip: Each environmental metric contained in the dataset
@@ -91,11 +94,12 @@ tot_imp_d:
   tooltip_id: total_impact_dropdown_tooltip_byob
   value_map:
     1: Embodied Carbon Intensity
-    2: Eutrophication Potential Intensity
-    3: Acidification Potential Intensity
-    4: Smog Formation Potential Intensity
-    5: Ozone Depletion Potential Intensity
-    6: Non Renewable Energy Demand Intensity
+    2: Material Use Intensity
+    3: Eutrophication Potential Intensity
+    4: Acidification Potential Intensity
+    5: Smog Formation Potential Intensity
+    6: Ozone Depletion Potential Intensity
+    7: Non Renewable Energy Demand Intensity
 
 cat_fil_1:
   label: ""

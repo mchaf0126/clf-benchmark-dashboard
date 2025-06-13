@@ -671,6 +671,7 @@ def update_data_for_byob(category_x: str,
     # intensity metric map
     intensity_metric_map = {
         "Embodied Carbon Intensity": "gwp",
+        "Material Use Intensity": "inv_mass",
         "Eutrophication Potential Intensity": "ep",
         "Acidification Potential Intensity": "ap",
         "Smog Formation Potential Intensity": "sfp",
