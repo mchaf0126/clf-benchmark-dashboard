@@ -159,8 +159,8 @@ c_t_1:
       value: 1
   first_item: [1]
   toggle_id: c_t_1
-  tooltip: Use this toggle to enable the display of 
-    results by a categorical variable. When enabled, 
+  tooltip: Use this toggle to display 
+    results of a categorical variable. When enabled, 
     users should select the variable they 
     wish to display below. 
   tooltip_id: c_t_1_tooltip
@@ -257,7 +257,7 @@ c_t_2:
       value: 1
   first_item: []
   toggle_id: c_t_2
-  tooltip: Use this toggle to enable the display of
+  tooltip: Use this toggle to display
     results grouped by color by a second categorical 
     variable. When enabled, users should select the 
     variable they wish to display below.
@@ -269,7 +269,7 @@ c_d_2:
   first_item: []
   dropdown_id: c_d_2
   tooltip: Use this dropdown to select a second categorical
-    variable to display. These values will become the 
+    variable. These values will become the 
     colors of the boxes plotted per first categorical 
     variable.
   tooltip_id: c_d_2_tooltip
@@ -305,7 +305,7 @@ m_t:
       value: 1
   first_item: []
   toggle_id: m_t
-  tooltip: Use this toggle to enable the display of a
+  tooltip: Use this toggle to display a
     subset of impacts based on a specific material or 
     materials. When enabled, users should select the 
     materials they wish to display below.
@@ -381,7 +381,7 @@ ln_t:
       value: 1
   first_item: []
   toggle_id: ln_t
-  tooltip: Use this toggle to enable the ability to add a 
+  tooltip: Use this toggle to add a 
     user-defined reference line to the box plots. This will 
     allow for a visual comparison of a target value across 
     the box plot figures.

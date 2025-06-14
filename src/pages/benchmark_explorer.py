@@ -308,7 +308,7 @@ def layout(state: str = None):
         checklist=scope_checklist_yaml['checklist'],
         first_item=state.get(scope_checklist_yaml['checklist_id']),
         checklist_id={"type": "control", "id": scope_checklist_yaml['checklist_id']},
-        tooltip_id=lcs_checklist_yaml['tooltip_id']
+        tooltip_id=scope_checklist_yaml['tooltip_id']
     )
 
     proj_type_checklist = create_checklist(
@@ -316,7 +316,7 @@ def layout(state: str = None):
         checklist=proj_type_checklist_yaml['checklist'],
         first_item=state.get(proj_type_checklist_yaml['checklist_id']),
         checklist_id={"type": "control", "id": proj_type_checklist_yaml['checklist_id']},
-        tooltip_id=lcs_checklist_yaml['tooltip_id']
+        tooltip_id=proj_type_checklist_yaml['tooltip_id']
     )
 
     categorical_toggle_one = create_toggle(
