@@ -151,7 +151,7 @@ layout = html.Div(
                         ),
                         dcc.Markdown(
                             '''
-                            In 2017, the Carbon Leadership Forum (CLF) at the 
+                            In 2017, the Carbon Leadership Forum at the 
                             University of Washington published the [Embodied 
                             Carbon Benchmark Study V1]
                             (https://carbonleadershipforum.org/lca-benchmark-database/)
