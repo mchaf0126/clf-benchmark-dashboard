@@ -240,7 +240,7 @@ c_f_t_1:
 c_f_1:
   label: 1st categorical filter(s)
   dropdown_list:
-  first_item:
+  first_item: []
   dropdown_id: c_f_1
   placeholder: If enabled, please select a filter
   tooltip: Use this dropdown to filter the values
@@ -265,8 +265,8 @@ c_t_2:
 
 c_d_2:
   label: 2nd categorical variable
-  dropdown_list:
-  first_item:
+  dropdown_list: []
+  first_item: 
   dropdown_id: c_d_2
   tooltip: Use this dropdown to select a second categorical
     variable to display. These values will become the 
@@ -288,7 +288,7 @@ c_f_t_2:
 c_f_2:
   label: 2nd categorical filter(s)
   dropdown_list:
-  first_item:
+  first_item: []
   dropdown_id: c_f_2
   placeholder: If enabled, please select a filter
   tooltip: Use this dropdown to filter the values of
@@ -314,7 +314,7 @@ m_t:
 m_f:
   label: Material filter(s)
   dropdown_list:
-  first_item:
+  first_item: []
   dropdown_id: m_f
   placeholder: If enabled, please select a filter
   tooltip: Use this dropdown to filter the impacts of 
@@ -390,7 +390,7 @@ ln_t:
 ln_v:
   label: Value of reference line
   placeholder: Integer 
-  input_id: line_number_input
+  input_id: ln_v
   tooltip: This value corresponds with the x-axis placement 
     of the user-defined vertical line.
   tooltip_id: ln_v_tooltip

@@ -42,75 +42,74 @@ load_figure_template('pulse')
 # sort = sort
 # v = values
 
-
-categorical_dropdown_yaml = config.get('cat_d_1')
-assert categorical_dropdown_yaml is not None, 'The config for cat. dropdowns could not be set'
+impact_dropdown_yaml = config.get('i_d')
+assert impact_dropdown_yaml is not None, 'The config for total impacts could not be set'
 
 impact_type_radio_yaml = config.get('i_typ')
 assert impact_type_radio_yaml is not None, 'The config for impact type radio could not be set'
 
-enable_filters_toggle_yaml = config.get('cat_fil_1')
-assert enable_filters_toggle_yaml is not None, 'The config for cat. dropdowns could not be set'
-
-total_impact_dropdown_yaml = config.get('tot_imp_d')
-assert total_impact_dropdown_yaml is not None, 'The config for total impacts could not be set'
-
 lcs_checklist_yaml = config.get('lcs_c')
 assert lcs_checklist_yaml is not None, 'The config for lcs checklist could not be set'
 
-scope_checklist_yaml = config.get('scope_c')
+scope_checklist_yaml = config.get('sc_c')
 assert scope_checklist_yaml is not None, 'The config for scope checklist could not be set'
 
 proj_type_checklist_yaml = config.get('p_typ_c')
 assert proj_type_checklist_yaml is not None, 'The config for proj_type checklist could not be set'
 
+categorical_toggle_one_yaml = config.get('c_t_1')
+assert categorical_toggle_one_yaml is not None, 'The config for categorical selection toggle could not be set'
+
+categorical_dropdown_one_yaml = config.get('c_d_1')
+assert categorical_dropdown_one_yaml is not None, 'The config for cat. dropdowns could not be set'
+
+categorical_filter_toggle_one_yaml = config.get('c_f_t_1')
+assert categorical_filter_toggle_one_yaml is not None, 'The config for cat. dropdowns could not be set'
+
+categorical_filter_one_yaml = config.get('c_f_1')
+assert categorical_filter_one_yaml is not None, 'The config for cat filters could not be set'
+
+categorical_toggle_two_yaml = config.get('c_t_2')
+assert categorical_toggle_two_yaml is not None, 'The config for second cat select could not be set'
+
+categorical_dropdown_two_yaml = config.get('c_d_2')
+assert categorical_dropdown_two_yaml is not None, 'The config for second cat dropdown could not be set'
+
+categorical_filter_toggle_two_yaml = config.get('c_f_t_2')
+assert categorical_filter_toggle_two_yaml is not None, 'The config for second cat filter toggle could not be set'
+
+categorical_filter_two_yaml = config.get('c_f_2')
+assert categorical_filter_two_yaml is not None, 'The config for second cat filters could not be set'
+
+material_filter_toggle_yaml = config.get('m_t')
+assert material_filter_toggle_yaml is not None, 'The config for material filter toggle could not be set'
+
+material_filter_yaml = config.get('m_f')
+assert material_filter_yaml is not None, 'The config for material filters could not be set'
+
+floor_area_normalization_radio_yaml = config.get('fl_no')
+assert floor_area_normalization_radio_yaml is not None, 'The config for floor area norm. could not be set'
+
+sort_values_radio_yaml = config.get('sort_v')
+assert sort_values_radio_yaml is not None, 'The config for box plot sorting could not be set'
+
 outlier_toggle_yaml = config.get('out_t')
 assert outlier_toggle_yaml is not None, 'The config for outlier toggle could not be set'
 
-cat_selection_toggle_yaml = config.get('cat_sel_t')
-assert cat_selection_toggle_yaml is not None, 'The config for categorical selection toggle could not be set'
+line_toggle_yaml = config.get("ln_t")
+assert line_toggle_yaml is not None, "The config for line toggle could not be set"
 
-cat_filter_yaml = config.get('cat_filter')
-assert cat_filter_yaml is not None, 'The config for cat filters could not be set'
+line_value_yaml = config.get("ln_v")
+assert line_value_yaml is not None, "The config for line number input could not be set"
 
-second_cat_selection_toggle_yaml = config.get('second_cat_selection_toggle')
-assert second_cat_selection_toggle_yaml is not None, 'The config for second cat select could not be set'
-
-second_cat_dropdown_yaml = config.get('second_cat_dropdown')
-assert second_cat_dropdown_yaml is not None, 'The config for second cat dropdown could not be set'
-
-second_cat_filter_toggle_yaml = config.get('second_cat_filter_toggle')
-assert second_cat_filter_toggle_yaml is not None, 'The config for second cat filter toggle could not be set'
-
-second_cat_filter_yaml = config.get('second_cat_filter')
-assert second_cat_filter_yaml is not None, 'The config for second cat filters could not be set'
-
-mat_filter_toggle_yaml = config.get('mat_filter_toggle_byob')
-assert mat_filter_toggle_yaml is not None, 'The config for material filter toggle could not be set'
-
-mat_filter_yaml = config.get('mat_filter')
-assert mat_filter_yaml is not None, 'The config for material filters could not be set'
-
-floor_area_radio_yaml = config.get('fl_norm')
-assert floor_area_radio_yaml is not None, 'The config for floor area norm. could not be set'
-
-sort_box_radio_yaml = config.get('sort_box_plot_byob')
-assert sort_box_radio_yaml is not None, 'The config for box plot sorting could not be set'
+line_name_yaml = config.get("ln_nm")
+assert line_name_yaml is not None, "The config for line name input could not be set"
 
 field_name_map = config.get('field_name_map')
 assert field_name_map is not None, 'The config for field names could not be set'
 
 category_order_map = config.get('category_order_map')
 assert category_order_map is not None, 'The config for category orders could not be set'
-
-line_toggle_byob_yaml = config.get("line_toggle_byob")
-assert line_toggle_byob_yaml is not None, "The config for line toggle could not be set"
-
-line_number_input_yaml = config.get("line_number_input")
-assert line_number_input_yaml is not None, "The config for line number input could not be set"
-
-line_name_input_yaml = config.get("line_name_input")
-assert line_name_input_yaml is not None, "The config for line name input could not be set"
 
 caption_orders = config.get("caption_orders")
 assert caption_orders is not None, "The config for caption orders could not be set"
@@ -143,6 +142,112 @@ byob_figure = px.box(
     layer='below'
 )
 
+impact_dropdown_tooltip = create_tooltip(
+    tooltip_text=impact_dropdown_yaml['tooltip'],
+    target_id=impact_dropdown_yaml['tooltip_id']
+)
+
+impact_type_radio_tooltip = create_tooltip(
+    tooltip_text=impact_type_radio_yaml['tooltip'],
+    target_id=impact_type_radio_yaml['tooltip_id']
+)
+
+lcs_checklist_tooltip = create_tooltip(
+    tooltip_text=lcs_checklist_yaml['tooltip'],
+    target_id=lcs_checklist_yaml['tooltip_id']
+)
+
+scope_checklist_tooltip = create_tooltip(
+    tooltip_text=scope_checklist_yaml['tooltip'],
+    target_id=scope_checklist_yaml['tooltip_id']
+)
+
+proj_type_checklist_tooltip = create_tooltip(
+    tooltip_text=proj_type_checklist_yaml['tooltip'],
+    target_id=proj_type_checklist_yaml['tooltip_id']
+)
+
+categorical_toggle_one_tooltip = create_tooltip(
+    tooltip_text=categorical_toggle_one_yaml['tooltip'],
+    target_id=categorical_toggle_one_yaml['tooltip_id']
+)
+
+categorical_dropdown_one_tooltip = create_tooltip(
+    tooltip_text=categorical_dropdown_one_yaml['tooltip'],
+    target_id=categorical_dropdown_one_yaml['tooltip_id']
+)
+
+categorical_filter_toggle_one_tooltip = create_tooltip(
+    tooltip_text=categorical_filter_toggle_one_yaml['tooltip'],
+    target_id=categorical_filter_toggle_one_yaml['tooltip_id']
+)
+
+categorical_filter_one_tooltip = create_tooltip(
+    tooltip_text=categorical_filter_one_yaml['tooltip'],
+    target_id=categorical_filter_one_yaml['tooltip_id']
+)
+
+categorical_toggle_two_tooltip = create_tooltip(
+    tooltip_text=categorical_toggle_two_yaml['tooltip'],
+    target_id=categorical_toggle_two_yaml['tooltip_id']
+)
+
+categorical_dropdown_two_tooltip = create_tooltip(
+    tooltip_text=categorical_dropdown_two_yaml['tooltip'],
+    target_id=categorical_dropdown_two_yaml['tooltip_id']
+)
+
+categorical_filter_toggle_two_tooltip = create_tooltip(
+    tooltip_text=categorical_filter_toggle_two_yaml['tooltip'],
+    target_id=categorical_filter_toggle_two_yaml['tooltip_id']
+)
+
+categorical_filter_two_tooltip = create_tooltip(
+    tooltip_text=categorical_filter_two_yaml['tooltip'],
+    target_id=categorical_filter_two_yaml['tooltip_id']
+)
+
+material_filter_toggle_tooltip = create_tooltip(
+    tooltip_text=material_filter_toggle_yaml['tooltip'],
+    target_id=material_filter_toggle_yaml['tooltip_id']
+)
+
+material_filter_tooltip = create_tooltip(
+    tooltip_text=material_filter_yaml['tooltip'],
+    target_id=material_filter_yaml['tooltip_id']
+)
+
+floor_area_normalization_radio_tooltip = create_tooltip(
+    tooltip_text=floor_area_normalization_radio_yaml['tooltip'],
+    target_id=floor_area_normalization_radio_yaml['tooltip_id']
+)
+
+sort_values_radio_tooltip = create_tooltip(
+    tooltip_text=sort_values_radio_yaml['tooltip'],
+    target_id=sort_values_radio_yaml['tooltip_id']
+)
+
+outlier_toggle_tooltip = create_tooltip(
+    tooltip_text=outlier_toggle_yaml['tooltip'],
+    target_id=outlier_toggle_yaml['tooltip_id']
+)
+
+line_toggle_tooltip = create_tooltip(
+    tooltip_text=line_toggle_yaml['tooltip'],
+    target_id=line_toggle_yaml['tooltip_id']
+)
+
+line_value_tooltip = create_tooltip(
+    tooltip_text=line_value_yaml['tooltip'],
+    target_id=line_value_yaml['tooltip_id']
+)
+
+line_name_tooltip = create_tooltip(
+    tooltip_text=line_name_yaml['tooltip'],
+    target_id=line_name_yaml['tooltip_id']
+)
+
+
 def layout(state: str = None):
     """Home page layout
 
@@ -151,32 +256,35 @@ def layout(state: str = None):
     # """
     # Define default state values
     defaults = {
-        categorical_dropdown_yaml['dropdown_id']: categorical_dropdown_yaml['first_item'],
+        impact_dropdown_yaml['dropdown_id']: impact_dropdown_yaml['first_item'],
         impact_type_radio_yaml['radio_id']: impact_type_radio_yaml['first_item'],
         lcs_checklist_yaml['checklist_id']: lcs_checklist_yaml['first_item'],
         scope_checklist_yaml['checklist_id']: scope_checklist_yaml['first_item'],
         proj_type_checklist_yaml['checklist_id']: proj_type_checklist_yaml['first_item'],
-        total_impact_dropdown_yaml['dropdown_id']: total_impact_dropdown_yaml['first_item'],
-        enable_filters_toggle_yaml['toggle_id']: enable_filters_toggle_yaml['first_item'],
+        categorical_toggle_one_yaml['toggle_id']: categorical_toggle_one_yaml['first_item'],
+        categorical_dropdown_one_yaml['dropdown_id']: categorical_dropdown_one_yaml['first_item'],
+        categorical_filter_toggle_one_yaml['toggle_id']: categorical_filter_toggle_one_yaml['first_item'],
+        categorical_filter_one_yaml['dropdown_id']: [],
+        categorical_toggle_two_yaml['toggle_id']: categorical_toggle_two_yaml['first_item'],
+        categorical_dropdown_two_yaml['dropdown_id']: [],
+        categorical_filter_toggle_two_yaml['toggle_id']: categorical_filter_toggle_two_yaml['first_item'],
+        categorical_filter_two_yaml['dropdown_id']: [],
+        material_filter_toggle_yaml['toggle_id']: material_filter_toggle_yaml['first_item'],
+        material_filter_yaml['dropdown_id']: [],
+        floor_area_normalization_radio_yaml['radio_id']: floor_area_normalization_radio_yaml['first_item'],
+        sort_values_radio_yaml['radio_id']: sort_values_radio_yaml['first_item'],
         outlier_toggle_yaml['toggle_id']: outlier_toggle_yaml['first_item'],
-        floor_area_radio_yaml['radio_id']: floor_area_radio_yaml['first_item'],
-        line_toggle_byob_yaml['toggle_id']: line_toggle_byob_yaml['first_item'],
-        cat_filter_yaml['dropdown_id']: [],
-        cat_selection_toggle_yaml['toggle_id']: cat_selection_toggle_yaml['first_item'],
-        mat_filter_toggle_yaml['toggle_id']: mat_filter_toggle_yaml['first_item'],
-        second_cat_selection_toggle_yaml['toggle_id']: second_cat_selection_toggle_yaml['first_item'],
-        second_cat_dropdown_yaml['dropdown_id']: [],
-        second_cat_filter_toggle_yaml['toggle_id']: second_cat_filter_toggle_yaml['first_item'],
+        line_toggle_yaml['toggle_id']: line_toggle_yaml['first_item'],
     }
     # Decode the state from the hash
     state = defaults | (msgpack.unpackb(base64.urlsafe_b64decode(state)) if state else {})
 
-    categorical_dropdown = create_dropdown(
-        label=categorical_dropdown_yaml['label'],
-        tooltip_id=categorical_dropdown_yaml['tooltip_id'],
-        dropdown_list=categorical_dropdown_yaml['dropdown_list'],
-        first_item=state.get(categorical_dropdown_yaml['dropdown_id']),
-        dropdown_id={"type": "control", "id": categorical_dropdown_yaml['dropdown_id']}
+    impact_dropdown = create_dropdown(
+        label=impact_dropdown_yaml['label'],
+        tooltip_id=impact_dropdown_yaml['tooltip_id'],
+        dropdown_list=impact_dropdown_yaml['dropdown_list'],
+        first_item=state.get(impact_dropdown_yaml['dropdown_id']),
+        dropdown_id={"type": "control", "id": impact_dropdown_yaml['dropdown_id']}
     )
 
     impact_type_radio = create_radio_items(
@@ -185,11 +293,6 @@ def layout(state: str = None):
         radio_list=impact_type_radio_yaml['radio_list'],
         first_item=state.get(impact_type_radio_yaml['radio_id']),
         radio_id={"type": "control", "id": impact_type_radio_yaml['radio_id']}
-    )
-
-    categorical_tooltip = create_tooltip(
-        tooltip_text=categorical_dropdown_yaml['tooltip'],
-        target_id=categorical_dropdown_yaml['tooltip_id']
     )
 
     lcs_checklist = create_checklist(
@@ -216,24 +319,92 @@ def layout(state: str = None):
         tooltip_id=lcs_checklist_yaml['tooltip_id']
     )
 
-    total_impact_dropdown = create_dropdown(
-        label=total_impact_dropdown_yaml['label'],
-        tooltip_id=total_impact_dropdown_yaml['tooltip_id'],
-        dropdown_list=total_impact_dropdown_yaml['dropdown_list'],
-        first_item=state.get(total_impact_dropdown_yaml['dropdown_id']),
-        dropdown_id={"type": "control", "id": total_impact_dropdown_yaml['dropdown_id']}
+    categorical_toggle_one = create_toggle(
+        toggle_list=categorical_toggle_one_yaml['toggle_list'],
+        first_item=state.get(categorical_toggle_one_yaml['toggle_id']),
+        toggle_id={"type": "control", "id": categorical_toggle_one_yaml['toggle_id']},
+        tooltip_id=categorical_toggle_one_yaml['tooltip_id'],
     )
 
-    total_impact_tooltip = create_tooltip(
-        tooltip_text=total_impact_dropdown_yaml['tooltip'],
-        target_id=total_impact_dropdown_yaml['tooltip_id']
+    categorical_dropdown_one = create_dropdown(
+        label=categorical_dropdown_one_yaml['label'],
+        tooltip_id=categorical_dropdown_one_yaml['tooltip_id'],
+        dropdown_list=categorical_dropdown_one_yaml['dropdown_list'],
+        first_item=state.get(categorical_dropdown_one_yaml['dropdown_id']),
+        dropdown_id={"type": "control", "id": categorical_dropdown_one_yaml['dropdown_id']}
     )
 
-    enable_filters_toggle = create_toggle(
-        toggle_list=enable_filters_toggle_yaml['toggle_list'],
-        first_item=state.get(enable_filters_toggle_yaml['toggle_id']),
-        toggle_id={"type": "control", "id": enable_filters_toggle_yaml['toggle_id']},
-        tooltip_id=enable_filters_toggle_yaml['tooltip_id'],
+    categorical_filter_toggle_one = create_toggle(
+        toggle_list=categorical_filter_toggle_one_yaml['toggle_list'],
+        first_item=state.get(categorical_filter_toggle_one_yaml['toggle_id']),
+        toggle_id={"type": "control", "id": categorical_filter_toggle_one_yaml['toggle_id']},
+        tooltip_id=categorical_filter_toggle_one_yaml['tooltip_id'],
+    )
+
+    categorical_filter_one = create_multi_dropdown(
+        label=categorical_filter_one_yaml["label"],
+        tooltip_id=categorical_filter_one_yaml["tooltip_id"],
+        dropdown_id={"type": "control", "id": categorical_filter_one_yaml["dropdown_id"]},
+        placeholder=categorical_filter_one_yaml["placeholder"],
+    )
+
+    categorical_toggle_two = create_toggle(
+        toggle_list=categorical_toggle_two_yaml['toggle_list'],
+        first_item=state.get(categorical_toggle_two_yaml['toggle_id']),
+        toggle_id={"type": "control", "id": categorical_toggle_two_yaml['toggle_id']},
+        tooltip_id=categorical_toggle_two_yaml['tooltip_id'],
+    )
+
+    categorical_dropdown_two = create_dropdown(
+        label=categorical_dropdown_two_yaml['label'],
+        tooltip_id=categorical_dropdown_two_yaml['tooltip_id'],
+        dropdown_list=categorical_dropdown_two_yaml['dropdown_list'],
+        first_item=state.get(categorical_dropdown_two_yaml['dropdown_id']),
+        dropdown_id={"type": "control", "id": categorical_dropdown_two_yaml['dropdown_id']}
+    )
+
+    categorical_filter_toggle_two = create_toggle(
+        toggle_list=categorical_filter_toggle_two_yaml['toggle_list'],
+        first_item=state.get(categorical_filter_toggle_two_yaml['toggle_id']),
+        toggle_id={"type": "control", "id": categorical_filter_toggle_two_yaml['toggle_id']},
+        tooltip_id=categorical_filter_toggle_two_yaml['tooltip_id'],
+    )
+
+    categorical_filter_two = create_multi_dropdown(
+        label=categorical_filter_two_yaml["label"],
+        tooltip_id=categorical_filter_two_yaml["tooltip_id"],
+        dropdown_id={"type": "control", "id": categorical_filter_two_yaml["dropdown_id"]},
+        placeholder=categorical_filter_two_yaml["placeholder"],
+    )
+
+    material_filter_toggle = create_toggle(
+        toggle_list=material_filter_toggle_yaml['toggle_list'],
+        first_item=state.get(material_filter_toggle_yaml['toggle_id']),
+        toggle_id={"type": "control", "id": material_filter_toggle_yaml['toggle_id']},
+        tooltip_id=material_filter_toggle_yaml['tooltip_id'],
+    )
+
+    material_filter = create_multi_dropdown(
+        label=material_filter_yaml["label"],
+        tooltip_id=material_filter_yaml["tooltip_id"],
+        dropdown_id={"type": "control", "id": material_filter_yaml["dropdown_id"]},
+        placeholder=material_filter_yaml["placeholder"],
+    )
+
+    floor_area_normalization_radio = create_radio_items(
+        label=floor_area_normalization_radio_yaml['label'],
+        tooltip_id=floor_area_normalization_radio_yaml['tooltip_id'],
+        radio_list=floor_area_normalization_radio_yaml['radio_list'],
+        first_item=state.get(floor_area_normalization_radio_yaml['radio_id']),
+        radio_id={"type": "control", "id": floor_area_normalization_radio_yaml['radio_id']}
+    )
+
+    sort_values_radio = create_radio_items(
+        label=sort_values_radio_yaml['label'],
+        tooltip_id=sort_values_radio_yaml['tooltip_id'],
+        radio_list=sort_values_radio_yaml['radio_list'],
+        first_item=state.get(sort_values_radio_yaml['radio_id']),
+        radio_id={"type": "control", "id": sort_values_radio_yaml['radio_id']}
     )
 
     outlier_toggle = create_toggle(
@@ -243,154 +414,79 @@ def layout(state: str = None):
         tooltip_id=outlier_toggle_yaml['tooltip_id'],
     )
 
-    outlier_tooltip = create_tooltip(
-        tooltip_text=outlier_toggle_yaml['tooltip'],
-        target_id=outlier_toggle_yaml['tooltip_id']
+    line_toggle = create_toggle(
+        toggle_list=line_toggle_yaml['toggle_list'],
+        first_item=state.get(line_toggle_yaml['toggle_id']),
+        toggle_id={"type": "control", "id": line_toggle_yaml['toggle_id']},
+        tooltip_id=line_toggle_yaml['tooltip_id'],
     )
 
-    cat_selection_toggle = create_toggle(
-        toggle_list=cat_selection_toggle_yaml['toggle_list'],
-        first_item=state.get(cat_selection_toggle_yaml['toggle_id']),
-        toggle_id={"type": "control", "id": cat_selection_toggle_yaml['toggle_id']},
-        tooltip_id=cat_selection_toggle_yaml['tooltip_id'],
+    line_value = create_float_input(
+        label=line_value_yaml["label"],
+        placeholder=line_value_yaml["placeholder"],
+        input_id={"type": "control", "id": line_value_yaml["input_id"]},
+        tooltip_id=line_value_yaml["tooltip_id"]
     )
 
-    second_cat_selection_toggle = create_toggle(
-        toggle_list=second_cat_selection_toggle_yaml['toggle_list'],
-        first_item=state.get(second_cat_selection_toggle_yaml['toggle_id']),
-        toggle_id={"type": "other", "id": second_cat_selection_toggle_yaml['toggle_id']},
-        tooltip_id=second_cat_selection_toggle_yaml['tooltip_id'],
-    )
-
-    second_categorical_dropdown = create_dropdown(
-        label=second_cat_dropdown_yaml['label'],
-        tooltip_id=second_cat_dropdown_yaml['tooltip_id'],
-        dropdown_list=[],
-        first_item=state.get(second_cat_dropdown_yaml['dropdown_id']),
-        dropdown_id={"type": "other", "id": second_cat_dropdown_yaml['dropdown_id']}
-    )
-
-    second_cat_filter_toggle = create_toggle(
-        toggle_list=second_cat_filter_toggle_yaml['toggle_list'],
-        first_item=state.get(second_cat_filter_toggle_yaml['toggle_id']),
-        toggle_id={"type": "other", "id": second_cat_filter_toggle_yaml['toggle_id']},
-        tooltip_id=second_cat_filter_toggle_yaml['tooltip_id'],
-    )
-
-    mat_filter_toggle = create_toggle(
-        toggle_list=mat_filter_toggle_yaml['toggle_list'],
-        first_item=state.get(mat_filter_toggle_yaml['toggle_id']),
-        toggle_id={"type": "other", "id": mat_filter_toggle_yaml['toggle_id']},
-        tooltip_id=mat_filter_toggle_yaml['tooltip_id'],
-    )
-
-    floor_area_radio = create_radio_items(
-        label=floor_area_radio_yaml['label'],
-        tooltip_id=floor_area_radio_yaml['tooltip_id'],
-        radio_list=floor_area_radio_yaml['radio_list'],
-        first_item=state.get(floor_area_radio_yaml['radio_id']),
-        radio_id={"type": "control", "id": floor_area_radio_yaml['radio_id']}
-    )
-
-    floor_area_tooltip = create_tooltip(
-        tooltip_text=floor_area_radio_yaml['tooltip'],
-        target_id=floor_area_radio_yaml['tooltip_id']
-    )
-
-    sort_box_radio = create_radio_items(
-        label=sort_box_radio_yaml['label'],
-        tooltip_id=sort_box_radio_yaml['tooltip_id'],
-        radio_list=sort_box_radio_yaml['radio_list'],
-        first_item=sort_box_radio_yaml['first_item'],
-        radio_id=sort_box_radio_yaml['radio_id']
-    )
-
-    sort_box_tooltip = create_tooltip(
-        tooltip_text=sort_box_radio_yaml['tooltip'],
-        target_id=sort_box_radio_yaml['tooltip_id']
-    )
-
-    line_toggle_byob = create_toggle(
-        toggle_list=line_toggle_byob_yaml['toggle_list'],
-        first_item=state.get(line_toggle_byob_yaml['toggle_id']),
-        toggle_id=line_toggle_byob_yaml['toggle_id'],
-        tooltip_id=line_toggle_byob_yaml['tooltip_id'],
-    )
-
-    line_number_input = create_float_input(
-        label=line_number_input_yaml["label"],
-        placeholder=line_number_input_yaml["placeholder"],
-        input_id=line_number_input_yaml["input_id"],
-        tooltip_id=line_number_input_yaml["tooltip_id"]
-    )
-
-    line_name_input = create_str_input(
-        label=line_name_input_yaml["label"],
-        placeholder=line_name_input_yaml["placeholder"],
-        input_id=line_name_input_yaml["input_id"],
-        tooltip_id=line_name_input_yaml["tooltip_id"]
-    )
-
-    categorical_filter = create_multi_dropdown(
-        label=cat_filter_yaml["label"],
-        tooltip_id=cat_filter_yaml["tooltip_id"],
-        dropdown_id={"type": "other", "id": cat_filter_yaml["dropdown_id"]},
-        placeholder="If enabled, please select a filter"
-    )
-
-    second_categorical_filter = create_multi_dropdown(
-        label=second_cat_filter_yaml["label"],
-        tooltip_id=second_cat_filter_yaml["tooltip_id"],
-        dropdown_id={"type": "other", "id": second_cat_filter_yaml["dropdown_id"]},
-        placeholder="If enabled, please select a filter"
-    )
-
-    material_filter = create_multi_dropdown(
-        label=mat_filter_yaml["label"],
-        tooltip_id=mat_filter_yaml["tooltip_id"],
-        dropdown_id={"type": "other", "id": mat_filter_yaml["dropdown_id"]},
-        placeholder="If enabled, please select a filter"
-    )
+    line_name = create_str_input(
+        label=line_name_yaml["label"],
+        placeholder=line_name_yaml["placeholder"],
+        input_id={"type": "control", "id": line_name_yaml["input_id"]},
+        tooltip_id=line_name_yaml["tooltip_id"]
+    )  
 
     controls_byob = dbc.Accordion(
         [
             dbc.AccordionItem(
                 [
-                    total_impact_dropdown,
-                    total_impact_tooltip,
+                    impact_dropdown,
+                    impact_dropdown_tooltip,
                     impact_type_radio,
+                    impact_type_radio_tooltip,
                     lcs_checklist,
+                    lcs_checklist_tooltip,
                     scope_checklist,
-                    proj_type_checklist
+                    scope_checklist_tooltip,
+                    proj_type_checklist,
+                    proj_type_checklist_tooltip
                 ],            
                 title="Impact Controls",
                 item_id='proj_filters'
             ),
             dbc.AccordionItem(
                 [
-                    cat_selection_toggle,
-                    categorical_dropdown,
-                    categorical_tooltip,
-                    enable_filters_toggle,
-                    categorical_filter,
-                    second_cat_selection_toggle,
-                    second_categorical_dropdown,
-                    second_cat_filter_toggle,
-                    second_categorical_filter,
-                    mat_filter_toggle,
-                    material_filter
+                    categorical_toggle_one,
+                    categorical_toggle_one_tooltip,
+                    categorical_dropdown_one,
+                    categorical_dropdown_one_tooltip,
+                    categorical_filter_toggle_one,
+                    categorical_filter_toggle_one_tooltip,
+                    categorical_filter_one,
+                    categorical_filter_one_tooltip,
+                    categorical_toggle_two,
+                    categorical_toggle_two_tooltip,
+                    categorical_dropdown_two,
+                    categorical_dropdown_two_tooltip,
+                    categorical_filter_toggle_two,
+                    categorical_filter_toggle_two_tooltip,
+                    categorical_filter_two,
+                    categorical_filter_two_tooltip,
+                    material_filter_toggle,
+                    material_filter_toggle_tooltip,
+                    material_filter,
+                    material_filter_tooltip
                 ],
                 title="Categorical Controls",
                 item_id='axis_controls'
             ),
             dbc.AccordionItem(
                 [
-                    floor_area_radio,
-                    floor_area_tooltip,
-                    sort_box_radio,
-                    sort_box_tooltip,
+                    floor_area_normalization_radio,
+                    floor_area_normalization_radio_tooltip,
+                    sort_values_radio,
+                    sort_values_radio_tooltip,
                     outlier_toggle,
-                    outlier_tooltip,
+                    outlier_toggle_tooltip,
                     
                 ],            
                 title="Additional Filters",
@@ -398,9 +494,12 @@ def layout(state: str = None):
             ),
             dbc.AccordionItem(
                 [
-                    line_toggle_byob,
-                    line_number_input,
-                    line_name_input
+                    line_toggle,
+                    line_toggle_tooltip,
+                    line_value,
+                    line_value_tooltip,
+                    line_name,
+                    line_name_tooltip
                 ],
                 title="Reference Line",
                 item_id='ref_line'
@@ -448,13 +547,13 @@ def layout(state: str = None):
 
 @callback(
     [
-        Output({"type": "control", "id": 'cat_fil_1'}, 'options'),
-        Output({"type": "other", "id": 'second_cat_selection_toggle'}, 'options'),
-        Output({"type": "other", "id": 'second_cat_filter_toggle'}, 'options'),
+        Output({"type": "control", "id": 'c_f_t_1'}, 'options'),
+        Output({"type": "control", "id": 'c_t_2'}, 'options'),
+        Output({"type": "control", "id": 'c_f_t_2'}, 'options'),
     ],
     [
-        Input({"type": "control", "id": 'cat_sel_t'}, 'value'),
-        Input({"type": "other", "id": 'second_cat_selection_toggle'}, 'value'),
+        Input({"type": "control", "id": 'c_t_1'}, 'value'),
+        Input({"type": "control", "id": 'c_t_2'}, 'value'),
     ]
 )
 def enable_filters(cat_selection_toggle: list, second_cat_selection_toggle: list):
@@ -475,16 +574,16 @@ def enable_filters(cat_selection_toggle: list, second_cat_selection_toggle: list
 
 @callback(
     [
-        Output({"type": "control", "id": 'cat_d_1'}, 'disabled'),
-        Output({"type": "other", "id": 'cat_filter'}, 'disabled'),
-        Output({"type": "other", "id": 'second_cat_dropdown'}, 'disabled'),
-        Output({"type": "other", "id": 'second_cat_filter'}, 'disabled'),
+        Output({"type": "control", "id": 'c_d_1'}, 'disabled'),
+        Output({"type": "control", "id": 'c_f_1'}, 'disabled'),
+        Output({"type": "control", "id": 'c_d_2'}, 'disabled'),
+        Output({"type": "control", "id": 'c_f_2'}, 'disabled'),
     ],
     [
-        Input({"type": "control", "id": 'cat_sel_t'}, 'value'),
-        Input({"type": "control", "id": 'cat_fil_1'}, 'value'),
-        Input({"type": "other", "id": 'second_cat_selection_toggle'}, 'value'),
-        Input({"type": "other", "id": 'second_cat_filter_toggle'}, 'value'),
+        Input({"type": "control", "id": 'c_t_1'}, 'value'),
+        Input({"type": "control", "id": 'c_f_t_1'}, 'value'),
+        Input({"type": "control", "id": 'c_t_2'}, 'value'),
+        Input({"type": "control", "id": 'c_f_t_2'}, 'value'),
     ]   
 )
 def enable_filters(cat_selection_toggle: list,
@@ -507,24 +606,24 @@ def enable_filters(cat_selection_toggle: list,
                 else:
                     return False, False, False, True
             else:
-                return False, False, True, True
+                return False, True, True, True
     else:
         return True, True, True, True
     
 
 @callback(
-    Output({"type": "other", "id": 'mat_filter'}, 'disabled'),
-    Input({"type": "other", "id": 'mat_filter_toggle_byob'}, 'value')
+    Output({"type": "control", "id": 'm_f'}, 'disabled'),
+    Input({"type": "control", "id": 'm_t'}, 'value')
 )
-def enable_filters(enable_filters_toggle):
-    if enable_filters_toggle == []:
+def enable_filters(material_filter_toggle):
+    if material_filter_toggle == []:
         return True
     else:
         return False
 
 
 @callback(
-    Output({"type": "control", "id": 'fl_norm'}, 'options'),
+    Output({"type": "control", "id": 'fl_no'}, 'options'),
     Input({"type": "control", "id": 'i_typ'}, 'value')
 )
 def enable_filters(impact_type_value):
@@ -548,13 +647,13 @@ def enable_filters(impact_type_value):
 
 @callback(
     [
-        Output('line_number_input', 'disabled'),
-        Output('line_name_input', 'disabled'),
+        Output({"type": "control", "id": 'ln_v'}, 'disabled'),
+        Output({"type": "control", "id": 'ln_nm'}, 'disabled'),
     ],
-    Input("ref_line_toggle", 'value')
+    Input({"type": "control", "id": "ln_t"}, 'value')
 )
-def enable_filters(enable_filters_toggle):
-    if enable_filters_toggle == []:
+def enable_filters(enable_line_toggle):
+    if enable_line_toggle == []:
         return True, True
     else:
         return False, False
@@ -562,13 +661,13 @@ def enable_filters(enable_filters_toggle):
 
 @callback(
     [
-        Output({"type": "other", "id": 'second_cat_dropdown'}, 'options'),
-        Output({"type": "other", "id": 'second_cat_dropdown'}, 'value')
+        Output({"type": "control", "id": 'c_d_2'}, 'options'),
+        Output({"type": "control", "id": 'c_d_2'}, 'value')
     ],
     [
-        Input({"type": "other", "id": 'second_cat_selection_toggle'}, 'value'),
-        Input({"type": "control", "id": 'cat_d_1'}, 'value'),
-        Input({"type": "control", "id": 'cat_d_1'}, 'options')
+        Input({"type": "control", "id": 'c_t_2'}, 'value'),
+        Input({"type": "control", "id": 'c_d_1'}, 'value'),
+        Input({"type": "control", "id": 'c_d_1'}, 'options')
     ]
 )
 def add_filter_dropdown(cat_filters_toggle: list,
@@ -577,27 +676,19 @@ def add_filter_dropdown(cat_filters_toggle: list,
     if cat_filters_toggle == []:
         return ([], None)
     else:
-        # path to directories of files
-        current_file_path = Path(__file__)
-        main_directory = current_file_path.parents[2]
-        metadata_directory = main_directory.joinpath('data/buildings_metadata.pkl')
-        metadata_df = pd.read_pickle(metadata_directory)
-        metadata_df = metadata_df[
-            (metadata_df[category_x] == 'New Construction')
-        ]
         reduced_options = [option for option in category_x_options if option.get("value") != category_x]
         return reduced_options, reduced_options[0].get("value")
 
 
 @callback(
     [
-        Output({"type": "other", "id": 'second_cat_filter'}, 'options'),
-        Output({"type": "other", "id": 'second_cat_filter'}, 'value')
+        Output({"type": "control", "id": 'c_f_2'}, 'options'),
+        Output({"type": "control", "id": 'c_f_2'}, 'value')
     ],
     [
-        Input({"type": "other", "id": 'second_cat_filter_toggle'}, 'value'),
-        Input({"type": "other", "id": 'second_cat_selection_toggle'}, 'value'),
-        Input({"type": "other", "id": 'second_cat_dropdown'}, 'value')
+        Input({"type": "control", "id": 'c_f_t_2'}, 'value'),
+        Input({"type": "control", "id": 'c_t_2'}, 'value'),
+        Input({"type": "control", "id": 'c_d_2'}, 'value')
     ]
 )
 def add_filter_dropdown(second_cat_filters_toggle: list,
@@ -613,24 +704,22 @@ def add_filter_dropdown(second_cat_filters_toggle: list,
         main_directory = current_file_path.parents[2]
         metadata_directory = main_directory.joinpath('data/buildings_metadata.pkl')
         metadata_df = pd.read_pickle(metadata_directory)
-        metadata_df = metadata_df[
-            (metadata_df['bldg_proj_type'] == 'New Construction')
-        ]
         return metadata_df[second_category_x].dropna().unique(), metadata_df[second_category_x].unique()[0]
 
 
 @callback(
     [
-        Output({"type": "other", "id": 'cat_filter'}, 'options'),
-        Output({"type": "other", "id": 'cat_filter'}, 'value')
+        Output({"type": "control", "id": 'c_f_1'}, 'options'),
+        Output({"type": "control", "id": 'c_f_1'}, 'value')
     ],
     [
-        Input({"type": "control", "id": 'cat_fil_1'}, 'value'),
-        Input({"type": "control", "id": 'cat_d_1'}, 'value')
+        Input({"type": "control", "id": 'c_f_t_1'}, 'value'),
+        Input({"type": "control", "id": 'c_d_1'}, 'value')
     ]
 )
 def add_filter_dropdown(cat_filters_toggle: list,
                         category_x: str):
+    print(cat_filters_toggle)
     if cat_filters_toggle == []:
         return [], None
     else:
@@ -639,20 +728,17 @@ def add_filter_dropdown(cat_filters_toggle: list,
         main_directory = current_file_path.parents[2]
         metadata_directory = main_directory.joinpath('data/buildings_metadata.pkl')
         metadata_df = pd.read_pickle(metadata_directory)
-        metadata_df = metadata_df[
-            (metadata_df['bldg_proj_type'] == 'New Construction')
-        ]
         return metadata_df[category_x].dropna().unique(), metadata_df[category_x].unique()[0]
 
 
 
 @callback(
     [
-        Output({"type": "other", "id": 'mat_filter'}, 'options'),
-        Output({"type": "other", "id": 'mat_filter'}, 'value')
+        Output({"type": "control", "id": 'm_f'}, 'options'),
+        Output({"type": "control", "id": 'm_f'}, 'value')
     ],
     [
-        Input({"type": "other", "id": 'mat_filter_toggle_byob'}, 'value'),
+        Input({"type": "control", "id": 'm_t'}, 'value'),
     ]
 )
 def add_filter_dropdown(mat_filters_toggle: list):
@@ -665,26 +751,26 @@ def add_filter_dropdown(mat_filters_toggle: list):
 @callback(
     Output('byob_data', 'data'),
     [
-        Input({"type": "control", "id": 'cat_d_1'}, 'value'),
-        Input({"type": "control", "id": 'tot_imp_d'}, 'value'),
-        Input({"type": "control", "id": 'fl_norm'}, 'value'),
-        Input({"type": "control", "id": 'scope_c'}, 'value'),
+        Input({"type": "control", "id": 'c_d_1'}, 'value'),
+        Input({"type": "control", "id": 'i_d'}, 'value'),
+        Input({"type": "control", "id": 'fl_no'}, 'value'),
+        Input({"type": "control", "id": 'sc_c'}, 'value'),
         Input({"type": "control", "id": 'p_typ_c'}, 'value'),
         Input({"type": "control", "id": "lcs_c"}, 'value'),
-        Input({"type": "control", "id": "cat_sel_t"}, "value"),
+        Input({"type": "control", "id": "c_t_1"}, "value"),
         Input({"type": "control", "id": "i_typ"}, "value"),
-        Input({"type": "other", "id": "second_cat_selection_toggle"}, "value"),
-        Input({"type": "other", "id": 'second_cat_dropdown'}, 'value'),
-        Input({"type": "other", "id": 'second_cat_filter_toggle'}, 'value'),
-        Input({"type": "other", "id": 'second_cat_filter'}, 'value'),
-        Input({"type": "other", "id": "mat_filter_toggle_byob"}, "value"),
-        Input({"type": "other", "id": "mat_filter"}, "value"),
+        Input({"type": "control", "id": "c_t_2"}, "value"),
+        Input({"type": "control", "id": 'c_d_2'}, 'value'),
+        Input({"type": "control", "id": 'c_f_t_2'}, 'value'),
+        Input({"type": "control", "id": 'c_f_2'}, 'value'),
+        Input({"type": "control", "id": "m_t"}, "value"),
+        Input({"type": "control", "id": "m_f"}, "value"),
         Input({"type": "control", "id": 'out_t'}, 'value'),
-        Input('sort_box_plot_byob', 'value'),
-        Input({"type": "other", "id": 'cat_filter'}, 'value'),
-        Input("ref_line_toggle", 'value'),
-        Input("line_number_input", 'value'),
-        Input("line_name_input", 'value')
+        Input({"type": "control", "id": 'sort_v'}, 'value'),
+        Input({"type": "control", "id": 'c_f_1'}, 'value'),
+        Input({"type": "control", "id": "ln_t"}, 'value'),
+        Input({"type": "control", "id": "ln_v"}, 'value'),
+        Input({"type": "control", "id": "ln_nm"}, 'value')
     ]
 )
 def update_data_for_byob(category_x: str,
@@ -714,7 +800,7 @@ def update_data_for_byob(category_x: str,
     metadata_directory = main_directory.joinpath('data/buildings_metadata.pkl')
     impacts_directory = main_directory.joinpath('data/impacts_grouped_by_lcs_and_scope.parquet')
 
-    intensity_metric_value_map = total_impact_dropdown_yaml.get("value_map")
+    intensity_metric_value_map = impact_dropdown_yaml.get("value_map")
     objective = intensity_metric_value_map.get(objective)
 
     lcs_value_map = lcs_checklist_yaml.get("value_map")
@@ -891,21 +977,21 @@ def update_data_for_byob(category_x: str,
 @callback(
     Output('caption', 'children'),
     [
-        Input({"type": "control", "id": 'cat_d_1'}, 'value'),
-        Input({"type": "control", "id": "cat_sel_t"}, "value"),
-        Input({"type": "other", "id": 'cat_filter'}, 'value'),
-        Input({"type": "other", "id": "second_cat_selection_toggle"}, "value"),
-        Input({"type":  "other", "id": 'second_cat_dropdown'}, 'value'),
-        Input({"type": "other", "id": 'second_cat_filter'}, 'value'),
-        Input({"type": "other", "id": "mat_filter_toggle_byob"}, "value"),
-        Input({"type": "other", "id": "mat_filter"}, "value"),
-        Input({"type": "control", "id": 'tot_imp_d'}, 'value'),
-        Input({"type": "control", "id": 'fl_norm'}, 'value'),
-        Input({"type": "control", "id": 'scope_c'}, 'value'),
+        Input({"type": "control", "id": 'c_d_1'}, 'value'),
+        Input({"type": "control", "id": "c_t_1"}, "value"),
+        Input({"type": "control", "id": 'c_f_1'}, 'value'),
+        Input({"type": "control", "id": "c_t_2"}, "value"),
+        Input({"type": "control", "id": 'c_d_2'}, 'value'),
+        Input({"type": "control", "id": 'c_f_2'}, 'value'),
+        Input({"type": "control", "id": "m_t"}, "value"),
+        Input({"type": "control", "id": "m_f"}, "value"),
+        Input({"type": "control", "id": 'i_d'}, 'value'),
+        Input({"type": "control", "id": 'fl_no'}, 'value'),
+        Input({"type": "control", "id": 'sc_c'}, 'value'),
         Input({"type": "control", "id": 'p_typ_c'}, 'value'),
         Input({"type": "control", "id": "lcs_c"}, 'value'),
         Input({"type": "control", "id": 'out_t'}, 'value'),
-        Input('sort_box_plot_byob', 'value'),
+        Input({"type": "control", "id": 'sort_v'}, 'value'),
     ]
 )
 def create_notes_below_graph(category_x: str,
@@ -979,7 +1065,7 @@ def create_notes_below_graph(category_x: str,
     else:
         crop_option = "have not been"
 
-    intensity_metric_value_map = total_impact_dropdown_yaml.get("value_map")
+    intensity_metric_value_map = impact_dropdown_yaml.get("value_map")
     objective = intensity_metric_value_map.get(objective)
 
     
@@ -1289,8 +1375,8 @@ def update_hash(_values):
     reverse process in the layout function.
     """
     print({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]})
-    if len({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]}) == 0:
-        return ""
+    # if len({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]}) == 0:
+    #     return ""
     return "#" + base64.urlsafe_b64encode(
         msgpack.packb({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]})
     ).decode("utf-8")
