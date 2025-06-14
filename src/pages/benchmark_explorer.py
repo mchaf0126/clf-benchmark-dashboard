@@ -719,7 +719,6 @@ def add_filter_dropdown(second_cat_filters_toggle: list,
 )
 def add_filter_dropdown(cat_filters_toggle: list,
                         category_x: str):
-    print(cat_filters_toggle)
     if cat_filters_toggle == []:
         return [], None
     else:
@@ -1283,83 +1282,79 @@ def update_chart(byob_data: dict):
 )
 def create_download_table(n_clicks,
                           byob_data):
-    df = pd.DataFrame.from_dict(byob_data.get('byob_data'))    
+    starting_df = pd.DataFrame.from_dict(byob_data.get('byob_data'))
+    df = starting_df.copy()
     column_list = list(df.columns)
-    categories = column_list[0]
-    values = column_list[1]
+    if len(column_list) == 1:
+        values = column_list[0]
+        categories = "All"
+        df[categories] = categories
+    elif len(column_list) == 2:
+        categories = column_list[0]
+        values = column_list[1]
+    else:
+        categories = column_list[0]
+        color_col = column_list[1]
+        values = column_list[2]
+
+    if len(column_list) > 2:
+        groupby_cols = [categories, color_col]
+    else:
+        groupby_cols = categories
 
     tbl_df = (
         df.groupby(
-            categories, as_index=False
+            groupby_cols, as_index=False
         )[values]
         .describe()
         .rename(
             columns={
+                '25%': 'Q1',
                 '50%': 'median',
+                '75%': 'Q3'
             }
-        ).drop(
-            columns=[
-                'count',
-                '25%',
-                '75%'
-            ]
         )
     )
 
-    tbl_df = pd.merge(
-        left=tbl_df,
-        right=df[categories].value_counts(),
-        how='left',
-        left_on=categories,
-        right_on=categories
-    )
-    tbl_df = pd.merge(
-        left=tbl_df,
-        right=df.groupby(categories)[values].quantile(0.2).rename('20%'),
-        how='left',
-        left_on=categories,
-        right_on=categories
-    )
-    tbl_df = pd.merge(
-        left=tbl_df,
-        right=df.groupby(categories)[values].quantile(0.25).rename('Q1'),
-        how='left',
-        left_on=categories,
-        right_on=categories
-    )
-    tbl_df = pd.merge(
-        left=tbl_df,
-        right=df.groupby(categories)[values].quantile(0.75).rename('Q3'),
-        how='left',
-        left_on=categories,
-        right_on=categories
-    )
-    tbl_df = pd.merge(
-        left=tbl_df,
-        right=df.groupby(categories)[values].quantile(0.8).rename('80%'),
-        how='left',
-        left_on=categories,
-        right_on=categories
-    )
-    tbl_df = tbl_df[
-        [
-            categories,
-            'count',
-            'std',
-            'min',
-            '20%',
-            'Q1',
-            'median',
-            'mean',
-            'Q3',
-            '80%',
-            'max'
+    if len(column_list) > 2:
+        tbl_df = tbl_df[
+            [
+                categories,
+                color_col,
+                'count',
+                'std',
+                'min',
+                'Q1',
+                'median',
+                'mean',
+                'Q3',
+                'max'
+            ]
         ]
-    ]
+    else:
+        tbl_df = tbl_df[
+            [
+                categories,
+                'count',
+                'std',
+                'min',
+                'Q1',
+                'median',
+                'mean',
+                'Q3',
+                'max'
+            ]
+        ]
+
+    if len(column_list) > 2:
+        grouped_text = f" grouped by {color_col}"
+    else:
+        grouped_text = ""
+    
 
     return dcc.send_data_frame(
         tbl_df.to_csv,
-        f"{categories} values by {values}.csv",
+        f"{categories} values by {values}{grouped_text}.csv",
         index=False
     )
 
