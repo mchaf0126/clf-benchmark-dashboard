@@ -1,6 +1,172 @@
 ---
-cat_d_1:
-  label: Categorical Variable  
+i_d: 
+  label: Impacts  
+  dropdown_list: 
+    - 
+      label: Global Warming Potential
+      value: 1
+    -
+      label: Material Use
+      value: 2
+    -  
+      label: Eutrophication Potential
+      value: 3
+    -  
+      label: Acidification Potential
+      value: 4
+    -  
+      label: Smog Formation Potential
+      value: 5
+    -  
+      label: Ozone Depletion Potential
+      value: 6
+    -  
+      label: Non Renewable Energy Demand
+      value: 7
+  first_item: 1
+  dropdown_id: i_d
+  tooltip: Select an environmental impact category to assess.
+    Each metric is calculated as an “intensity” where each 
+    project’s total impact has been divided by its floor area. 
+    These values will be plotted on the y-axis of the graph.
+  tooltip_id: i_d_tooltip
+  value_map:
+    1: Global Warming Potential
+    2: Material Use
+    3: Eutrophication Potential
+    4: Acidification Potential
+    5: Smog Formation Potential
+    6: Ozone Depletion Potential
+    7: Non Renewable Energy Demand
+
+i_typ:
+  label: "Impact Type"
+  radio_list:
+    - label: Impact Intensity
+      value: 1
+    - label: Total Impact
+      value: 2
+  first_item: 1
+  radio_id: i_typ
+  tooltip: Use this selection to select the type of environmental impact
+    to be shown in the box plots. Selecting "Impact Intensity" will display
+    the total environmental impact divided by the area metric selected below in 
+    "Additional Filters". Selecting "Total Impact" will display the total 
+    environmental impact of each project.
+  tooltip_id: i_typ_tooltip
+
+lcs_c: 
+  label: Life Cycle Stage 
+  checklist: 
+    - 
+      label: A1-A3
+      value: 1
+    -  
+      label: A4
+      value: 2
+    -  
+      label: B4-B5
+      value: 3
+    -  
+      label: C2-C4
+      value: 4
+    -  
+      label: D
+      value: 5
+  first_item: [1, 2, 3, 4]
+  checklist_id: lcs_c
+  tooltip: Filter which life cycle stages to display by
+    checking each box. Note that not all projects contain 
+    life cycle stage D results. 
+  tooltip_id: lcs_c_tooltip
+  value_map:
+    1: A1-A3
+    2: A4
+    3: B4-B5
+    4: C2-C4
+    5: D
+
+sc_c: 
+  label: Scope  
+  checklist: 
+    - 
+      label: Substructure
+      value: 1
+    -  
+      label: "Shell - Superstructure"
+      value: 2
+    -  
+      label: "Shell - Enclosure"
+      value: 3
+    -  
+      label: "Interiors - Construction"
+      value: 4
+    -  
+      label: "Interiors - Finishes"
+      value: 5
+    -  
+      label: "Unknown"
+      value: 6
+  first_item: [1, 2, 3]
+  checklist_id: sc_c
+  tooltip: Filter which building elements to display. These 
+    element scopes are derived from Omniclass Table 21. 
+    All new construction projects contain Substructure, 
+    Superstructure, and Enclosure at a minimum.
+  tooltip_id: sc_c_tooltip
+  value_map:
+    1: Substructure
+    2: "Shell - Superstructure"
+    3: "Shell - Enclosure"
+    4: "Interiors - Construction"
+    5: "Interiors - Finishes"
+    6: "Unknown"
+
+p_typ_c: 
+  label: Project Type  
+  checklist: 
+    - 
+      label: New Construction
+      value: 1
+    -  
+      label: Major Renovation
+      value: 2
+    -  
+      label: Minor Renovation
+      value: 3
+    -  
+      label: Tenant Improvement
+      value: 4
+  first_item: [1]
+  checklist_id: p_typ_c
+  tooltip: Filter which project types to display. 
+    New construction is the default for this option, 
+    but any combination of renovations can be selected 
+    as well. Note that different project types may 
+    include significant differences in their scope 
+    of work that limit comparability.
+  tooltip_id: p_typ_c_tooltip
+  value_map:
+    1: New Construction
+    2: Major Renovation
+    3: Minor Renovation
+    4: Tenant Improvement
+
+c_t_1:
+  label: ""
+  toggle_list:
+    - label: Enable 1st categorical selection
+      value: 1
+  first_item: [1]
+  toggle_id: c_t_1
+  tooltip: Use this toggle to enable the display of 
+    results by a categorical variable. When enabled, 
+    users should select the variable they 
+    wish to display below. 
+  tooltip_id: c_t_1_tooltip
+
+c_d_1:
+  label: 1st categorical variable  
   dropdown_list:
     - 
       label: Region
@@ -54,109 +220,124 @@ cat_d_1:
       label: Physical Scope Summary
       value: lca_phys_scope
   first_item: bldg_prim_use
-  dropdown_id: cat_d_1
-  tooltip: Categorical values are those that can take on 
-    one of a limited number of possible values. These values will 
-    become the categories plotted on the y-axis of the box plot.
-  tooltip_id: categorical_dropdown_byob_tooltip
+  dropdown_id: c_d_1
+  tooltip: Use this dropdown to select a categorical 
+    variable to display. These values will become the 
+    categories plotted on the y-axis of the box plot.
+  tooltip_id: c_d_1_tooltip
 
-i_typ:
-  label: "Impact Type"
-  radio_list:
-    - label: Impact Intensity
-      value: 1
-    - label: Total Impact
-      value: 2
-  first_item: 1
-  radio_id: i_typ
-  tooltip: Use this selection to select the type of environmental impact
-    to be shown in the box plots. Selecting "Impact Intensity" will display
-    the total environmental impact divided by the area metric selected below in 
-    "Additional Filters". Selecting "Total Impact" will display the total 
-    environmental impact of each project.
-  tooltip_id: i_typ_tooltip
-
-tot_imp_d: 
-  label: Impacts  
-  dropdown_list: 
-    - 
-      label: Global Warming Potential
-      value: 1
-    -
-      label: Material Use
-      value: 2
-    -  
-      label: Eutrophication Potential
-      value: 3
-    -  
-      label: Acidification Potential
-      value: 4
-    -  
-      label: Smog Formation Potential
-      value: 5
-    -  
-      label: Ozone Depletion Potential
-      value: 6
-    -  
-      label: Non Renewable Energy Demand
-      value: 7
-  first_item: 1
-  dropdown_id: tot_imp_d
-  tooltip: Each environmental metric contained in the dataset
-    is represented in this dropdown. They are either divided by
-    floor area to create "intensity" metrics, or are divided by
-    other numeric values such as occupants or residential units. 
-    These values will be plotted on the y-axis of the graph.
-  tooltip_id: total_impact_dropdown_tooltip_byob
-  value_map:
-    1: Global Warming Potential
-    2: Material Use
-    3: Eutrophication Potential
-    4: Acidification Potential
-    5: Smog Formation Potential
-    6: Ozone Depletion Potential
-    7: Non Renewable Energy Demand
-
-cat_fil_1:
+c_f_t_1:
   label: ""
   toggle_list:
-    - label: Enable categorical filtering
+    - label: Enable 1st categorical filtering
       value: 1
   first_item: []
-  toggle_id: cat_fil_1
-  tooltip: This toggle enable you to filter projects based on the 
-    categorical filters chosed in the dropdown below.
-  tooltip_id: enable_filters_toggle_tooltip
+  toggle_id: c_f_t_1
+  tooltip: Use this toggle to filter the selected
+    categorical variable by the specific groups it contains. 
+  tooltip_id: c_f_t_1_tooltip
 
-out_t:
+c_f_1:
+  label: 1st categorical filter(s)
+  dropdown_list:
+  first_item:
+  dropdown_id: c_f_1
+  placeholder: If enabled, please select a filter
+  tooltip: Use this dropdown to filter the values
+    of the first categorical variable to specific 
+    groups it contains. If no values are selected, 
+    all box plots of the first categorical variable 
+    will be plotted.
+  tooltip_id: c_f_1_tooltip
+
+c_t_2:
   label: ""
   toggle_list:
-    - label: Crop outliers 
+    - label: Enable 2nd categorical selection
       value: 1
   first_item: []
-  toggle_id: out_t
-  tooltip: This toggle will Crop outliers from the box plot.
-    A project is considered an outlier if the selected impact or continuous variable
-    of the project is 3 times the interquartile range of 
-    all project impacts in the dataset.
-  tooltip_id: outlier_toggle_tooltip_byob
+  toggle_id: c_t_2
+  tooltip: Use this toggle to enable the display of
+    results grouped by color by a second categorical 
+    variable. When enabled, users should select the 
+    variable they wish to display below.
+  tooltip_id: c_t_2_tooltip
 
-fl_norm:
-  label: "Normalize intensity by:  "
+c_d_2:
+  label: 2nd categorical variable
+  dropdown_list:
+  first_item:
+  dropdown_id: c_d_2
+  tooltip: Use this dropdown to select a second categorical
+    variable to display. These values will become the 
+    colors of the boxes plotted per first categorical 
+    variable.
+  tooltip_id: c_d_2_tooltip
+
+c_f_t_2:
+  label: ""
+  toggle_list:
+    - label: Enable 2nd categorical filtering
+      value: 1
+  first_item: []
+  toggle_id: c_f_t_2
+  tooltip: Use this toggle to filter the second categorical
+    variable by the specific groups it contains.
+  tooltip_id: c_f_t_2_tooltip
+
+c_f_2:
+  label: 2nd categorical filter(s)
+  dropdown_list:
+  first_item:
+  dropdown_id: c_f_2
+  placeholder: If enabled, please select a filter
+  tooltip: Use this dropdown to filter the values of
+    the second categorical variable to specific groups
+    it contains. If no values are selected, all colored 
+    boxes of the second categorical variable 
+    will be plotted.
+  tooltip_id: c_f_2_tooltip
+
+m_t:
+  label: ""
+  toggle_list:
+    - label: Enable material selection
+      value: 1
+  first_item: []
+  toggle_id: m_t
+  tooltip: Use this toggle to enable the display of a
+    subset of impacts based on a specific material or 
+    materials. When enabled, users should select the 
+    materials they wish to display below.
+  tooltip_id: m_t_tooltip
+
+m_f:
+  label: Material filter(s)
+  dropdown_list:
+  first_item:
+  dropdown_id: m_f
+  placeholder: If enabled, please select a filter
+  tooltip: Use this dropdown to filter the impacts of 
+    projects by material. If no values are selected, the impacts of all materials will be plotted. 
+  tooltip_id: m_f_tooltip
+
+fl_no:
+  label: "Normalize intensity by: "
   radio_list:
     - label: Constructed Floor Area
       value: bldg_cfa
     - label: Gross Internal Floor Area
       value: bldg_gfa
   first_item: bldg_gfa
-  radio_id: fl_norm
-  tooltip: "Total constructed floor area (CFA) 
-    includes the gross internal floor area (GFA) of the 
-    building and the gross floor area of any 
-    attached/integrated parking components."
-  tooltip_id: floor_area_normalization_tooltip_byob
+  radio_id: fl_no
+  tooltip: Total constructed floor area (CFA) includes the 
+    gross internal floor area (GFA) of the building and the 
+    gross floor area of any attached/integrated parking components. 
+    GFA excludes the area of the attached/integrated parking 
+    components.
+  tooltip_id: fl_no_tooltip
 
-sort_box_plot_byob:
+sort_v:
   label: "Sort box plots by:  "
   radio_list:
     - label: Median
@@ -166,15 +347,64 @@ sort_box_plot_byob:
     - label: Sample Size
       value: sample_size
   first_item: median
-  radio_id: sort_box_plot_byob
-  tooltip: Selecting "Median" sorts box plots from 
-    highest to lowest median values. Selecting "Categorical 
-    value" will sort the box plots in a rational
-     way based on the category (e.g. Seismic Design Category 
-     will be sorted alphabetically)
-  tooltip_id: sort_box_plot_tooltip_cat
+  radio_id: sort_v
+  tooltip: Use this selection to control how the order of 
+    the categories in the y-axis is displayed. Selecting 
+    "Median" sorts box plots from highest to lowest median 
+    values. Selecting "Categorical value" sorts the box 
+    plots in a rational way based on the category (e.g. 
+    Seismic Design Category will be sorted alphabetically). 
+    Selecting “Sample size” sorts the box plots by the 
+    number of projects in a given category.
+  tooltip_id: sort_v_tooltip
+
+out_t:
+  label: ""
+  toggle_list:
+    - label: Crop outliers 
+      value: 1
+  first_item: []
+  toggle_id: out_t
+  tooltip: Use this toggle to visually crop outliers from 
+    the box plot. This will not change the calculated values, 
+    as outliers are always included in the calculation of 
+    statistics presented in the plots. A project is considered 
+    an outlier if the selected impact or continuous variable
+    of the project is 3 times the interquartile range of all 
+    project impacts in the dataset.
+  tooltip_id: out_t_tooltip
+
+ln_t:
+  label: ""
+  toggle_list:
+    - label: Enable reference line
+      value: 1
+  first_item: []
+  toggle_id: ln_t
+  tooltip: Use this toggle to enable the ability to add a 
+    user-defined reference line to the box plots. This will 
+    allow for a visual comparison of a target value across 
+    the box plot figures.
+  tooltip_id: ln_t_tooltip
+
+ln_v:
+  label: Value of reference line
+  placeholder: Integer 
+  input_id: line_number_input
+  tooltip: This value corresponds with the x-axis placement 
+    of the user-defined vertical line.
+  tooltip_id: ln_v_tooltip
 
 
+ln_nm:
+  label: Name of reference value
+  placeholder: Text 
+  input_id: ln_nm
+  tooltip: This value allows for naming and 
+    labelling of the user-defined vertical line. 
+  tooltip_id: ln_nm_tooltip
+
+# dictionaries for renaming
 field_name_map:
   site_country: Country
   site_region: Region
@@ -447,117 +677,6 @@ category_order_map:
   lca_ec_reductions:
     - Yes
     - No
-  
-lcs_c: 
-  label: Life Cycle Stage 
-  checklist: 
-    - 
-      label: A1-A3
-      value: 1
-    -  
-      label: A4
-      value: 2
-    -  
-      label: B4-B5
-      value: 3
-    -  
-      label: C2-C4
-      value: 4
-    -  
-      label: D
-      value: 5
-  first_item: [1, 2, 3, 4]
-  checklist_id: lcs_c
-  tooltip: TBD
-  tooltip_id: TBD
-  value_map:
-    1: A1-A3
-    2: A4
-    3: B4-B5
-    4: C2-C4
-    5: D
-
-scope_c: 
-  label: Scope  
-  checklist: 
-    - 
-      label: Substructure
-      value: 1
-    -  
-      label: "Shell - Superstructure"
-      value: 2
-    -  
-      label: "Shell - Enclosure"
-      value: 3
-    -  
-      label: "Interiors - Construction"
-      value: 4
-    -  
-      label: "Interiors - Finishes"
-      value: 5
-    -  
-      label: "Unknown"
-      value: 6
-  first_item: [1, 2, 3]
-  checklist_id: scope_c
-  tooltip: TBD
-  tooltip_id: TBD
-  value_map:
-    1: Substructure
-    2: "Shell - Superstructure"
-    3: "Shell - Enclosure"
-    4: "Interiors - Construction"
-    5: "Interiors - Finishes"
-    6: "Unknown"
-
-p_typ_c: 
-  label: Project Type  
-  checklist: 
-    - 
-      label: New Construction
-      value: 1
-    -  
-      label: Major Renovation
-      value: 2
-    -  
-      label: Minor Renovation
-      value: 3
-    -  
-      label: Tenant Improvement
-      value: 4
-  first_item: [1]
-  checklist_id: p_typ_c
-  tooltip: TBD
-  tooltip_id: TBD
-  value_map:
-    1: New Construction
-    2: Major Renovation
-    3: Minor Renovation
-    4: Tenant Improvement
-
-line_toggle_byob:
-  label: ""
-  toggle_list:
-    - label: Enable reference line
-      value: 1
-  first_item: []
-  toggle_id: ref_line_toggle
-  tooltip: TBD
-  tooltip_id: TBD
-
-line_number_input:
-  label: Value of vertical line
-  placeholder: Integer 
-  input_id: line_number_input
-  tooltip: TBD
-  tooltip_id: TBD
-
-line_name_input:
-  label: Name of reference value
-  placeholder: Text 
-  input_id: line_name_input
-  tooltip: TBD
-  tooltip_id: TBD
 
 caption_orders:
   scope_order:
@@ -572,81 +691,6 @@ caption_orders:
     - Major Renovation
     - Minor Renovation
     - Tenant Improvement
-  
-cat_sel_t:
-  label: ""
-  toggle_list:
-    - label: Enable categorical selection
-      value: 1
-  first_item: [1]
-  toggle_id: cat_sel_t
-  tooltip: TBD
-  tooltip_id: TBD
-
-cat_filter:
-  label: Categorical values to filter
-  dropdown_list:
-  first_item:
-  dropdown_id: cat_filter
-  placeholder: If enabled, please select a filter
-  tooltip: TBD
-  tooltip_id: TBD
-
-second_cat_selection_toggle:
-  label: ""
-  toggle_list:
-    - label: Enable second categorical selection
-      value: 1
-  first_item: []
-  toggle_id: second_cat_selection_toggle
-  tooltip: TBD
-  tooltip_id: TBD
-
-second_cat_dropdown:
-  label: Second categorical variable
-  dropdown_list:
-  first_item:
-  dropdown_id: second_cat_dropdown
-  tooltip: TBD
-  tooltip_id: TBD
-
-second_cat_filter_toggle:
-  label: ""
-  toggle_list:
-    - label: Enable second categorical filter
-      value: 1
-  first_item: []
-  toggle_id: second_cat_filter_toggle
-  tooltip: TBD
-  tooltip_id: TBD
-
-second_cat_filter:
-  label: Second categorical values to filter
-  dropdown_list:
-  first_item:
-  dropdown_id: second_cat_filter
-  placeholder: If enabled, please select a filter
-  tooltip: TBD
-  tooltip_id: TBD
-
-mat_filter_toggle_byob:
-  label: ""
-  toggle_list:
-    - label: Enable material selection
-      value: 1
-  first_item: []
-  toggle_id: mat_filter_toggle_byob
-  tooltip: TBD
-  tooltip_id: TBD
-
-mat_filter:
-  label: Materials to filter
-  dropdown_list:
-  first_item:
-  dropdown_id: mat_filter
-  placeholder: If enabled, please select a filter
-  tooltip: TBD
-  tooltip_id: TBD
 
 material_list: 
   - Acoustic ceilings

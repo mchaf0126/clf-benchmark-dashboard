@@ -29,14 +29,18 @@ load_figure_template('pulse')
 # f = filter
 # fl = floor
 # i = impact
+# ln = line
 # m = material
+# nm = name
+# no = normalization
 # t = toggle
 # typ = type
 # p = project
 # lcs = life cycle stage
 # out = outlier
-# s = selection
 # sc = scope
+# sort = sort
+# v = values
 
 
 categorical_dropdown_yaml = config.get('cat_d_1')
