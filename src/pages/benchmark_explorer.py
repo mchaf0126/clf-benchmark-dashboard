@@ -28,15 +28,22 @@ load_figure_template('pulse')
 # d = dropdown
 # f = filter
 # fl = floor
+# i = impact
 # m = material
 # t = toggle
+# typ = type
 # p = project
 # lcs = life cycle stage
 # out = outlier
 # s = selection
+# sc = scope
+
 
 categorical_dropdown_yaml = config.get('cat_d_1')
 assert categorical_dropdown_yaml is not None, 'The config for cat. dropdowns could not be set'
+
+impact_type_radio_yaml = config.get('i_typ')
+assert impact_type_radio_yaml is not None, 'The config for impact type radio could not be set'
 
 enable_filters_toggle_yaml = config.get('cat_fil_1')
 assert enable_filters_toggle_yaml is not None, 'The config for cat. dropdowns could not be set'
@@ -141,6 +148,7 @@ def layout(state: str = None):
     # Define default state values
     defaults = {
         categorical_dropdown_yaml['dropdown_id']: categorical_dropdown_yaml['first_item'],
+        impact_type_radio_yaml['radio_id']: impact_type_radio_yaml['first_item'],
         lcs_checklist_yaml['checklist_id']: lcs_checklist_yaml['first_item'],
         scope_checklist_yaml['checklist_id']: scope_checklist_yaml['first_item'],
         proj_type_checklist_yaml['checklist_id']: proj_type_checklist_yaml['first_item'],
@@ -165,6 +173,14 @@ def layout(state: str = None):
         dropdown_list=categorical_dropdown_yaml['dropdown_list'],
         first_item=state.get(categorical_dropdown_yaml['dropdown_id']),
         dropdown_id={"type": "control", "id": categorical_dropdown_yaml['dropdown_id']}
+    )
+
+    impact_type_radio = create_radio_items(
+        label=impact_type_radio_yaml['label'],
+        tooltip_id=impact_type_radio_yaml['tooltip_id'],
+        radio_list=impact_type_radio_yaml['radio_list'],
+        first_item=state.get(impact_type_radio_yaml['radio_id']),
+        radio_id={"type": "control", "id": impact_type_radio_yaml['radio_id']}
     )
 
     categorical_tooltip = create_tooltip(
@@ -338,6 +354,7 @@ def layout(state: str = None):
                 [
                     total_impact_dropdown,
                     total_impact_tooltip,
+                    impact_type_radio,
                     lcs_checklist,
                     scope_checklist,
                     proj_type_checklist
@@ -501,6 +518,29 @@ def enable_filters(enable_filters_toggle):
         return True
     else:
         return False
+
+
+@callback(
+    Output({"type": "control", "id": 'fl_norm'}, 'options'),
+    Input({"type": "control", "id": 'i_typ'}, 'value')
+)
+def enable_filters(impact_type_value):
+    if impact_type_value == 1:
+        disabled_option = False
+    else:
+        disabled_option = True
+    return [
+        {
+        'label': 'Constructed Floor Area',
+        'value': 'bldg_cfa',
+        'disabled': disabled_option
+        },
+        {
+        'label': 'Gross Internal Floor Area',
+        'value': 'bldg_gfa',
+        'disabled': disabled_option
+        }
+    ]
     
 
 @callback(
@@ -629,6 +669,7 @@ def add_filter_dropdown(mat_filters_toggle: list):
         Input({"type": "control", "id": 'p_typ_c'}, 'value'),
         Input({"type": "control", "id": "lcs_c"}, 'value'),
         Input({"type": "control", "id": "cat_sel_t"}, "value"),
+        Input({"type": "control", "id": "i_typ"}, "value"),
         Input({"type": "other", "id": "second_cat_selection_toggle"}, "value"),
         Input({"type": "other", "id": 'second_cat_dropdown'}, 'value'),
         Input({"type": "other", "id": 'second_cat_filter_toggle'}, 'value'),
@@ -650,6 +691,7 @@ def update_data_for_byob(category_x: str,
                          proj_type: list,
                          lcs: list,
                          cat_selection_toggle: list,
+                         impact_type: int,
                          second_cat_selection_toggle: list,
                          second_cat_value: str,
                          second_cat_filter_toggle: list,
@@ -683,13 +725,13 @@ def update_data_for_byob(category_x: str,
 
     # intensity metric map
     intensity_metric_map = {
-        "Embodied Carbon Intensity": "gwp",
-        "Material Use Intensity": "inv_mass",
-        "Eutrophication Potential Intensity": "ep",
-        "Acidification Potential Intensity": "ap",
-        "Smog Formation Potential Intensity": "sfp",
-        "Ozone Depletion Potential Intensity": "odp",
-        "Non Renewable Energy Demand Intensity": "nred",
+        "Global Warming Potential": "gwp",
+        "Material Use": "inv_mass",
+        "Eutrophication Potential": "ep",
+        "Acidification Potential": "ap",
+        "Smog Formation Potential": "sfp",
+        "Ozone Depletion Potential": "odp",
+        "Non Renewable Energy Demand": "nred",
     }
 
     # read files
@@ -773,7 +815,10 @@ def update_data_for_byob(category_x: str,
         left_index=True,
         right_index=True
     )
-    final_impacts[objective] = final_impacts[intensity_metric_map.get(objective)] / final_impacts[cfa_gfa_type]
+    if impact_type == 1:
+        final_impacts[objective] = final_impacts[intensity_metric_map.get(objective)] / final_impacts[cfa_gfa_type]
+    else:
+        final_impacts[objective] = final_impacts[intensity_metric_map.get(objective)]
 
     # remove outliers
     if outlier_toggle_byob == [1]:
@@ -832,6 +877,7 @@ def update_data_for_byob(category_x: str,
 
     return {
         'byob_data': final_impacts.to_dict(),
+        'impact_type': impact_type,
         'sort': category_order,
         'v_line': ref_line_toggle_boolean,
         'v_line_location': ref_line_number,
@@ -960,16 +1006,16 @@ def create_notes_below_graph(category_x: str,
 )
 def update_chart(byob_data: dict):
     units_map = {
-        "Embodied Carbon Intensity": '(kgCO<sub>2</sub>e/m<sup>2</sup>)',
-        "Material Use Intensity": "(kg/m<sup>2</sup>)",
-        "Eutrophication Potential Intensity": '(kgNe/m<sup>2</sup>)',
-        "Acidification Potential Intensity": '(kgSO<sub>2</sub>e/m<sup>2</sup>)',
-        "Smog Formation Potential Intensity": '(kgO<sub>3</sub>e/m<sup>2</sup>)',
-        "Ozone Depletion Potential Intensity": '(kgCFC-11e/m<sup>2</sup>)',
-        "Non Renewable Energy Demand Intensity": '(MJ/m<sup>2</sup>)',
-        # 'ec_per_occupant': '(kgCO<sub>2</sub>e/occupant)',
-        # 'ec_per_res_unit': '(kgCO<sub>2</sub>e/residential unit)',
+        "Global Warming Potential": '(kgCO<sub>2</sub>e)',
+        "Material Use": "(kg)",
+        "Eutrophication Potential": '(kgNe)',
+        "Acidification Potential": '(kgSO<sub>2</sub>e)',
+        "Smog Formation Potential": '(kgO<sub>3</sub>e)',
+        "Ozone Depletion Potential": '(kgCFC-11e)',
+        "Non Renewable Energy Demand": '(MJ)',
     }
+    if byob_data.get("impact_type") == 1:
+        units_map = {key: value.replace(")","")+"/m<sup>2</sup>)" for key, value in units_map.items()}
 
     starting_df = pd.DataFrame.from_dict(byob_data.get('byob_data'))
     df = starting_df.copy()
@@ -1239,7 +1285,6 @@ def update_hash(_values):
     The app state is json serialised then base64 encoded and is treated with the
     reverse process in the layout function.
     """
-    # print({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]})
     print({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]})
     if len({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]}) == 0:
         return ""

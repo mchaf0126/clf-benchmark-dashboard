@@ -60,29 +60,45 @@ cat_d_1:
     become the categories plotted on the y-axis of the box plot.
   tooltip_id: categorical_dropdown_byob_tooltip
 
+i_typ:
+  label: "Impact Type"
+  radio_list:
+    - label: Impact Intensity
+      value: 1
+    - label: Total Impact
+      value: 2
+  first_item: 1
+  radio_id: i_typ
+  tooltip: Use this selection to select the type of environmental impact
+    to be shown in the box plots. Selecting "Impact Intensity" will display
+    the total environmental impact divided by the area metric selected below in 
+    "Additional Filters". Selecting "Total Impact" will display the total 
+    environmental impact of each project.
+  tooltip_id: i_typ_tooltip
+
 tot_imp_d: 
   label: Impacts  
   dropdown_list: 
     - 
-      label: Embodied Carbon Intensity
+      label: Global Warming Potential
       value: 1
     -
-      label: Material Use Intensity
+      label: Material Use
       value: 2
     -  
-      label: Eutrophication Potential Intensity
+      label: Eutrophication Potential
       value: 3
     -  
-      label: Acidification Potential Intensity
+      label: Acidification Potential
       value: 4
     -  
-      label: Smog Formation Potential Intensity
+      label: Smog Formation Potential
       value: 5
     -  
-      label: Ozone Depletion Potential Intensity
+      label: Ozone Depletion Potential
       value: 6
     -  
-      label: Non Renewable Energy Demand Intensity
+      label: Non Renewable Energy Demand
       value: 7
   first_item: 1
   dropdown_id: tot_imp_d
@@ -93,13 +109,13 @@ tot_imp_d:
     These values will be plotted on the y-axis of the graph.
   tooltip_id: total_impact_dropdown_tooltip_byob
   value_map:
-    1: Embodied Carbon Intensity
-    2: Material Use Intensity
-    3: Eutrophication Potential Intensity
-    4: Acidification Potential Intensity
-    5: Smog Formation Potential Intensity
-    6: Ozone Depletion Potential Intensity
-    7: Non Renewable Energy Demand Intensity
+    1: Global Warming Potential
+    2: Material Use
+    3: Eutrophication Potential
+    4: Acidification Potential
+    5: Smog Formation Potential
+    6: Ozone Depletion Potential
+    7: Non Renewable Energy Demand
 
 cat_fil_1:
   label: ""
