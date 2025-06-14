@@ -519,7 +519,7 @@ def layout(state: str = None):
                         [
                             controls_byob
                         ], xs=4, sm=4, md=4, lg=4, xl=3, xxl=3,
-                        style={'max-height': '750px'}
+                        style={'max-height': '800px'}
                     ),
                     dbc.Col(
                         [
