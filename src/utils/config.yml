@@ -266,7 +266,7 @@ c_t_2:
 c_d_2:
   label: 2nd categorical variable
   dropdown_list: []
-  first_item: 
+  first_item: []
   dropdown_id: c_d_2
   tooltip: Use this dropdown to select a second categorical
     variable to display. These values will become the 
