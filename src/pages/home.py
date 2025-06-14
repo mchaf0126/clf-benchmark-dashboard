@@ -180,7 +180,7 @@ layout = html.Div(
                         html.Br(),
                         dcc.Markdown(
                             '''
-                            #### **Useful Links**
+                            #### **Project Publications**
                             '''
                         ),
                         dcc.Markdown(
