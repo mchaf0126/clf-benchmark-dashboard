@@ -427,7 +427,6 @@ def layout(state: str = None):
                                     "Download Table Contents",
                                     color='primary',
                                     id="btn-download-tbl-byob",
-                                    active=True,
                                     className='my-2 fw-bold'
                                 ),
                                 dcc.Download(id="download-tbl-byob"),

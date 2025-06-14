@@ -3,6 +3,15 @@
     src: url('SourceSansPro-Regular.otf');
 }
 
+@font-face {
+    font-family: 'Source Sans Pro Bold'; 
+    src: url('SourceSansPro-Bold.otf');
+}
+
 body {
     font-family: "Source Sans Pro";
+}
+
+strong {
+    font-family: "Source Sans Pro Bold";
 }

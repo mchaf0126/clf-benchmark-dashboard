@@ -27,7 +27,7 @@ def create_header() -> html.Div:
                         dbc.NavbarBrand(
                             'Benchmark Explorer',
                             href='/benchmark_explorer',
-                            className='fs-3 text-white fw-bolder text-wrap'
+                            className='fs-3 text-white fw-bold text-wrap'
                         ),
                         width=6,
                         class_name='text-center',

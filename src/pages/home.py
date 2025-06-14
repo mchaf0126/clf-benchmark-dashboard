@@ -35,138 +35,227 @@ layout = html.Div(
                     [
                         dcc.Markdown(
                             '''
-                            #### About this study
+                            #### **About the dashboard**
+                            '''
+                        ),
+                        dcc.Markdown(
+                            """
+                            The [CLF Benchmark Explorer](/benchmark_explorer) 
+                            is a tool created by the Carbon Leadership Forum (CLF) to 
+                            better visualize the data created by the 
+                            [WBLCA Benchmark Study V2](https://carbonleadershipforum.org/clf-wblca-v2/). It consists 
+                            of a set of customizable box and whisker plots for 
+                            use in design, research, and education. These plots
+                            can be used to understand the impacts of building 
+                            typologies and learn more about the WBLCA Benchmark 
+                            Study dataset created by the CLF and the University 
+                            of Washington’s Life Cycle Lab.
+                            """,
+                        ),
+                        html.Div([
+                            dbc.Button(
+                                "Use the Benchmark Explorer",
+                                color='primary',
+                                href="/benchmark_explorer",
+                                className='d-grid col-4 fw-bold mx-auto',
+                                size='lg'
+                            ),
+                        ]),
+                        html.Br(),
+                        dcc.Markdown(
+                            '''
+                            #### **Relationship to CLF Embodied Carbon Benchmark Report**
+                            '''
+                        ),
+                        dcc.Markdown(
+                            """
+                            This dashboard is meant to enable exploration, research, 
+                            and education. While it is a valuable tool for comparison 
+                            making and target setting, the CLF does not recommend it 
+                            be used to derive carbon limits or budgets for LCA policies
+                            or programs. The [CLF Embodied Carbon Benchmark Report]
+                            (https://carbonleadershipforum.org/de/the-embodied-carbon-benchmark-report/)
+                            serves this purpose by presenting curated benchmarks
+                            intended for reference in building-scale policies, 
+                            incentives, certification programs, and other real-world
+                            applications. In order to be legible and useful for a wide 
+                            variety of applications, the embodied carbon budgets (ECBs) 
+                            in the CLF Embodied Carbon Benchmark Report were generated 
+                            with specific methods that extend beyond what can be assessed 
+                            with this dashboard or with the raw dataset alone. Please 
+                            note that these additional methods and curated benchmark 
+                            figures are not available in the dashboard which is built 
+                            directly on the public dataset. 
+                            """,
+                        ),
+                        html.Br(),
+                        dcc.Markdown(
+                            '''
+                            #### **Using the Dashboard**
+                            '''
+                        ),
+                        dcc.Markdown(
+                            """
+                            CLF chose box and whisker plots to visualize the benchmarking 
+                            dataset to quickly display the variability and distribution 
+                            of WBLCA results and provide several helpful key statistics 
+                            for use by the industry. Looking at a box and whisker plot, 
+                            viewers should be able to quickly understand the range of 
+                            typical impacts (indicated by the color bar between quartile
+                            1 and 3), typical practice (mean) or (median), “best practice” 
+                            (quartile 1), and a conservative upper value (quartile 3). 
+
+                            The specific values that box and whisker plots display are 
+                            described in the figure below, which include:
+
+                            - **Mean:** The average value representing the sum of all
+                                values divided by the number of values
+                            - **Quartile 1 (Q1):** The 25th percentile value of data 
+                                points, where 25% of projects fall below this value. 
+                            - **Median:** The middle value dividing the upper and lower 
+                                half of data points (50th percentile)
+                            - **Quartile 3 (Q3):** The 75th percentile value of data 
+                                points, where 75% of projects fall below this value
+                            - **Interquartile range (IQR):** The middle 50% of data 
+                                points, from 25th to 75th percentiles. A smaller IQR 
+                                indicates less variability of the data (more similar 
+                                values) and a larger IQR indicates more variability 
+                                (less similar values).
+                            - **Lower whisker:** The lowest 25% of data points, 
+                                excluding any outliers, as determined by multiplying 
+                                the length of the IQR by 1.5.
+                            - **Upper whisker:** The uppermost 25% of data points, 
+                                excluding any outliers, as determined by multiplying 
+                                the length of the IQR by 1.5.
+                            """,
+                        ),
+                        html.Img(
+                            src='assets/boxplot_ex.jpg',
+                            className='img-fluid px-4'
+                        ),
+                        dcc.Markdown(
+                            """
+                            **Note:** Box and whisker plots cannot be accurately drawn 
+                            with sample sizes less than 5. In this dashboard, when 
+                            sample sizes are less than 5, approximations of box and 
+                            whisker plots will be shown, but they are for information 
+                            only so that the user can understand where the small sample 
+                            sizes are located in the dataset. 
+                            """,
+                        ),
+                        html.Br(),
+                        dcc.Markdown(
+                            '''
+                            #### **About the CLF Benchmark v2 study**
                             '''
                         ),
                         dcc.Markdown(
                             '''
                             In 2017, the Carbon Leadership Forum (CLF) at the 
-                            University of Washington published the **[Embodied 
+                            University of Washington published the [Embodied 
                             Carbon Benchmark Study V1]
-                            (https://carbonleadershipforum.org/lca-benchmark-database/)**
-                            and **[Visualization Tool]
-                            (https://carbonleadershipforum.org/embodied-carbon-benchmark-study-data-visualization/)**. 
+                            (https://carbonleadershipforum.org/lca-benchmark-database/)
+                            and [Visualization Tool]
+                            (https://carbonleadershipforum.org/embodied-carbon-benchmark-study-data-visualization/). 
                             Since then, the practice of whole-building life 
                             cycle assessment (WBLCA) has grown rapidly, and 
                             it became clear that more robust and reliable 
-                            benchmarks are critical for advancing work in this
-                            field. This project fills a critical gap and helps 
-                            enable architects, engineers, policy makers, and 
+                            benchmarks were critical for advancing work in this
+                            field. This project helps fill this critical gap 
+                            by enabling architects, engineers, policy makers, and 
                             the entire design community to work towards 
                             realistic and measurable embodied carbon reductions
                             at the building scale.
                             
-                            The **[WBLCA Benchmark Study V2]
-                            (https://carbonleadershipforum.org/clf-wblca-v2/)**
-                            began while the Carbon Leadership Forum (CLF) 
+                            The [WBLCA Benchmark Study V2]
+                            (https://carbonleadershipforum.org/clf-wblca-v2/)
+                            began while the Carbon Leadership Forum
                             was hosted at the University 
-                            of Washington (UW). After the CLF became an 
+                            of Washington. After the CLF became an 
                             independent nonprofit in the spring of 2024, the 
                             study continued as a collaboration between the UW’s 
                             newly named Life Cycle Lab and CLF.
                             ''',
-                            className='fw-light'
                         ),
                         html.Br(),
                         dcc.Markdown(
                             '''
-                            #### About the dashboard
+                            #### **Useful Links**
                             '''
                         ),
                         dcc.Markdown(
                             '''
-                            There are
-                            currently two types of graphs available:
-                            *  **[Box plot](/box_plot)** - the traditional benchmarking graph. 
-                            This plot shows environmental impacts based on categorical 
-                            variables (e.g. building use, number of stories or 
-                            location). All environmental impacts are inclusive
-                            of life cycle stages A-C.
-                            *  **[Scatter plot](/scatter_plot)** - good for analyzing relationships.
-                            This plot shows environmental impacts compared to continuous
-                            variables (e.g. floor area, window-to-wall ratio or 
-                            column spacing). All environmental impacts are inclusive
-                            of life cycle stages A-C.
-                            
-                            Please refer to the Data Glossary in the **[WBLCA Benchmark v2 Data 
-                            Github Repository](https://github.com/Life-Cycle-Lab/wblca-benchmark-v2-data)**
-                            for any questions related to categorical or continuous variable definitions.
+                            - [The Embodied Carbon Benchmark Report]
+                            (https://carbonleadershipforum.org/de/the-embodied-carbon-benchmark-report/)
+                            - [Public dataset hosted on Figshare]
+                            (https://doi.org/10.6084/m9.figshare.28462145.v1)
+                            - [A Harmonized Dataset of High-resolution Whole 
+                            Building Life Cycle Assessment Results in North America]
+                            (https://doi.org/10.21203/rs.3.rs-6108016/v1)
+                            - [The California Carbon Report: An Analysis of the 
+                            Embodied and Operational Carbon Impacts of 30 Buildings]
+                            (https://carbonleadershipforum.org/california-carbon/)
+                            - [A Novel Whole-life Carbon Assessment of 
+                            Thirty Buildings in California]
+                            (https://www.sciencedirect.com/science/article/pii/S2352710225013117?via%3Dihub)
+                            - [The California Carbon Report: Six Key 
+                            Takeaways for Policymakers](http://hdl.handle.net/1773/51415)
+                            [Material Use Intensity Paper (preprint)]
+                            (https://doi.org/10.21203/rs.3.rs-6315460/v1)
+                            - [Exploratory Data Analysis of a North American 
+                            Whole Building Life Cycle Assessment Dataset]
+                            (https://doi.org/10.2139/ssrn.5197463)
+                            - [Material Use and Embodied Carbon Intensity of New Construction Buildings in North America]
+                            (https://doi.org/10.21203/rs.3.rs-6315460/v1)
+
+                            The code for this dashboard can be found at this [Github Repository.]()
                             ''',
-                            className='fw-light'
                         ),
                         html.Br(),
                         dcc.Markdown(
                             '''
-                            #### Useful Links
+                            #### **About the Carbon Leadership Forum**
                             '''
                         ),
                         dcc.Markdown(
                             '''
-                            - **[Study Landing Page]
-                            (https://carbonleadershipforum.org/clf-wblca-v2/)**
-                            - **[California Carbon Report]
-                            (https://carbonleadershipforum.org/california-carbon/)**
-                            - **[Dataset hosted on Figshare]
-                            (https://doi.org/10.6084/m9.figshare.28462145.v1)**
-                            - **[Data Descriptor Paper (preprint)]
-                            (https://doi.org/10.21203/rs.3.rs-6108016/v1)**
-                            - **[Material Use Intensity Paper (preprint)]
-                            (https://doi.org/10.21203/rs.3.rs-6315460/v1)**
-                            - **[Data Collection User Guide]
-                            (https://hdl.handle.net/1773/51285)**
-                            - **[Data Entry Template]
-                            (https://hdl.handle.net/1773/51286)**
-                            - **[Github Repository for Dashboard]
-                            (https://github.com/Life-Cycle-Lab/wblca-benchmark-v2-dashboard)**
-                            ''',
-                            className='fw-light'
-                        ),
-                        html.Br(),
-                        dcc.Markdown(
-                            '''
-                            #### About the University of Washington (UW) Life Cycle Lab
-                            '''
-                        ),
-                        dcc.Markdown(
-                            '''
-                            The **[Life Cycle Lab](https://www.lifecyclelab.org/)**
-                            at UW’s College of Built Environments leads
-                            research to advance life cycle assessment (LCA) data, methods,
-                            and approaches to enable the optimization of materials, buildings,
-                            and infrastructure. Our work is structured to inform impactful
-                            policies and practices that support global decarbonization efforts.
-                            We envision a transformed, decarbonized building
+                            The Carbon Leadership Forum accelerates the transformation 
+                            of the building sector to radically reduce the greenhouse 
+                            gas emissions attributed to materials (also known as 
+                            embodied carbon) used in buildings and infrastructure. 
+                            The CLF researches, educates, and fosters cross-collaboration to 
+                            bring embodied carbon of buildings and infrastructure down to 
+                            zero. CLF envisions a transformed, decarbonized building 
                             industry – better buildings for a better planet.
                             ''',
-                            className='fw-light'
                         ),
                         html.Br(),
                         dcc.Markdown(
                             '''
-                            #### Authors
+                            #### **Authors**
                             '''
                         ),
                         dcc.Markdown(
                             '''
                             The individuals from the Carbon Leadership Forum who worked on this
                             dashboard are:
-                            - Manuel Chafart, Reseacher (now at Carbon Leadership Forum)
-                            - Brad Benke, Researcher (now at Carbon Leadership Forum)
-                            - Kathrina Simonen, Professor
+                            - Manuel Chafart, Lead
+                            - Aurora Jensen, Senior Manager
+                            - Brad Benke, Manager
+                            - Meghan Lewis, Program Director
 
-                            **[CRediT]
-                            (https://www.elsevier.com/researcher/author/policies-and-guidelines/credit-author-statement)**
-                            authorship contribution: Conceptualization - B.B., M.C.,
-                            Formal analysis: M.C; Methodology - B.B., M.C.;  Visualization: M.C;
-                            Supervision and Funding Acquisition: K.S.
+                            [CRediT]
+                            (https://www.elsevier.com/researcher/author/policies-and-guidelines/credit-author-statement)
+                            authorship contribution: Conceptualization -M.C., A.J., B.B., M.L.;
+                            Formal analysis: M.C; Methodology - M.C., A.J.;  Visualization: M.C;
+                            Supervision and Funding Acquisition: M.L.
                             ''',
-                            className='fw-light'
                         ),
                         html.Br(),
                         dcc.Markdown(
                             '''
-                            #### Acknowledgements
-                            '''
+                            #### **Acknowledgements**
+                            ''',
                         ),
                         dcc.Markdown(
                             '''
@@ -184,29 +273,28 @@ layout = html.Div(
                             The Green Engineer Inc., The Miller Hull Partnership, LLP.,
                             Walter P Moore, and ZGF Architects LLP.
                             ''',
-                            className='fw-light'
                         ),
                         html.Br(),
                         dcc.Markdown(
                             '''
-                            #### Citation
+                            #### **Citation**
                             '''
                         ),
                         dcc.Markdown(
                             '''
-                            Chafart, M., Benke, B., Simonen, K. (2025). WBLCA Benchmark Study v2 Dashboard
-                            (Version 1.0) \[Computer Software]. Life Cycle Lab,
-                            https://wblca-benchmark-v2.lifecyclelab.org/
+                            Chafart, M., Jensen, A., Benke, B., Lewis, M. (2025). CLF 
+                            Benchmark Explorer (Version 1.0) [Computer Software]. 
+                            Carbon Leadership Forum, 
+                            https://wblca-benchmark-explorer.carbonleadershipforum.org 
                             ''',
-                            className='fw-light'
                         ),
                         html.Br(),
                         dcc.Markdown(
                             '''
-                            **[(CC BY 4.0)](https://creativecommons.org/licenses/by/4.0)**
+                            [(CC BY 4.0)](https://creativecommons.org/licenses/by/4.0)
                             2025
                             ''',
-                            className='fw-light text-center'
+                            className='text-center'
                         ),
                     ],
                     xs=9, sm=9, md=9, lg=9, xl=8, xxl=8,
@@ -226,12 +314,3 @@ layout = html.Div(
     ]
 )
 
-# *  **Stacked bar chart** - a way to compare average impacts.
-# This chart will show the _average_ impacts of a categorical
-# variable split across either life cycle stage or building
-# element (as described by OmniClass).
-# *  **Parallel coordinates chart** - a way to compare different
-# continuous variables and impacts. This chart will show each
-# building's categorical values along with their impacts. This will
-# allow the user to select different values and see how their building
-# will compare against others.
