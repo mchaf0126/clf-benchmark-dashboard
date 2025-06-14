@@ -490,10 +490,10 @@ scope_c:
       label: "Shell - Enclosure"
       value: 3
     -  
-      label: "Interiors - Finishes"
+      label: "Interiors - Construction"
       value: 4
     -  
-      label: "Interiors - Construction"
+      label: "Interiors - Finishes"
       value: 5
     -  
       label: "Unknown"
@@ -506,8 +506,8 @@ scope_c:
     1: Substructure
     2: "Shell - Superstructure"
     3: "Shell - Enclosure"
-    4: "Interiors - Finishes"
-    5: "Interiors - Construction"
+    4: "Interiors - Construction"
+    5: "Interiors - Finishes"
     6: "Unknown"
 
 p_typ_c: 
