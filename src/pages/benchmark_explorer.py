@@ -1082,9 +1082,9 @@ def create_notes_below_graph(category_x: str,
             The environmental metric is {impact_type_information}. The boxes are sorted 
             by {field_name_map.get(sort_box_byob)}, and outliers {crop_option} cropped. A subset of the data 
             is being displayed that represents:
-            - **Life Cycle Stages**: {sorted_lcs}
-            - **Element Scopes**: {sorted_scope}
-            - **Project Types**: {sorted_proj_type}
+            - **Life Cycle Stage(s)**: {sorted_lcs}
+            - **Element Scope(s)**: {sorted_scope}
+            - **Project Type(s)**: {sorted_proj_type}
             {mat_text}
             {cat_selection_one_text}
             {cat_selection_two_text}

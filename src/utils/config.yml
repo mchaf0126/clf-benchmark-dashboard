@@ -40,7 +40,7 @@ i_d:
     7: Non Renewable Energy Demand
 
 i_typ:
-  label: "Impact Type"
+  label: "Impact type"
   radio_list:
     - label: Impact Intensity
       value: 1
@@ -87,7 +87,7 @@ lcs_c:
     5: D
 
 sc_c: 
-  label: Scope  
+  label: Element scope  
   checklist: 
     - 
       label: Substructure
