@@ -985,6 +985,7 @@ def update_data_for_byob(category_x: str,
         Input({"type": "control", "id": "m_t"}, "value"),
         Input({"type": "control", "id": "m_f"}, "value"),
         Input({"type": "control", "id": 'i_d'}, 'value'),
+        Input({"type": "control", "id": 'i_typ'}, 'value'),
         Input({"type": "control", "id": 'fl_no'}, 'value'),
         Input({"type": "control", "id": 'sc_c'}, 'value'),
         Input({"type": "control", "id": 'p_typ_c'}, 'value'),
@@ -1002,6 +1003,7 @@ def create_notes_below_graph(category_x: str,
                              mat_filter_toggle: list,
                              mat_filter,
                              objective: str,
+                             impact_type: str,
                              cfa_gfa_type: str,
                              scope: list,
                              proj_type: list,
@@ -1063,6 +1065,11 @@ def create_notes_below_graph(category_x: str,
         crop_option = "have been"
     else:
         crop_option = "have not been"
+    
+    if impact_type == 1:
+        impact_type_information = f"normalized by {field_name_map.get(cfa_gfa_type)}"
+    else:
+        impact_type_information = "not normalized by floor area"
 
     intensity_metric_value_map = impact_dropdown_yaml.get("value_map")
     objective = intensity_metric_value_map.get(objective)
@@ -1072,7 +1079,7 @@ def create_notes_below_graph(category_x: str,
         dcc.Markdown(
             f"""
             This box plot represents the projects plotted by {objective}. 
-            The environmental metric is normalized by {field_name_map.get(cfa_gfa_type)}. The boxes are sorted 
+            The environmental metric is {impact_type_information}. The boxes are sorted 
             by {field_name_map.get(sort_box_byob)}, and outliers {crop_option} cropped. A subset of the data 
             is being displayed that represents:
             - **Life Cycle Stages**: {sorted_lcs}
