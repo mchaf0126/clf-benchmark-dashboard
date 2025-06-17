@@ -1380,7 +1380,7 @@ def update_hash(_values):
     The app state is json serialised then base64 encoded and is treated with the
     reverse process in the layout function.
     """
-    print({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]})
+    # print({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]})
     if len({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]}) == 0:
         return ""
     return "#" + base64.urlsafe_b64encode(
