@@ -275,6 +275,8 @@ def layout(state: str = None):
         sort_values_radio_yaml['radio_id']: sort_values_radio_yaml['first_item'],
         outlier_toggle_yaml['toggle_id']: outlier_toggle_yaml['first_item'],
         line_toggle_yaml['toggle_id']: line_toggle_yaml['first_item'],
+        line_value_yaml['input_id']: 0,
+        line_name_yaml['input_id']: "",
     }
     # Decode the state from the hash
     state = defaults | (msgpack.unpackb(base64.urlsafe_b64decode(state)) if state else {})
@@ -425,14 +427,16 @@ def layout(state: str = None):
         label=line_value_yaml["label"],
         placeholder=line_value_yaml["placeholder"],
         input_id={"type": "control", "id": line_value_yaml["input_id"]},
-        tooltip_id=line_value_yaml["tooltip_id"]
+        tooltip_id=line_value_yaml["tooltip_id"],
+        first_item=state.get(line_value_yaml['input_id']),
     )
 
     line_name = create_str_input(
         label=line_name_yaml["label"],
         placeholder=line_name_yaml["placeholder"],
         input_id={"type": "control", "id": line_name_yaml["input_id"]},
-        tooltip_id=line_name_yaml["tooltip_id"]
+        tooltip_id=line_name_yaml["tooltip_id"],
+        first_item=state.get(line_name_yaml['input_id']),
     )  
 
     controls_byob = dbc.Accordion(

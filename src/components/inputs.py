@@ -2,7 +2,7 @@ from dash import html, dcc
 import dash_bootstrap_components as dbc
 
 
-def create_str_input(label: str, tooltip_id: str, placeholder: str, input_id: str) -> html.Div:
+def create_str_input(label: str, tooltip_id: str, placeholder: str, input_id: str, first_item: str = "") -> html.Div:
     """_summary_
 
     Args:
@@ -30,7 +30,7 @@ def create_str_input(label: str, tooltip_id: str, placeholder: str, input_id: st
             ),
             dbc.Input(
                 placeholder=placeholder,
-                value="",
+                value=first_item,
                 type='text',
                 id=input_id,
                 persistence=False,
@@ -42,7 +42,7 @@ def create_str_input(label: str, tooltip_id: str, placeholder: str, input_id: st
     return dbc_input
 
 
-def create_float_input(label: str, tooltip_id: str, placeholder: str, input_id: str) -> html.Div:
+def create_float_input(label: str, tooltip_id: str, placeholder: str, input_id: str, first_item: int = 0) -> html.Div:
     """_summary_
 
     Args:
@@ -70,7 +70,7 @@ def create_float_input(label: str, tooltip_id: str, placeholder: str, input_id: 
             ),
             dbc.Input(
                 placeholder=placeholder,
-                value=0,
+                value=first_item,
                 type='number',
                 id=input_id,
                 persistence=False,
