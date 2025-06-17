@@ -558,17 +558,17 @@ def layout(state: str = None):
 )
 def enable_filters(cat_selection_toggle: list, second_cat_selection_toggle: list):
     if cat_selection_toggle == [1]:
-        enable_filters_toggle = [{"label": "Enable categorical filtering", "value": 1}]
-        second_cat_selection =[{"label": "Enable second categorical selection", "value": 1}]
+        enable_filters_toggle = [{"label": "Enable 1st categorical filter", "value": 1}]
+        second_cat_selection =[{"label": "Enable 2nd categorical variable", "value": 1}]
         if second_cat_selection_toggle == [1]:
-            second_cat_filter_toggle =[{"label": "Enable second categorical filter", "value": 1}]
+            second_cat_filter_toggle =[{"label": "Enable 2nd categorical filter", "value": 1}]
         else:
-            second_cat_filter_toggle =[{"label": "Enable second categorical filter", "value": 1, "disabled": True}]
+            second_cat_filter_toggle =[{"label": "Enable 2nd categorical filter", "value": 1, "disabled": True}]
         return enable_filters_toggle, second_cat_selection, second_cat_filter_toggle
     else:
-        enable_filters_toggle = [{"label": "Enable categorical filtering", "value": 1, "disabled": True}]
-        second_cat_selection =[{"label": "Enable second categorical selection", "value": 1, "disabled": True}]
-        second_cat_filter_toggle =[{"label": "Enable second categorical filter", "value": 1, "disabled": True}]
+        enable_filters_toggle = [{"label": "Enable 1st categorical filter", "value": 1, "disabled": True}]
+        second_cat_selection =[{"label": "Enable 2nd categorical variable", "value": 1, "disabled": True}]
+        second_cat_filter_toggle =[{"label": "Enable 2nd categorical filter", "value": 1, "disabled": True}]
         return enable_filters_toggle, second_cat_selection, second_cat_filter_toggle
 
 
@@ -1376,7 +1376,7 @@ def update_hash(_values):
     The app state is json serialised then base64 encoded and is treated with the
     reverse process in the layout function.
     """
-    # print({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]})
+    print({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]})
     if len({inp["id"]["id"]: inp["value"] for inp in ctx.inputs_list[0]}) == 0:
         return ""
     return "#" + base64.urlsafe_b64encode(
