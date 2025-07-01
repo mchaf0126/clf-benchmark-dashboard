@@ -324,13 +324,13 @@ m_f:
 fl_no:
   label: "Normalize intensity by: "
   radio_list:
-    - label: Constructed Floor Area
+    - label: Built Floor Area
       value: bldg_cfa
     - label: Gross Internal Floor Area
       value: bldg_gfa
   first_item: bldg_gfa
   radio_id: fl_no
-  tooltip: Total constructed floor area (CFA) includes the 
+  tooltip: Total built floor area includes the 
     gross internal floor area (GFA) of the building and the 
     gross floor area of any attached/integrated parking components. 
     GFA excludes the area of the attached/integrated parking 
@@ -445,7 +445,7 @@ field_name_map:
   nredi_a_to_c_cfa: Natural Resource Depletion Intensity
   ec_per_occupant_a_to_c: Embodied Carbon per Occupant
   ec_per_res_unit_a_to_c: Embodied Carbon per Residential Unit
-  bldg_cfa: Constructed Floor Area
+  bldg_cfa: Built Floor Area
   bldg_gfa: Gross Floor Area
   bldg_park_gfa: Parking Floor Area
   bldg_added_gfa: Added Floor Area

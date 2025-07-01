@@ -741,7 +741,7 @@ def enable_or_disable_floor_norm_radio(impact_type_value):
         disabled_option = True
     return [
         {
-            "label": "Constructed Floor Area",
+            "label": "Built Floor Area",
             "value": "bldg_cfa",
             "disabled": disabled_option,
         },
