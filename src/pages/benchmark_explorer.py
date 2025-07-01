@@ -24,7 +24,7 @@ from src.components.tooltip import create_tooltip
 from src.components.checklists import create_checklist
 from src.components.inputs import create_float_input, create_str_input
 import src.utils.load_config as app_config
-from src.utils.general import create_graph_xshift
+from src.utils.general import create_graph_xshift, create_basic_figure, customwrap
 from dash_bootstrap_templates import load_figure_template
 import msgpack
 
@@ -58,28 +58,7 @@ caption_orders = app_config.caption_orders
 material_list = app_config.material_list
 
 
-byob_figure = (
-    px.box(
-        color_discrete_sequence=["#FFB71B"],
-        height=600,
-        orientation="h",
-        points="all",
-    )
-    .update_xaxes(title="", type="linear")
-    .update_traces(
-        quartilemethod="inclusive",
-        boxmean=True,
-        hovertemplate="Impact = %{x}<extra></extra>",
-        jitter=0.5,
-    )
-    .update_layout(
-        margin={"pad": 10},
-        font={"family": "Source Sans Pro"},
-        legend_traceorder="reversed",
-        boxgroupgap=0.4,
-    )
-    .add_vline(x=0, line_color="white", layer="below")
-)
+byob_figure = create_basic_figure()
 
 impact_dropdown_tooltip = create_tooltip(
     tooltip_text=impact_dropdown_yaml["tooltip"],
@@ -961,11 +940,6 @@ def update_data_for_graphs_and_tables(
     ref_line_toggle_boolean = False
     if ref_line_toggle == [1]:
         ref_line_toggle_boolean = True
-
-    # wrap text for formatting
-    def customwrap(s, width=25):
-        if type(s) is not float:
-            return "<br>".join(textwrap.wrap(s, width=width))
 
     if cat_selection_toggle == [1]:
         final_impacts[category_x] = final_impacts[category_x].map(customwrap)
