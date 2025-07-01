@@ -1,8 +1,6 @@
-import textwrap
 import base64
 from itertools import cycle
 from pathlib import Path
-import plotly.express as px
 import pandas as pd
 from dash import (
     html,
@@ -28,9 +26,12 @@ from src.utils.general import create_graph_xshift, create_basic_figure, customwr
 from dash_bootstrap_templates import load_figure_template
 import msgpack
 
+# page name and figure template
 register_page(__name__, path="/benchmark_explorer")
 load_figure_template("pulse")
 
+
+# load dictionaries from yaml
 impact_dropdown_yaml = app_config.impact_dropdown_yaml
 impact_type_radio_yaml = app_config.impact_type_radio_yaml
 lcs_checklist_yaml = app_config.lcs_checklist_yaml
@@ -57,9 +58,10 @@ category_order_map = app_config.category_order_map
 caption_orders = app_config.caption_orders
 material_list = app_config.material_list
 
-
+# create basic figure which will be updated by callbacks
 byob_figure = create_basic_figure()
 
+# create all tooltips
 impact_dropdown_tooltip = create_tooltip(
     tooltip_text=impact_dropdown_yaml["tooltip"],
     target_id=impact_dropdown_yaml["tooltip_id"],
@@ -166,9 +168,10 @@ line_name_tooltip = create_tooltip(
 def layout(state: str = None):
     """Home page layout
 
-    # It takes in a keyword arguments defined in `routing_callback_inputs`:
-    # * state (serialised state in the URL hash), it does not trigger re-render
-    #"""
+    It takes in a keyword arguments defined in `routing_callback_inputs`:
+    * state (serialised state in the URL hash), it does not trigger re-render.
+    This function is used to serialize and read the hash from URL, otherwise uses defaults.
+    """
     # Define default state values
     defaults = {
         impact_dropdown_yaml["dropdown_id"]: impact_dropdown_yaml["first_item"],
@@ -209,11 +212,13 @@ def layout(state: str = None):
         line_value_yaml["input_id"]: 0,
         line_name_yaml["input_id"]: "",
     }
+
     # Decode the state from the hash
     state = defaults | (
         msgpack.unpackb(base64.urlsafe_b64decode(state)) if state else {}
     )
 
+    # create all options for sidebar
     impact_dropdown = create_dropdown(
         label=impact_dropdown_yaml["label"],
         tooltip_id=impact_dropdown_yaml["tooltip_id"],
@@ -396,6 +401,7 @@ def layout(state: str = None):
         first_item=state.get(line_name_yaml["input_id"]),
     )
 
+    # create sidebar accordion
     controls_byob = dbc.Accordion(
         [
             dbc.AccordionItem(
@@ -1294,14 +1300,6 @@ def update_chart(byob_data: dict):
         patched_figure["layout"]["shapes"][0] = no_shape
 
     return patched_figure
-
-
-# @callback(
-#     Output('help_div', 'children'),
-#     Input('byob_graph', 'figure')
-# )
-# def test_one(figure_data):
-#     print(json.dumps(figure_data, indent=2))
 
 
 @callback(
