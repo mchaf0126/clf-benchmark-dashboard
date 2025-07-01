@@ -1,8 +1,6 @@
-import textwrap
 import base64
 from itertools import cycle
 from pathlib import Path
-import plotly.express as px
 import pandas as pd
 from dash import (
     html,
@@ -23,165 +21,47 @@ from src.components.radio_items import create_radio_items
 from src.components.tooltip import create_tooltip
 from src.components.checklists import create_checklist
 from src.components.inputs import create_float_input, create_str_input
-from src.utils.load_config import app_config
-from src.utils.general import create_graph_xshift
+import src.utils.load_config as app_config
+from src.utils.general import create_graph_xshift, create_basic_figure, customwrap
 from dash_bootstrap_templates import load_figure_template
 import msgpack
 
-config = app_config
-
+# page name and figure template
 register_page(__name__, path="/benchmark_explorer")
 load_figure_template("pulse")
 
-### Glossary of symbols for variables
-# c = category
-# ch = checklist
-# d = dropdown
-# f = filter
-# fl = floor
-# i = impact
-# ln = line
-# m = material
-# nm = name
-# no = normalization
-# t = toggle
-# typ = type
-# p = project
-# lcs = life cycle stage
-# out = outlier
-# sc = scope
-# sort = sort
-# v = values
 
-impact_dropdown_yaml = config.get("i_d")
-assert impact_dropdown_yaml is not None, "The config for total impacts could not be set"
+# load dictionaries from yaml
+impact_dropdown_yaml = app_config.impact_dropdown_yaml
+impact_type_radio_yaml = app_config.impact_type_radio_yaml
+lcs_checklist_yaml = app_config.lcs_checklist_yaml
+scope_checklist_yaml = app_config.scope_checklist_yaml
+proj_type_checklist_yaml = app_config.proj_type_checklist_yaml
+categorical_toggle_one_yaml = app_config.categorical_toggle_one_yaml
+categorical_dropdown_one_yaml = app_config.categorical_dropdown_one_yaml
+categorical_filter_toggle_one_yaml = app_config.categorical_filter_toggle_one_yaml
+categorical_filter_one_yaml = app_config.categorical_filter_one_yaml
+categorical_toggle_two_yaml = app_config.categorical_toggle_two_yaml
+categorical_dropdown_two_yaml = app_config.categorical_dropdown_two_yaml
+categorical_filter_toggle_two_yaml = app_config.categorical_filter_toggle_two_yaml
+categorical_filter_two_yaml = app_config.categorical_filter_two_yaml
+material_filter_toggle_yaml = app_config.material_filter_toggle_yaml
+material_filter_yaml = app_config.material_filter_yaml
+floor_area_normalization_radio_yaml = app_config.floor_area_normalization_radio_yaml
+sort_values_radio_yaml = app_config.sort_values_radio_yaml
+outlier_toggle_yaml = app_config.outlier_toggle_yaml
+line_toggle_yaml = app_config.line_toggle_yaml
+line_value_yaml = app_config.line_value_yaml
+line_name_yaml = app_config.line_name_yaml
+field_name_map = app_config.field_name_map
+category_order_map = app_config.category_order_map
+caption_orders = app_config.caption_orders
+material_list = app_config.material_list
 
-impact_type_radio_yaml = config.get("i_typ")
-assert (
-    impact_type_radio_yaml is not None
-), "The config for impact type radio could not be set"
+# create basic figure which will be updated by callbacks
+byob_figure = create_basic_figure()
 
-lcs_checklist_yaml = config.get("lcs_c")
-assert lcs_checklist_yaml is not None, "The config for lcs checklist could not be set"
-
-scope_checklist_yaml = config.get("sc_c")
-assert (
-    scope_checklist_yaml is not None
-), "The config for scope checklist could not be set"
-
-proj_type_checklist_yaml = config.get("p_typ_c")
-assert (
-    proj_type_checklist_yaml is not None
-), "The config for proj_type checklist could not be set"
-
-categorical_toggle_one_yaml = config.get("c_t_1")
-assert (
-    categorical_toggle_one_yaml is not None
-), "The config for categorical selection toggle could not be set"
-
-categorical_dropdown_one_yaml = config.get("c_d_1")
-assert (
-    categorical_dropdown_one_yaml is not None
-), "The config for cat. dropdowns could not be set"
-
-categorical_filter_toggle_one_yaml = config.get("c_f_t_1")
-assert (
-    categorical_filter_toggle_one_yaml is not None
-), "The config for cat. dropdowns could not be set"
-
-categorical_filter_one_yaml = config.get("c_f_1")
-assert (
-    categorical_filter_one_yaml is not None
-), "The config for cat filters could not be set"
-
-categorical_toggle_two_yaml = config.get("c_t_2")
-assert (
-    categorical_toggle_two_yaml is not None
-), "The config for second cat select could not be set"
-
-categorical_dropdown_two_yaml = config.get("c_d_2")
-assert (
-    categorical_dropdown_two_yaml is not None
-), "The config for second cat dropdown could not be set"
-
-categorical_filter_toggle_two_yaml = config.get("c_f_t_2")
-assert (
-    categorical_filter_toggle_two_yaml is not None
-), "The config for second cat filter toggle could not be set"
-
-categorical_filter_two_yaml = config.get("c_f_2")
-assert (
-    categorical_filter_two_yaml is not None
-), "The config for second cat filters could not be set"
-
-material_filter_toggle_yaml = config.get("m_t")
-assert (
-    material_filter_toggle_yaml is not None
-), "The config for material filter toggle could not be set"
-
-material_filter_yaml = config.get("m_f")
-assert (
-    material_filter_yaml is not None
-), "The config for material filters could not be set"
-
-floor_area_normalization_radio_yaml = config.get("fl_no")
-assert (
-    floor_area_normalization_radio_yaml is not None
-), "The config for floor area norm. could not be set"
-
-sort_values_radio_yaml = config.get("sort_v")
-assert (
-    sort_values_radio_yaml is not None
-), "The config for box plot sorting could not be set"
-
-outlier_toggle_yaml = config.get("out_t")
-assert outlier_toggle_yaml is not None, "The config for outlier toggle could not be set"
-
-line_toggle_yaml = config.get("ln_t")
-assert line_toggle_yaml is not None, "The config for line toggle could not be set"
-
-line_value_yaml = config.get("ln_v")
-assert line_value_yaml is not None, "The config for line number input could not be set"
-
-line_name_yaml = config.get("ln_nm")
-assert line_name_yaml is not None, "The config for line name input could not be set"
-
-field_name_map = config.get("field_name_map")
-assert field_name_map is not None, "The config for field names could not be set"
-
-category_order_map = config.get("category_order_map")
-assert category_order_map is not None, "The config for category orders could not be set"
-
-caption_orders = config.get("caption_orders")
-assert caption_orders is not None, "The config for caption orders could not be set"
-
-material_list = config.get("material_list")
-assert material_list is not None, "The config for caption orders could not be set"
-
-
-byob_figure = (
-    px.box(
-        color_discrete_sequence=["#FFB71B"],
-        height=600,
-        orientation="h",
-        points="all",
-    )
-    .update_xaxes(title="", type="linear")
-    .update_traces(
-        quartilemethod="inclusive",
-        boxmean=True,
-        hovertemplate="Impact = %{x}<extra></extra>",
-        jitter=0.5,
-    )
-    .update_layout(
-        margin={"pad": 10},
-        font={"family": "Source Sans Pro"},
-        legend_traceorder="reversed",
-        boxgroupgap=0.4,
-    )
-    .add_vline(x=0, line_color="white", layer="below")
-)
-
+# create all tooltips
 impact_dropdown_tooltip = create_tooltip(
     tooltip_text=impact_dropdown_yaml["tooltip"],
     target_id=impact_dropdown_yaml["tooltip_id"],
@@ -288,9 +168,10 @@ line_name_tooltip = create_tooltip(
 def layout(state: str = None):
     """Home page layout
 
-    # It takes in a keyword arguments defined in `routing_callback_inputs`:
-    # * state (serialised state in the URL hash), it does not trigger re-render
-    #"""
+    It takes in a keyword arguments defined in `routing_callback_inputs`:
+    * state (serialised state in the URL hash), it does not trigger re-render.
+    This function is used to serialize and read the hash from URL, otherwise uses defaults.
+    """
     # Define default state values
     defaults = {
         impact_dropdown_yaml["dropdown_id"]: impact_dropdown_yaml["first_item"],
@@ -331,11 +212,13 @@ def layout(state: str = None):
         line_value_yaml["input_id"]: 0,
         line_name_yaml["input_id"]: "",
     }
+
     # Decode the state from the hash
     state = defaults | (
         msgpack.unpackb(base64.urlsafe_b64decode(state)) if state else {}
     )
 
+    # create all options for sidebar
     impact_dropdown = create_dropdown(
         label=impact_dropdown_yaml["label"],
         tooltip_id=impact_dropdown_yaml["tooltip_id"],
@@ -518,6 +401,7 @@ def layout(state: str = None):
         first_item=state.get(line_name_yaml["input_id"]),
     )
 
+    # create sidebar accordion
     controls_byob = dbc.Accordion(
         [
             dbc.AccordionItem(
@@ -637,6 +521,27 @@ def layout(state: str = None):
             ),
         ],
     )
+
+
+### Glossary of symbols for variables
+# c = category
+# ch = checklist
+# d = dropdown
+# f = filter
+# fl = floor
+# i = impact
+# ln = line
+# m = material
+# nm = name
+# no = normalization
+# t = toggle
+# typ = type
+# p = project
+# lcs = life cycle stage
+# out = outlier
+# sc = scope
+# sort = sort
+# v = values
 
 
 @callback(
@@ -1042,11 +947,6 @@ def update_data_for_graphs_and_tables(
     if ref_line_toggle == [1]:
         ref_line_toggle_boolean = True
 
-    # wrap text for formatting
-    def customwrap(s, width=25):
-        if type(s) is not float:
-            return "<br>".join(textwrap.wrap(s, width=width))
-
     if cat_selection_toggle == [1]:
         final_impacts[category_x] = final_impacts[category_x].map(customwrap)
     final_impacts = final_impacts.drop(
@@ -1400,14 +1300,6 @@ def update_chart(byob_data: dict):
         patched_figure["layout"]["shapes"][0] = no_shape
 
     return patched_figure
-
-
-# @callback(
-#     Output('help_div', 'children'),
-#     Input('byob_graph', 'figure')
-# )
-# def test_one(figure_data):
-#     print(json.dumps(figure_data, indent=2))
 
 
 @callback(
