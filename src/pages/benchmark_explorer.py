@@ -1181,7 +1181,7 @@ def create_notes_below_graph(
         elif isinstance(mat_filter, str):
             mat_text = f"- **Material Data**: {mat_filter} only"
         else:
-            mat_text = '- **Material Data**: {", ".join(mat_filter)}'
+            mat_text = f'- **Material Data**: {", ".join(mat_filter)}'
     else:
         mat_text = "- **Material Data**: All"
 
