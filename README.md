@@ -1,11 +1,10 @@
-## CLF WBLCA Benchmark Study v2 - Dashboard
+## The CLF Benchmark Explorer
 This is a public repository containing the code required to run the CLF Dashboard as part of the CLF WBLCA Benchmark Study V2. This is a fork of the LCL dashboard found [here](https://wblca-benchmark-v2.lifecyclelab.org).
 
-## About this study
-In 2017, the Carbon Leadership Forum (CLF) at the University of Washington published the [Embodied Carbon Benchmark Study V1](https://carbonleadershipforum.org/lca-benchmark-database/) and [Visualization Tool](https://carbonleadershipforum.org/embodied-carbon-benchmark-study-data-visualization/). Since then, the practice of whole-building life cycle assessment (WBLCA) has grown rapidly, and it became clear that more robust and reliable benchmarks are critical for advancing work in thisfield. This project fills a critical gap and helps enable architects, engineers, policy makers, and the entire design community to work towards realistic and measurable embodied carbon reductionsat the building scale. TBD!
+## About this dashboard
+The CLF Benchmark Explorer is a tool created by the Carbon Leadership Forum (CLF) to better visualize the data created by the WBLCA Benchmark Study V2. It consists of a set of customizable box and whisker plots for use in design, research, and education. These plots can be used to understand the impacts of building typologies and learn more about the WBLCA Benchmark Study dataset created by the CLF and the University of Washington’s Life Cycle Lab.
 
-## About the dashboard
-TBD!
+To learn how to use the dashboard, refer to the how-to video posted [here]().
 
 ## Versioning
 Versions of this repository are tracked using Releases on GitHub.
@@ -13,24 +12,25 @@ Versions of this repository are tracked using Releases on GitHub.
 ## How to cite
 For any dashboard related citations, please use: 
 ```
-Chafart, M., Benke, B., Jensen, A. (2025). WBLCA Benchmark Study v2 Dashboard (Version 1.0) [Computer Software]. Carbon Leadership Forum, TBD!
+Chafart, M., Benke, B., Jensen, A. (2025). CLF Benchmark Explorer (Version 1.0) [Computer Software]. Carbon Leadership Forum, TBD!
 ```
 
 For citations relating to the dataset, please cite both the Data Descriptor and the specific data version used:
 - **Data Descriptor:**
 ```
-Benke, B., Chafart, M., Shen, Y., Ashtiani, M., Carlisle, S., and Simonen, K.  A Harmonized Dataset of High-Resolution Whole Building Life Cycle Assessment Results in North America. In Review. Preprint available at https://doi.org/10.21203/rs.3.rs-6108016/v1
+Benke, B., Chafart, M., Shen, Y., Ashtiani, M., Carlisle, S., & Simonen, K. (2025). A Harmonized Dataset of High-Resolution Embodied Life Cycle Assessment Results for Buildings in North America. Scientific Data, 12(1), 1085. https://doi.org/10.1038/s41597-025-05216-0
 ```
 - **Dataset:** Refer to the latest version on Figshare https://doi.org/10.6084/m9.figshare.28462145.v1
 
 ## Additional Project Resources
-- [WBLCA Benchmark Study V2 Project Page - Carbon Leadership Forum](https://carbonleadershipforum.org/clf-wblca-v2/)
-- [WBLCA Benchmark Study V2 Project Page - Life Cycle Lab at University of Washington](https://www.lifecyclelab.org/projects/)
-- [Data Descriptor - A Harmonized Dataset of High-Resolution Whole Building Life Cycle Assessment Results in North America](https://doi.org/10.21203/rs.3.rs-6108016/v1)
-- [Material Use Intensity Paper - Material Use and Embodied Carbon Intensity of New Construction Buildings in North America](https://doi.org/10.21203/rs.3.rs-6315460/v1)
-- [California Carbon Report](https://carbonleadershipforum.org/california-carbon/)
-- [Data Entry Template](https://hdl.handle.net/1773/51286)
-- [Data Collection User Guide](https://hdl.handle.net/1773/51285)
+- [The Embodied Carbon Benchmark Report](https://carbonleadershipforum.org/de/the-embodied-carbon-benchmark-report/)
+- [Public dataset hosted on Figshare](https://doi.org/10.6084/m9.figshare.28462145.v1)
+- [A Harmonized Dataset of High-resolution Whole Building Life Cycle Assessment Results in North America](https://www.nature.com/articles/s41597-025-05216-0)
+- [The California Carbon Report: An Analysis of the Embodied and Operational Carbon Impacts of 30 Buildings](https://carbonleadershipforum.org/california-carbon/)
+- [A Novel Whole-life Carbon Assessment of Thirty Buildings in California](https://www.sciencedirect.com/science/article/pii/S2352710225013117?via%3Dihub)
+- [The California Carbon Report: Six Key Takeaways for Policymakers](http://hdl.handle.net/1773/51415)
+- [Exploratory Data Analysis of a North American Whole Building Life Cycle Assessment Dataset](https://doi.org/10.2139/ssrn.5197463)
+- [Material Use and Embodied Carbon Intensity of New Construction Buildings in North America](https://doi.org/10.21203/rs.3.rs-6315460/v1)
 
 ## How to Use Locally
 
