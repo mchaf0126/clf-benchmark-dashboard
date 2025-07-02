@@ -200,8 +200,6 @@ layout = html.Div(
                             (https://www.sciencedirect.com/science/article/pii/S2352710225013117?via%3Dihub)
                             - [The California Carbon Report: Six Key 
                             Takeaways for Policymakers](http://hdl.handle.net/1773/51415)
-                            [Material Use Intensity Paper (preprint)]
-                            (https://doi.org/10.21203/rs.3.rs-6315460/v1)
                             - [Exploratory Data Analysis of a North American 
                             Whole Building Life Cycle Assessment Dataset]
                             (https://doi.org/10.2139/ssrn.5197463)
