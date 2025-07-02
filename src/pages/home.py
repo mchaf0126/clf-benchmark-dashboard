@@ -1,30 +1,29 @@
 from pathlib import Path
 import pandas as pd
-from dash import html, dcc, register_page, Input, Output, callback
+from dash import html, dcc, register_page
 import dash_bootstrap_components as dbc
 from src.components.jumbotron import create_jumbotron
 
 
-register_page(__name__, path='/')
+register_page(__name__, path="/")
 
 current_file_path = Path(__file__)
 main_directory = current_file_path.parents[2]
-metadata_directory = main_directory.joinpath('data/buildings_metadata.pkl')
+metadata_directory = main_directory.joinpath("data/buildings_metadata.pkl")
 buildings_metadata_df = pd.read_pickle(metadata_directory)
 
 typology_jumbotron = create_jumbotron(
-    subtitle='Unique Building Typologies',
-    main_text=len(buildings_metadata_df['bldg_prim_use'].unique()),
+    subtitle="Unique Building Typologies",
+    main_text=len(buildings_metadata_df["bldg_prim_use"].unique()),
 )
 
 project_number_jumbotron = create_jumbotron(
-    subtitle='Projects in Dataset',
-    main_text=buildings_metadata_df.shape[0]
+    subtitle="Projects in Dataset", main_text=buildings_metadata_df.shape[0]
 )
 
 avg_impact_jumbotron = create_jumbotron(
-    subtitle='Average kgCO2e / m2',
-    main_text=round(buildings_metadata_df['eci_a_to_c_gfa'].mean())
+    subtitle="Average kgCO2e / m2",
+    main_text=round(buildings_metadata_df["eci_a_to_c_gfa"].mean()),
 )
 
 layout = html.Div(
@@ -34,9 +33,9 @@ layout = html.Div(
                 dbc.Col(
                     [
                         dcc.Markdown(
-                            '''
+                            """
                             #### **About the dashboard**
-                            '''
+                            """
                         ),
                         dcc.Markdown(
                             """
@@ -52,20 +51,22 @@ layout = html.Div(
                             of Washington’s Life Cycle Lab.
                             """,
                         ),
-                        html.Div([
-                            dbc.Button(
-                                "Use the Benchmark Explorer",
-                                color='primary',
-                                href="/benchmark_explorer",
-                                className='d-grid col-4 fw-bold mx-auto',
-                                size='lg'
-                            ),
-                        ]),
+                        html.Div(
+                            [
+                                dbc.Button(
+                                    "Use the Benchmark Explorer",
+                                    color="primary",
+                                    href="/benchmark_explorer",
+                                    className="d-grid col-4 fw-bold mx-auto",
+                                    size="lg",
+                                ),
+                            ]
+                        ),
                         html.Br(),
                         dcc.Markdown(
-                            '''
+                            """
                             #### **Relationship to CLF Embodied Carbon Benchmark Report**
-                            '''
+                            """
                         ),
                         dcc.Markdown(
                             """
@@ -90,9 +91,9 @@ layout = html.Div(
                         ),
                         html.Br(),
                         dcc.Markdown(
-                            '''
+                            """
                             #### **Using the Dashboard**
-                            '''
+                            """
                         ),
                         dcc.Markdown(
                             """
@@ -130,8 +131,7 @@ layout = html.Div(
                             """,
                         ),
                         html.Img(
-                            src='assets/boxplot_ex.jpg',
-                            className='img-fluid px-4'
+                            src="assets/boxplot_ex.jpg", className="img-fluid px-4"
                         ),
                         dcc.Markdown(
                             """
@@ -145,12 +145,12 @@ layout = html.Div(
                         ),
                         html.Br(),
                         dcc.Markdown(
-                            '''
+                            """
                             #### **About the CLF Benchmark v2 study**
-                            '''
+                            """
                         ),
                         dcc.Markdown(
-                            '''
+                            """
                             In 2017, the Carbon Leadership Forum at the 
                             University of Washington published the [Embodied 
                             Carbon Benchmark Study V1]
@@ -175,23 +175,23 @@ layout = html.Div(
                             independent nonprofit in the spring of 2024, the 
                             study continued as a collaboration between the UW’s 
                             newly named Life Cycle Lab and CLF.
-                            ''',
+                            """,
                         ),
                         html.Br(),
                         dcc.Markdown(
-                            '''
+                            """
                             #### **Project Publications**
-                            '''
+                            """
                         ),
                         dcc.Markdown(
-                            '''
+                            """
                             - [The Embodied Carbon Benchmark Report]
                             (https://carbonleadershipforum.org/de/the-embodied-carbon-benchmark-report/)
                             - [Public dataset hosted on Figshare]
                             (https://doi.org/10.6084/m9.figshare.28462145.v1)
                             - [A Harmonized Dataset of High-resolution Whole 
                             Building Life Cycle Assessment Results in North America]
-                            (https://doi.org/10.21203/rs.3.rs-6108016/v1)
+                            (https://www.nature.com/articles/s41597-025-05216-0)
                             - [The California Carbon Report: An Analysis of the 
                             Embodied and Operational Carbon Impacts of 30 Buildings]
                             (https://carbonleadershipforum.org/california-carbon/)
@@ -209,16 +209,16 @@ layout = html.Div(
                             (https://doi.org/10.21203/rs.3.rs-6315460/v1)
 
                             The code for this dashboard can be found at this [Github Repository.]()
-                            ''',
+                            """,
                         ),
                         html.Br(),
                         dcc.Markdown(
-                            '''
+                            """
                             #### **About the Carbon Leadership Forum**
-                            '''
+                            """
                         ),
                         dcc.Markdown(
-                            '''
+                            """
                             The Carbon Leadership Forum accelerates the transformation 
                             of the building sector to radically reduce the greenhouse 
                             gas emissions attributed to materials (also known as 
@@ -227,16 +227,16 @@ layout = html.Div(
                             bring embodied carbon of buildings and infrastructure down to 
                             zero. CLF envisions a transformed, decarbonized building 
                             industry – better buildings for a better planet.
-                            ''',
+                            """,
                         ),
                         html.Br(),
                         dcc.Markdown(
-                            '''
+                            """
                             #### **Authors**
-                            '''
+                            """
                         ),
                         dcc.Markdown(
-                            '''
+                            """
                             The individuals from the Carbon Leadership Forum who worked on this
                             dashboard are:
                             - Manuel Chafart, Lead
@@ -249,16 +249,16 @@ layout = html.Div(
                             authorship contribution: Conceptualization -M.C., A.J., B.B., M.L.;
                             Formal analysis: M.C; Methodology - M.C., A.J.;  Visualization: M.C;
                             Supervision and Funding Acquisition: M.L.
-                            ''',
+                            """,
                         ),
                         html.Br(),
                         dcc.Markdown(
-                            '''
+                            """
                             #### **Acknowledgements**
-                            ''',
+                            """,
                         ),
                         dcc.Markdown(
-                            '''
+                            """
                             We would like to thank the individuals and respective firms
                             who participated in the data collection and quality assurance
                             process, this work would not have been possible without their
@@ -272,45 +272,56 @@ layout = html.Div(
                             reLoad Sustainable Design Inc., SERA Architects, Stok,
                             The Green Engineer Inc., The Miller Hull Partnership, LLP.,
                             Walter P Moore, and ZGF Architects LLP.
-                            ''',
+                            """,
                         ),
                         html.Br(),
                         dcc.Markdown(
-                            '''
+                            """
                             #### **Citation**
-                            '''
+                            """
                         ),
                         dcc.Markdown(
-                            '''
+                            """
                             Chafart, M., Jensen, A., Benke, B., Lewis, M. (2025). CLF 
                             Benchmark Explorer (Version 1.0) [Computer Software]. 
                             Carbon Leadership Forum, 
                             https://wblca-benchmark-explorer.carbonleadershipforum.org 
-                            ''',
+                            """,
                         ),
                         html.Br(),
                         dcc.Markdown(
-                            '''
+                            """
                             [(CC BY 4.0)](https://creativecommons.org/licenses/by/4.0)
                             2025
-                            ''',
-                            className='text-center'
+                            """,
+                            className="text-center",
                         ),
                     ],
-                    xs=9, sm=9, md=9, lg=9, xl=8, xxl=8,
-                    class_name='pe-5'
+                    xs=9,
+                    sm=9,
+                    md=9,
+                    lg=9,
+                    xl=8,
+                    xxl=8,
+                    class_name="pe-5",
                 ),
                 dbc.Col(
                     [
-                        typology_jumbotron, project_number_jumbotron, avg_impact_jumbotron
+                        typology_jumbotron,
+                        project_number_jumbotron,
+                        avg_impact_jumbotron,
                     ],
-                    className='my-4',
-                    xs=3, sm=3, md=3, lg=3, xl=2, xxl=2,
+                    className="my-4",
+                    xs=3,
+                    sm=3,
+                    md=3,
+                    lg=3,
+                    xl=2,
+                    xxl=2,
                 ),
             ],
-            justify='center',
-            className='m-2'
+            justify="center",
+            className="m-2",
         ),
     ]
 )
-
