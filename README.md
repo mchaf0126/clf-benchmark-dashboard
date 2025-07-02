@@ -37,8 +37,8 @@ Benke, B., Chafart, M., Shen, Y., Ashtiani, M., Carlisle, S., & Simonen, K. (202
 ### 1. Clone the repository
 
 ```bash
-TBD!
-TBD!
+git clone https://github.com/carbon-leadership-forum/wblca-benchmark-explorer.git
+cd wblca-benchmark-explorer
 ```
 
 ### 2. Install dependencies
